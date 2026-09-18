@@ -1,8 +1,37 @@
+using MongoDB.Driver;
+using SmartSolarMicrogridAPI.Models;
+using SmartSolarMicrogridAPI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+
+// Register MongoDB Service
+builder.Services.AddSingleton<MongoDbService>();
+
+// Register User Service
+builder.Services.AddSingleton<UserService>();
+
+// MongoDB Configuration
+var mongoConnectionString =
+    builder.Configuration["MongoDbSettings:ConnectionString"];
+
+var mongoDatabaseName =
+    builder.Configuration["MongoDbSettings:DatabaseName"];
+
+if (string.IsNullOrEmpty(mongoConnectionString))
+{
+    throw new InvalidOperationException(
+        "MongoDB connection string is not configured.");
+}
+
+if (string.IsNullOrEmpty(mongoDatabaseName))
+{
+    throw new InvalidOperationException(
+        "MongoDB database name is not configured.");
+}
 
 var app = builder.Build();
 
@@ -12,30 +41,28 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
+// Home endpoint
+app.MapGet("/", () => "Smart Solar Microgrid API is running!");
+
+// MongoDB connection test endpoint
+app.MapGet("/api/test-mongodb", async (MongoDbService mongoDb) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var database = mongoDb.Database;
+
+    var collections = await database
+        .ListCollectionNames()
+        .ToListAsync();
+
+    return Results.Ok(new
+    {
+        message = "MongoDB connection successful!",
+        database = database.DatabaseNamespace.DatabaseName,
+        collections = collections
+    });
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
