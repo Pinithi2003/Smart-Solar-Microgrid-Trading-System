@@ -404,6 +404,34 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   --bs-table-bg: transparent;
 }
 
+/* bordered station table: outer frame + full cell grid */
+.directory-card .table-responsive {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.directory-card .table {
+  margin-bottom: 0;
+}
+
+.directory-card .table thead th {
+  border-right: 1px solid var(--card-border);
+}
+
+.directory-card .table tbody td {
+  border-right: 1px solid var(--card-border);
+}
+
+.directory-card .table thead th:last-child,
+.directory-card .table tbody td:last-child {
+  border-right: 0;
+}
+
+.directory-card .table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .table thead th {
   white-space: nowrap;
   font-size: 0.7rem;
