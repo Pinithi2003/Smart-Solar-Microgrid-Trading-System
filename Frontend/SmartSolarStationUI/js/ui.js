@@ -16,6 +16,7 @@
   let sortDir = 1;
   let page = 1;
   let pendingDeactivateId = null;
+  let detailsWasOpen = false;
   const prevStatus = new Map();
   const displayedStats = { total: 0, active: 0, maintenance: 0, available: 0 };
 
@@ -361,21 +362,27 @@
 
   function askDeactivate(stationId) {
     pendingDeactivateId = stationId;
+    // Stacking two Bootstrap modals shares one backdrop, so the details
+    // content bleeds through behind the confirm dialog. Hide details while
+    // confirming; it is restored on cancel (see confirmModal hidden handler).
+    detailsWasOpen = $("detailsModal").classList.contains("show");
+    if (detailsWasOpen) {
+      bootstrap.Modal.getInstance($("detailsModal"))?.hide();
+    }
     $("confirmModalMsg").textContent =
-      `${stationId} will become Inactive (soft delete — the record is kept). Continue?`;
+      `Are you sure you want to deactivate ${stationId}?`;
     bootstrap.Modal.getOrCreateInstance($("confirmModal")).show();
   }
 
   async function confirmDeactivate() {
     const id = pendingDeactivateId;
     pendingDeactivateId = null;
+    detailsWasOpen = false;
     bootstrap.Modal.getInstance($("confirmModal")).hide();
     if (!id) return;
-    const detailsOpen = document.getElementById("detailsModal").classList.contains("show");
     try {
       await api.deactivate(id);
       toast(`Station ${id} deactivated (soft delete).`);
-      if (detailsOpen) bootstrap.Modal.getInstance($("detailsModal")).hide();
       await reload();
     } catch (err) {
       toast(err.message, "error");
@@ -497,6 +504,16 @@
     });
     $("exportCsvBtn").addEventListener("click", exportCsv);
     $("confirmModalBtn").addEventListener("click", confirmDeactivate);
+    // Cancel/X on the confirm dialog: bring back the details modal underneath.
+    // (No-op after a real confirm — pendingDeactivateId is already cleared.)
+    $("confirmModal").addEventListener("hidden.bs.modal", () => {
+      if (pendingDeactivateId && detailsWasOpen) {
+        const id = pendingDeactivateId;
+        pendingDeactivateId = null;
+        detailsWasOpen = false;
+        showDetails(id);
+      }
+    });
     $("refreshBtn").addEventListener("click", async () => {
       await reload();
     });
