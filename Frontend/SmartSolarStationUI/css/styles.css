@@ -460,17 +460,17 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 }
 
 .badge-soft-active {
-  background-color: var(--mint-bg);
+  background-color: #f0faf3;
   color: var(--mint-text);
 }
 
 .badge-soft-maintenance {
-  background-color: #fdf3e3;
+  background-color: #fef8ec;
   color: #b7791f;
 }
 
 .badge-soft-inactive {
-  background-color: #fdecec;
+  background-color: #fef1f1;
   color: #c0392b;
 }
 
@@ -488,7 +488,9 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 /* pill action buttons (demo look) */
 .btn-pill-view,
 .btn-pill-edit,
-.btn-pill-neutral {
+.btn-pill-neutral,
+.btn-pill-danger,
+.btn-pill-activate {
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 600;
@@ -503,8 +505,8 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 }
 
 .btn-pill-edit {
-  background-color: var(--mint-bg);
-  color: var(--mint-text);
+  background-color: #e7f0fe;
+  color: #0d6efd;
 }
 
 .btn-pill-neutral {
@@ -512,9 +514,21 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: #344054;
 }
 
+.btn-pill-danger {
+  background-color: #fdecea;
+  color: #b42318;
+}
+
+.btn-pill-activate {
+  background-color: var(--mint-bg);
+  color: var(--mint-text);
+}
+
 .btn-pill-view:hover,
 .btn-pill-edit:hover,
-.btn-pill-neutral:hover {
+.btn-pill-neutral:hover,
+.btn-pill-danger:hover,
+.btn-pill-activate:hover {
   filter: brightness(0.95);
   transform: translateY(-1px);
 }
@@ -523,6 +537,21 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 [data-bs-theme="dark"] .btn-pill-neutral {
   background-color: #243145;
   color: #dbe4f0;
+}
+
+[data-bs-theme="dark"] .btn-pill-edit {
+  background-color: #1e3a5f;
+  color: #8fb8ff;
+}
+
+[data-bs-theme="dark"] .btn-pill-danger {
+  background-color: #4a2530;
+  color: #fda29b;
+}
+
+[data-bs-theme="dark"] .btn-pill-activate {
+  background-color: #1d3a2f;
+  color: #6ce9a6;
 }
 
 /* skeleton shimmer while loading */

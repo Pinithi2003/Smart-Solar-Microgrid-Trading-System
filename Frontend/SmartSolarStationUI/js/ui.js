@@ -166,7 +166,7 @@
           <td class="text-nowrap">
             <button class="btn btn-sm btn-pill-view" data-action="view" data-id="${esc(s.stationId)}">View</button>
             <button class="btn btn-sm btn-pill-edit" data-action="edit" data-id="${esc(s.stationId)}">Edit</button>
-            <button class="btn btn-sm btn-pill-neutral"
+            <button class="btn btn-sm ${s.status === "Active" ? "btn-pill-danger" : "btn-pill-activate"}"
               data-action="toggle" data-id="${esc(s.stationId)}">${s.status === "Active" ? "Deactivate" : "Activate"}</button>
           </td>
         </tr>`;
