@@ -300,6 +300,36 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   transform: translateY(-1px);
 }
 
+/* Map address search: border-only outline CTA (no background fill). */
+.btn-peacock {
+  background-color: transparent;
+  border-color: #0d6efd;
+  color: #0d6efd;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-peacock i {
+  color: #0d6efd;
+}
+
+.btn-peacock:hover {
+  background-color: #e7f0fe;
+  border-color: #0d6efd;
+  color: #0b5ed7;
+  transform: translateY(-1px);
+}
+
+.btn-peacock:hover i {
+  color: #0b5ed7;
+}
+
+.btn-peacock:focus-visible {
+  outline: 2px solid #005448;
+  outline-offset: 2px;
+}
+
 .btn-filter {
   background-color: var(--mint-bg);
   border-color: transparent;
@@ -404,7 +434,7 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   --bs-table-bg: transparent;
 }
 
-/* bordered station table: outer frame + full cell grid */
+/* bordered station table: outer frame only (no column dividers) */
 .directory-card .table-responsive {
   border: 1px solid var(--card-border);
   border-radius: 12px;
@@ -415,17 +445,10 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   margin-bottom: 0;
 }
 
-.directory-card .table thead th {
-  border-right: 1px solid var(--card-border);
-}
-
+.directory-card .table thead th,
 .directory-card .table tbody td {
-  border-right: 1px solid var(--card-border);
-}
-
-.directory-card .table thead th:last-child,
-.directory-card .table tbody td:last-child {
   border-right: 0;
+  border-left: 0;
 }
 
 .directory-card .table tbody tr:last-child td {
@@ -588,14 +611,31 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 .btn-footer-deactivate {
   font-weight: 600;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 0.375rem 1.25rem;
   transition: filter 0.15s ease;
 }
 
 .btn-footer-close {
+  background-color: transparent;
+  border-color: transparent;
+  color: #475467;
+}
+
+.btn-footer-close:hover {
   background-color: #f1f3f6;
-  color: #344054;
+  border-color: transparent;
+  color: #101828;
+  filter: none;
+}
+
+[data-bs-theme="dark"] .btn-footer-close {
+  color: #dbe4f0;
+}
+
+[data-bs-theme="dark"] .btn-footer-close:hover {
+  background-color: #243145;
+  color: #fff;
 }
 
 .btn-footer-edit {
@@ -604,24 +644,45 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: #fff;
 }
 
+/* Destructive action as outlined red: details modal + confirm cancel state.
+   The final confirm button stays solid (see #confirmModalBtn below). */
 .btn-footer-deactivate {
+  background-color: transparent;
+  border-color: #b42318;
+  color: #b42318;
+}
+
+.btn-footer-deactivate:hover {
+  background-color: #fdecea;
+  border-color: #b42318;
+  color: #b42318;
+  filter: none;
+}
+
+/* Final destructive confirmation keeps a solid fill for emphasis. */
+#confirmModalBtn.btn-footer-deactivate {
   background-color: #7f1d1d;
   border-color: #7f1d1d;
   color: #fff;
 }
 
-.btn-footer-close:hover,
-.btn-footer-edit:hover,
-.btn-footer-deactivate:hover {
+#confirmModalBtn.btn-footer-deactivate:hover {
+  background-color: #7f1d1d;
+  border-color: #7f1d1d;
+  color: #fff;
   filter: brightness(0.9);
 }
 
-/* Disabled "Already Inactive" state: dark-red outline instead of Bootstrap's grey fade. */
+.btn-footer-edit:hover {
+  filter: brightness(0.9);
+}
+
+/* Disabled "Already Inactive" state: muted red outline instead of Bootstrap's grey fade. */
 .btn-footer-deactivate:disabled {
   background-color: transparent;
-  border-color: #7f1d1d;
-  color: #7f1d1d;
-  opacity: 1;
+  border-color: #b42318;
+  color: #b42318;
+  opacity: 0.55;
 }
 
 /* Add/Edit form Cancel: light grey, standard rectangular shape. */
@@ -638,18 +699,38 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: #212529;
 }
 
-/* Add/Edit form Save: dark blue, standard rectangular shape. */
+/* Add/Edit form Save: station green (matches Add Station), standard rectangular shape. */
 .btn-save-dark {
-  background-color: #1e3a5f;
-  border-color: #1e3a5f;
+  background-color: var(--green);
+  border-color: var(--green);
   color: #fff;
   font-weight: 600;
 }
 
 .btn-save-dark:hover {
-  background-color: #152a45;
-  border-color: #152a45;
+  background-color: var(--green-dark);
+  border-color: var(--green-dark);
   color: #fff;
+}
+
+.btn-save-dark:disabled {
+  opacity: 0.65;
+}
+
+/* Visible keyboard focus on form actions (also guards double-submits visually). */
+.btn-cancel-muted:focus-visible,
+.btn-save-dark:focus-visible,
+.btn-add:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* System-generated Station ID: distinctly muted so it reads as locked. */
+#f_stationId:disabled,
+#f_stationId[readonly] {
+  color: #6c757d;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
 }
 
 /* skeleton shimmer while loading */
@@ -706,7 +787,7 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 .capacity-bar {
   height: 0.65rem;
   border-radius: 999px;
-  background-color: rgba(130, 130, 130, 0.25);
+  background-color: rgba(130, 130, 130, 0.45);
   overflow: hidden;
 }
 

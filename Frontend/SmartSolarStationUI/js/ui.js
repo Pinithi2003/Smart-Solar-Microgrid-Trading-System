@@ -5,7 +5,7 @@
    confirm-before-deactivate, capacity bar in details, read-only map hook. */
 (function () {
   const api = window.SolarUI.api;
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 5;
   const REDUCED_MOTION = window.matchMedia
     ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
     : false;
@@ -119,7 +119,7 @@
   }
 
   function skeletonRows() {
-    return Array.from({ length: 4 }, () => `
+    return Array.from({ length: PAGE_SIZE }, () => `
       <tr class="skeleton"><td><span class="sk"></span></td><td><span class="sk"></span></td>
       <td><span class="sk"></span></td><td><span class="sk"></span></td>
       <td><span class="sk"></span></td><td><span class="sk"></span></td>
@@ -130,6 +130,7 @@
     const rows = sortedStations(filteredStations());
     const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     if (page > pages) page = pages;
+    if (page < 1) page = 1;
     const slice = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
     const tbody = $("stationsBody");
 
@@ -175,18 +176,26 @@
 
   function renderPager(pages, total) {
     const pager = $("pager");
-    if (pages <= 1) {
-      pager.innerHTML = total ? `<li class="page-item disabled"><span class="page-link">${total} shown</span></li>` : "";
+    if (!total) {
+      pager.innerHTML = "";
       return;
     }
-    let html = `<li class="page-item${page === 1 ? " disabled" : ""}">
-      <button class="page-link" data-page="${page - 1}">Prev</button></li>`;
+    let html = "";
+    if (page > 1) {
+      html += `<li class="page-item">
+        <button class="page-link" data-page="${page - 1}">Prev</button></li>`;
+    }
     for (let p = 1; p <= pages; p++) {
       html += `<li class="page-item${p === page ? " active" : ""}">
         <button class="page-link" data-page="${p}">${p}</button></li>`;
     }
-    html += `<li class="page-item${page === pages ? " disabled" : ""}">
-      <button class="page-link" data-page="${page + 1}">Next</button></li>`;
+    if (page < pages) {
+      html += `<li class="page-item">
+        <button class="page-link" data-page="${page + 1}">Next</button></li>`;
+    } else {
+      html += `<li class="page-item disabled">
+        <button class="page-link" data-page="${page + 1}" disabled>Next</button></li>`;
+    }
     pager.innerHTML = html;
     pager.querySelectorAll("button[data-page]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -207,11 +216,16 @@
     }
   }
 
-  async function reload() {
+  async function reload(options = {}) {
     $("stationsBody").innerHTML = skeletonRows();
     try {
       stations = await api.getAll();
-      page = 1;
+      if (options.gotoLast) {
+        // New stations sort last (ST008+), so jump to the last page to reveal them.
+        page = Math.max(1, Math.ceil(stations.length / PAGE_SIZE));
+      } else if (options.reset) {
+        page = 1;
+      }
       renderAll();
     } catch (err) {
       $("stationsBody").innerHTML =
@@ -277,7 +291,7 @@
     editingId = stationId;
     showFormError(null);
     const s = stationId ? stations.find((x) => x.stationId === stationId) : null;
-    $("modalTitle").textContent = s ? `Edit ${s.stationId}` : "Add Solar Station";
+    $("modalTitle").textContent = s ? `Edit Station: ${s.stationName}` : "Add Solar Station";
     $("f_stationId").value = s?.stationId ?? nextStationId();
     $("f_stationId").disabled = Boolean(s);
     $("f_stationId").readOnly = !s; // add mode: system-generated, locked
@@ -327,18 +341,25 @@
       showFormError(localError);
       return;
     }
+    // Prevent double-submits: lock the Save button until the request settles.
+    const saveBtn = $("stationForm").querySelector('[type="submit"]');
+    saveBtn.disabled = true;
     try {
       if (editingId) {
         await api.update(editingId, payload);
         toast(`Station ${editingId} updated.`);
+        bootstrap.Modal.getInstance($("stationModal")).hide();
+        await reload();
       } else {
         const created = await api.create(payload);
         toast(`Station ${created.stationId} added.`);
+        bootstrap.Modal.getInstance($("stationModal")).hide();
+        await reload({ gotoLast: true });
       }
-      bootstrap.Modal.getInstance($("stationModal")).hide();
-      await reload();
     } catch (err) {
       showFormError(err.message);
+    } finally {
+      saveBtn.disabled = false;
     }
   }
 
@@ -398,7 +419,7 @@
     const color = pct > 50 ? "bg-success" : pct >= 20 ? "bg-warning" : "bg-danger";
     return `
       <div class="capacity-bar mb-1"><div class="${color}" style="width:${pct.toFixed(1)}%"></div></div>
-      <small class="text-muted">${esc(avail)} kWh free of ${esc(total)} kWh (${pct.toFixed(0)}%)</small>`;
+      <small class="text-muted">${esc(avail)} kWh available of ${esc(total)} kWh (${pct.toFixed(0)}%)</small>`;
   }
 
   async function showDetails(stationId) {
@@ -414,7 +435,6 @@
         </div>
         <div class="mb-3">${capacityBar(s)}</div>
         <dl class="row mb-0">
-          <dt class="col-sm-4">Location</dt><dd class="col-sm-8">${esc(s.location)}</dd>
           <dt class="col-sm-4">Coordinates</dt>
           <dd class="col-sm-8">${esc(coords)}
             <button class="btn btn-sm btn-link p-0 ms-1" data-copy="${esc(coords)}" title="Copy coordinates">Copy</button>
