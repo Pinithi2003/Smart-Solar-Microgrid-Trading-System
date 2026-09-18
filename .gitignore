@@ -5,3 +5,5 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+# Local secrets (team convention: copy .env.example to .env, never commit .env)
+.env
