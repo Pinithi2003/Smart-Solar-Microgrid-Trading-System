@@ -13,14 +13,6 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link href="css/styles.css" rel="stylesheet" />
-  <script>
-    // Apply saved theme before paint (avoids flash).
-    try {
-      if (localStorage.getItem("solarui-theme") === "dark") {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-      }
-    } catch { /* private mode: stay light */ }
-  </script>
 </head>
 <body>
   <div class="app-shell">
@@ -79,9 +71,6 @@
         <span class="profile-chip" title="Signed in as Grid Operator (demo)">
           <span class="profile-avatar">GO</span><span class="d-none d-sm-inline">Operator</span>
         </span>
-        <button id="themeToggle" class="btn btn-outline-secondary btn-sm" title="Toggle dark theme" aria-label="Toggle dark theme">
-          <i class="fa-solid fa-circle-half-stroke"></i>
-        </button>
       </div>
     </div>
   </nav>
@@ -297,9 +286,9 @@
         </div>
         <div class="modal-body" id="detailsBody"></div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="detailsEdit" class="btn btn-primary">Edit Station</button>
-          <button type="button" id="detailsDeactivate" class="btn btn-warning">Deactivate Station</button>
+          <button type="button" class="btn btn-footer-close" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="detailsEdit" class="btn btn-footer-edit">Edit Station</button>
+          <button type="button" id="detailsDeactivate" class="btn btn-footer-deactivate">Deactivate Station</button>
         </div>
       </div>
     </div>

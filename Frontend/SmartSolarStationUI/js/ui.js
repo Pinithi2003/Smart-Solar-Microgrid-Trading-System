@@ -58,17 +58,6 @@
     box.textContent = message;
   }
 
-  /* ---------------- theme ---------------- */
-
-  function applyTheme(theme) {
-    document.documentElement.setAttribute("data-bs-theme", theme);
-    try {
-      localStorage.setItem("solarui-theme", theme);
-    } catch { /* private mode */ }
-    const icon = $("themeToggle").querySelector("i");
-    if (icon) icon.className = theme === "dark" ? "fa-solid fa-sun" : "fa-solid fa-circle-half-stroke";
-  }
-
   /* ---------------- stats with count-up ---------------- */
 
   function countUp(el, to) {
@@ -481,14 +470,6 @@
   }
 
   function init() {
-    $("themeToggle").addEventListener("click", () => {
-      const next = document.documentElement.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
-      applyTheme(next);
-    });
-    try {
-      if (localStorage.getItem("solarui-theme") === "dark") applyTheme("dark");
-    } catch { /* private mode */ }
-
     $("addStationBtn").addEventListener("click", () => openModal());
     $("stationForm").addEventListener("submit", submitForm);
     $("searchInput").addEventListener("input", () => {
