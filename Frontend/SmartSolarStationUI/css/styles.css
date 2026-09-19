@@ -224,8 +224,8 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 
 .topbar-search .form-control:focus {
   background-color: var(--card-bg);
-  border-color: var(--green);
-  box-shadow: 0 0 0 0.2rem rgba(30, 126, 77, 0.15);
+  border-color: #adb5bd;
+  box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.25);
 }
 
 .icon-btn {
@@ -300,34 +300,41 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   transform: translateY(-1px);
 }
 
-/* Map address search: border-only outline CTA (no background fill). */
+/* Map address search: same look as top "Search station here" bar. */
 .btn-peacock {
-  background-color: transparent;
-  border-color: #0d6efd;
-  color: #0d6efd;
-  font-weight: 600;
-  border-radius: 10px;
+  background-color: var(--input-bg);
+  border: 1px solid transparent;
+  color: var(--label-grey);
+  font-weight: 400;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.9rem;
   transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .btn-peacock i {
-  color: #0d6efd;
+  color: var(--label-grey);
+  font-size: 0.85rem;
 }
 
 .btn-peacock:hover {
-  background-color: #e7f0fe;
-  border-color: #0d6efd;
-  color: #0b5ed7;
-  transform: translateY(-1px);
+  background-color: var(--input-bg);
+  border-color: #dee2e6;
+  color: #101828;
+  transform: none;
 }
 
 .btn-peacock:hover i {
-  color: #0b5ed7;
+  color: #101828;
 }
 
 .btn-peacock:focus-visible {
-  outline: 2px solid #005448;
-  outline-offset: 2px;
+  outline: 0;
+  border-color: #dee2e6;
+  box-shadow: 0 0 0 0.2rem rgba(222, 226, 230, 0.45);
 }
 
 .btn-filter {
@@ -381,8 +388,16 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 .stat-card .stat-value {
   font-size: 2rem;
   font-weight: 700;
-  line-height: 1.2;
-  margin: 0.1rem 0 0.45rem;
+  line-height: 1.35;
+  margin: 0 0 0.45rem;
+  padding-top: 0.1rem;
+  overflow: visible;
+}
+
+.stat-card .stat-unit {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--label-grey);
 }
 
 .stat-card .stat-icon {
@@ -430,15 +445,121 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   min-width: 200px;
 }
 
+/* Ash grey instead of Bootstrap blue for filter inputs */
+.directory-filters .form-control:focus,
+.directory-filters .form-select:focus {
+  border-color: #adb5bd;
+  box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.25);
+  outline: 0;
+}
+
+.directory-filters .form-select option:hover,
+.directory-filters .form-select option:checked,
+.directory-filters .form-select option:focus {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+/* Custom status dropdown: fully ash, no native blue */
+.custom-status .custom-status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 170px;
+  text-align: left;
+  background-color: var(--card-bg);
+  background-image: none !important;
+  padding-right: 0.75rem;
+  cursor: pointer;
+}
+
+.custom-status .custom-status-btn > i {
+  font-size: 0.75rem;
+  color: var(--label-grey);
+}
+
+.custom-status .custom-status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.custom-status .custom-status-label .fa-filter {
+  font-size: 0.8rem;
+  color: var(--label-grey);
+}
+
+.custom-status .dropdown-menu {
+  --bs-dropdown-link-active-bg: #e9ecef;
+  --bs-dropdown-link-active-color: #212529;
+  border-radius: 10px;
+  padding: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.custom-status .dropdown-item {
+  border-radius: 7px;
+  padding: 0.45rem 0.7rem;
+}
+
+.custom-status .dropdown-item:hover,
+.custom-status .dropdown-item:focus {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.custom-status .dropdown-item.active,
+.custom-status .dropdown-item:active {
+  font-weight: 600;
+}
+
+.custom-status .dropdown-item[data-value="All"].active,
+.custom-status .dropdown-item[data-value="All"]:active {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.custom-status .dropdown-item[data-value="Active"].active,
+.custom-status .dropdown-item[data-value="Active"]:active {
+  background-color: #e6f6ec;
+  color: #157347;
+}
+
+.custom-status .dropdown-item[data-value="Inactive"].active,
+.custom-status .dropdown-item[data-value="Inactive"]:active {
+  background-color: #fef1f1;
+  color: #c0392b;
+}
+
+.custom-status .dropdown-item[data-value="Maintenance"].active,
+.custom-status .dropdown-item[data-value="Maintenance"]:active {
+  background-color: #fef8ec;
+  color: #b7791f;
+}
+
 .table {
   --bs-table-bg: transparent;
+  --bs-table-hover-bg: #f8f9fa;
+  --bs-table-hover-color: inherit;
+}
+
+.directory-card .table-hover > tbody > tr:hover > * {
+  background-color: #f8f9fa;
 }
 
 /* bordered station table: outer frame only (no column dividers) */
 .directory-card .table-responsive {
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+@media (max-width: 992px) {
+  .directory-card .table-responsive {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
 }
 
 .directory-card .table {
@@ -455,6 +576,28 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   border-bottom: 0;
 }
 
+/* Row action menus render above neighboring rows (never hidden behind them). */
+.directory-card .table .dropdown-menu {
+  z-index: 1060;
+  min-width: 11rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.16);
+}
+
+/* Active (open) dropdown wrapper floats above all underlying table rows. */
+.directory-card .table .dropdown.show {
+  position: relative;
+  z-index: 1061;
+}
+
+/* Row menu items: neutral grey press state instead of Bootstrap's blue flash.
+   Text color is inherited so red/green/blue item accents are preserved. */
+.directory-card .table .dropdown-item:active,
+.directory-card .table .dropdown-item.active {
+  background-color: #e2e6ea;
+  color: inherit;
+}
+
 .table thead th {
   white-space: nowrap;
   font-size: 0.7rem;
@@ -468,6 +611,61 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 .table tbody td {
   font-size: 0.88rem;
   border-bottom: 1px solid var(--card-border);
+}
+
+/* Even column spacing for the station directory table */
+.station-table {
+  width: 100%;
+  min-width: 860px;
+  table-layout: fixed;
+}
+
+.station-table th,
+.station-table td {
+  padding: 0.75rem 0.9rem;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+/* Actions column must stay visible so View/Edit/Deactivate menu is never cut */
+.station-table th:last-child,
+.station-table td:last-child {
+  overflow: visible;
+  padding-right: 1.1rem;
+}
+
+.station-table .col-id { width: 7%; }
+.station-table .col-name { width: 21%; }
+.station-table .col-location { width: 17%; }
+.station-table .col-total { width: 11%; }
+.station-table .col-available { width: 12%; }
+.station-table .col-status { width: 12%; }
+.station-table .col-operator { width: 11%; }
+.station-table .col-actions { width: 9%; }
+
+.station-table td:nth-child(2),
+.station-table td:nth-child(3),
+.station-table td:nth-child(7) {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.station-table td:nth-child(1),
+.station-table td:nth-child(4),
+.station-table td:nth-child(5),
+.station-table td:nth-child(6),
+.station-table td:nth-child(8) {
+  white-space: nowrap;
+}
+
+.station-table th.text-end,
+.station-table td.text-end {
+  text-align: right;
+}
+
+.station-table th.text-center,
+.station-table td.text-center {
+  text-align: center;
 }
 
 .table thead th[data-sort] {
@@ -490,7 +688,10 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 }
 
 #stationsBody tr.row-enter {
-  animation: row-in 0.3s ease both;
+  /* "backwards" (not "both"): the fill must not persist after the animation,
+     or the retained transform traps each row in its own stacking context and
+     open ••• menus render behind later rows no matter their z-index. */
+  animation: row-in 0.3s ease backwards;
 }
 
 @keyframes row-in {
@@ -685,12 +886,13 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   opacity: 0.55;
 }
 
-/* Add/Edit form Cancel: light grey, standard rectangular shape. */
+/* Add/Edit form Cancel: light grey, box shape matching the footer buttons. */
 .btn-cancel-muted {
   background-color: #e2e6ea;
   border-color: #d3d9df;
   color: #212529;
   font-weight: 600;
+  border-radius: 10px;
 }
 
 .btn-cancel-muted:hover {
@@ -699,12 +901,13 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: #212529;
 }
 
-/* Add/Edit form Save: station green (matches Add Station), standard rectangular shape. */
+/* Add/Edit form Save: station green (matches Add Station), box shape matching the footer buttons. */
 .btn-save-dark {
   background-color: var(--green);
   border-color: var(--green);
   color: #fff;
   font-weight: 600;
+  border-radius: 10px;
 }
 
 .btn-save-dark:hover {
@@ -725,12 +928,25 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   outline-offset: 2px;
 }
 
+/* Modal inputs: light ash borders instead of Bootstrap grey/blue */
+#stationModal .form-control,
+#stationModal .form-select {
+  border-color: #e6ebf1;
+}
+
+#stationModal .form-control:focus,
+#stationModal .form-select:focus {
+  border-color: #dee2e6;
+  box-shadow: 0 0 0 0.2rem rgba(222, 226, 230, 0.45);
+  outline: 0;
+}
+
 /* System-generated Station ID: distinctly muted so it reads as locked. */
 #f_stationId:disabled,
 #f_stationId[readonly] {
   color: #6c757d;
-  background-color: #e9ecef;
-  border-color: #dee2e6;
+  background-color: #f2f4f7;
+  border-color: #e6ebf1;
 }
 
 /* skeleton shimmer while loading */
@@ -800,7 +1016,8 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 
 /* ---------- maps ---------- */
 .station-map {
-  height: 340px;
+  height: 440px;
+  min-height: 380px;
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--card-border);
@@ -812,6 +1029,42 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   line-height: 1.5;
 }
 
+.station-map .leaflet-tooltip.station-tip {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.18);
+}
+
+.map-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--label-grey);
+}
+
+.map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.legend-active { background: #198754; }
+.legend-maintenance { background: #e0a800; }
+.legend-inactive { background: #dc3545; }
+
 .picker-map {
   height: 220px;
   border-radius: 0.5rem;
@@ -822,6 +1075,50 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 
 #geoResults .list-group-item {
   cursor: pointer;
+}
+
+/* Export CSV: light ash instead of dark grey */
+#exportCsvBtn {
+  background-color: #f2f4f7;
+  border-color: #e6ebf1;
+  color: #344054;
+}
+
+#exportCsvBtn:hover,
+#exportCsvBtn:focus {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+  color: #101828;
+}
+
+#exportCsvBtn:active {
+  background-color: #dee2e6;
+  border-color: #dee2e6;
+  color: #101828;
+}
+
+/* Pagination: sidebar navy instead of Bootstrap blue */
+#pager .page-link {
+  color: var(--navy);
+  border-color: #e6ebf1;
+  background-color: #fff;
+}
+
+#pager .page-link:hover {
+  background-color: #f2f4f7;
+  border-color: #e6ebf1;
+  color: var(--navy);
+}
+
+#pager .page-item.active .page-link {
+  background-color: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+#pager .page-link:focus {
+  box-shadow: 0 0 0 0.2rem rgba(17, 29, 45, 0.15);
+  outline: 0;
 }
 
 /* ---------- accessibility: honor reduced motion ---------- */
