@@ -62,7 +62,7 @@
       </button>
       <div class="topbar-search flex-grow-1">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input id="topSearchInput" class="form-control" type="search" placeholder="Search stations, users or reservations" aria-label="Global search" />
+        <input id="topSearchInput" class="form-control" type="search" placeholder="Search station here" aria-label="Search station" />
       </div>
       <div class="d-flex align-items-center gap-2 ms-auto">
         <button class="icon-btn" title="Notifications (demo)" aria-label="Notifications">
@@ -78,14 +78,11 @@
   <main class="container py-4">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
       <h1 class="page-title mb-0">Solar Stations</h1>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-2 align-items-center">
         <button id="addStationBtn" class="btn btn-add">
           <i class="fa-solid fa-plus"></i> Add Station
         </button>
-        <button id="filterBtn" class="btn btn-filter">
-          <i class="fa-solid fa-filter"></i> Filter
-        </button>
-        <button id="refreshBtn" class="btn btn-outline-secondary btn-sm" title="Refresh data">
+        <button id="refreshBtn" class="btn btn-outline-secondary" title="Refresh data">
           <i class="fa-solid fa-rotate"></i>
         </button>
       </div>
@@ -129,7 +126,7 @@
             <span class="stat-label">AVAILABLE</span>
             <i class="fa-solid fa-battery-half stat-icon"></i>
           </div>
-          <div id="statAvailable" class="stat-value">–</div>
+          <div class="stat-value"><span id="statAvailable">–</span> <small class="stat-unit">kWh</small></div>
           <span class="trend-pill"><i class="fa-solid fa-bolt"></i> kWh available</span>
         </div></div>
       </div>
@@ -140,26 +137,47 @@
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
           <h2 class="h6 mb-0 fw-bold">Station Directory</h2>
           <div class="d-flex flex-wrap gap-2 directory-filters">
-            <input id="searchInput" class="form-control" type="search" placeholder="Search station or location" title="Press / to focus" />
-            <select id="statusFilter" class="form-select">
+            <select id="statusFilter" class="d-none" aria-hidden="true" tabindex="-1">
               <option value="All">All statuses</option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
               <option value="Maintenance">Maintenance</option>
             </select>
+            <div class="dropdown custom-status" id="statusDropdown">
+              <button id="statusFilterBtn" class="form-select custom-status-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="custom-status-label"><i class="fa-solid fa-filter"></i><span id="statusFilterLabel">All statuses</span></span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <ul class="dropdown-menu w-100" aria-labelledby="statusFilterBtn">
+                <li><button type="button" class="dropdown-item active" data-value="All">All statuses</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Active">Active</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Inactive">Inactive</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Maintenance">Maintenance</button></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table class="table table-hover align-middle mb-0 station-table">
+            <colgroup>
+              <col class="col-id" />
+              <col class="col-name" />
+              <col class="col-location" />
+              <col class="col-total" />
+              <col class="col-available" />
+              <col class="col-status" />
+              <col class="col-operator" />
+              <col class="col-actions" />
+            </colgroup>
             <thead class="table-light">
               <tr>
-                <th data-sort="stationId" role="button" tabindex="0">ID</th>
+                <th data-sort="stationId" role="button" tabindex="0" class="text-nowrap">ID</th>
                 <th data-sort="stationName" role="button" tabindex="0">Name</th>
                 <th data-sort="location" role="button" tabindex="0">Location</th>
-                <th data-sort="totalCapacity" role="button" tabindex="0">Total</th>
-                <th data-sort="availableCapacity" role="button" tabindex="0">Available</th>
-                <th data-sort="status" role="button" tabindex="0">Status</th>
-                <th>Operator</th><th>Actions</th>
+                <th data-sort="totalCapacity" role="button" tabindex="0" class="text-center text-nowrap">Total (kWh)</th>
+                <th data-sort="availableCapacity" role="button" tabindex="0" class="text-center text-nowrap">Available (kWh)</th>
+                <th data-sort="status" role="button" tabindex="0" class="text-nowrap">Status</th>
+                <th class="text-nowrap">Operator</th><th class="text-end text-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody id="stationsBody">
@@ -181,8 +199,13 @@
 
     <div class="card shadow-sm mt-4">
       <div class="card-body">
-        <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
           <h2 class="h5 mb-0"><i class="fa-solid fa-map-location-dot text-success"></i> Station Map <span class="badge text-bg-info">Preview</span></h2>
+          <div class="map-legend" aria-label="Map legend">
+            <span><i class="legend-dot legend-active"></i>Active</span>
+            <span><i class="legend-dot legend-maintenance"></i>Maintenance</span>
+            <span><i class="legend-dot legend-inactive"></i>Inactive</span>
+          </div>
         </div>
         <div id="stationMap" class="station-map"></div>
         <div id="mapFallback" class="alert alert-warning d-none mt-2 mb-0" role="alert">
@@ -251,7 +274,7 @@
               <div class="col-12">
                 <div class="mb-2">
                   <button type="button" id="geoLookupBtn" class="btn w-100 btn-peacock">
-                    <i class="fa-solid fa-magnifying-glass-location"></i> Search this location on the map
+                    <i class="fa-solid fa-magnifying-glass-location"></i> Edit this location on the map
                   </button>
                 </div>
                 <div id="geoResults" class="list-group list-group-flush mb-2 d-none"></div>
@@ -291,13 +314,13 @@
 
   <!-- Deactivate confirmation modal -->
   <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Confirm</h5>
+          <h5 class="modal-title">Deactivate Station?</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body"><p id="confirmModalMsg" class="mb-0"></p></div>
+        <div class="modal-body"><p id="confirmModalMsg" class="mb-1"></p><p class="text-muted small mb-0">This will temporarily remove the station from active service.</p></div>
         <div class="modal-footer">
           <button type="button" class="btn btn-footer-close" data-bs-dismiss="modal">Cancel</button>
           <button type="button" id="confirmModalBtn" class="btn btn-footer-deactivate">Deactivate</button>

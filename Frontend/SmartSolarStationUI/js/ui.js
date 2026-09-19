@@ -96,7 +96,7 @@
   /* ---------------- filter / sort / paginate ---------------- */
 
   function filteredStations() {
-    const q = ($("searchInput").value || "").toLowerCase();
+    const q = (($("topSearchInput")?.value ?? $("searchInput")?.value) || "").toLowerCase();
     const f = $("statusFilter").value;
     return stations.filter((s) => {
       const hay = `${s.stationId} ${s.stationName} ${s.location} ${s.operator}`.toLowerCase();
@@ -145,20 +145,31 @@
       tbody.innerHTML = slice.map((s, i) => {
         const changed = prevStatus.has(s.stationId) && prevStatus.get(s.stationId) !== s.status;
         prevStatus.set(s.stationId, s.status);
+        // Last visible row opens upward so the menu never covers rows below
+        // or gets cut by the card edge; viewport boundary escapes the
+        // table-responsive overflow context (no clipping).
+        const drop = i === slice.length - 1 ? " dropup" : "";
         return `
         <tr class="row-enter" style="animation-delay:${Math.min(i, 11) * 25}ms">
           <td><strong>${esc(s.stationId)}</strong></td>
           <td>${esc(s.stationName)}</td>
           <td>${esc(s.location)}</td>
-          <td>${esc(s.totalCapacity)}</td>
-          <td>${esc(s.availableCapacity)}</td>
+          <td class="text-center">${esc(s.totalCapacity)}</td>
+          <td class="text-center">${esc(s.availableCapacity)}</td>
           <td>${statusBadge(s.status, changed)}</td>
           <td>${esc(s.operator)}</td>
-          <td class="text-nowrap">
-            <button class="btn btn-sm btn-pill-view" data-action="view" data-id="${esc(s.stationId)}">View</button>
-            <button class="btn btn-sm btn-pill-edit" data-action="edit" data-id="${esc(s.stationId)}">Edit</button>
-            <button class="btn btn-sm ${s.status === "Active" ? "btn-pill-danger" : "btn-pill-activate"}"
-              data-action="toggle" data-id="${esc(s.stationId)}">${s.status === "Active" ? "Deactivate" : "Activate"}</button>
+          <td class="text-nowrap text-end">
+            <div class="dropdown d-inline-block${drop}">
+              <button class="btn btn-sm btn-pill-view" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false"
+                title="Row actions" aria-label="Actions for ${esc(s.stationId)}">
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><button class="dropdown-item" data-action="view" data-id="${esc(s.stationId)}"><i class="fa-solid fa-eye fa-fw me-2 text-secondary"></i>View</button></li>
+                <li><button class="dropdown-item text-primary" data-action="edit" data-id="${esc(s.stationId)}"><i class="fa-solid fa-pen fa-fw me-2 text-primary"></i>Edit</button></li>
+                <li><button class="dropdown-item ${s.status === "Active" ? "text-danger" : "text-success"}" data-action="toggle" data-id="${esc(s.stationId)}"><i class="fa-solid ${s.status === "Active" ? "fa-ban" : "fa-circle-check"} fa-fw me-2"></i>${s.status === "Active" ? "Deactivate" : "Activate"}</button></li>
+              </ul>
+            </div>
           </td>
         </tr>`;
       }).join("");
@@ -287,8 +298,15 @@
     return `ST${String(max + 1).padStart(width, "0")}`;
   }
 
-  function openModal(stationId = null) {
-    editingId = stationId;
+  /* Filled modal inputs read ash like the locked Station ID. */
+  function refreshFilled() {
+    document.querySelectorAll("#stationModal .form-control, #stationModal .form-select").forEach((el) => {
+      if (el.id === "f_stationId") return;
+      el.classList.toggle("is-filled", String(el.value ?? "").trim() !== "");
+    });
+  }
+
+  function openModal(stationId = null) {    editingId = stationId;
     showFormError(null);
     const s = stationId ? stations.find((x) => x.stationId === stationId) : null;
     $("modalTitle").textContent = s ? `Edit Station: ${s.stationName}` : "Add Solar Station";
@@ -305,6 +323,7 @@
     $("f_availableCapacity").value = s?.availableCapacity ?? "";
     $("f_status").value = s?.status ?? "Active";
     $("f_operator").value = s?.operator ?? "Grid Operator";
+    refreshFilled();
     // Keep the mini-map pin in sync with the form (pins follow coordinates).
     if (window.SolarUI.picker) {
       window.SolarUI.picker.reset(s?.latitude, s?.longitude);
@@ -390,8 +409,10 @@
     if (detailsWasOpen) {
       bootstrap.Modal.getInstance($("detailsModal"))?.hide();
     }
-    $("confirmModalMsg").textContent =
-      `Are you sure you want to deactivate ${stationId}?`;
+    $("confirmModalMsg").textContent = (() => {
+      const s = stations.find((x) => x.stationId === stationId);
+      return `Are you sure you want to deactivate ${stationId}${s ? ` (${s.stationName})` : ""}?`;
+    })();
     bootstrap.Modal.getOrCreateInstance($("confirmModal")).show();
   }
 
@@ -416,7 +437,9 @@
     const total = Number(s.totalCapacity || 0);
     const avail = Number(s.availableCapacity || 0);
     const pct = total > 0 ? Math.max(0, Math.min(100, (avail / total) * 100)) : 0;
-    const color = pct > 50 ? "bg-success" : pct >= 20 ? "bg-warning" : "bg-danger";
+    // Bar color follows station status (not the %): Active green, Maintenance orange, Inactive red.
+    const color = s.status === "Maintenance" ? "bg-warning"
+      : s.status === "Inactive" ? "bg-danger" : "bg-success";
     return `
       <div class="capacity-bar mb-1"><div class="${color}" style="width:${pct.toFixed(1)}%"></div></div>
       <small class="text-muted">${esc(avail)} kWh available of ${esc(total)} kWh (${pct.toFixed(0)}%)</small>`;
@@ -459,8 +482,12 @@
         openModal(s.stationId);
       };
       const deactBtn = $("detailsDeactivate");
-      deactBtn.textContent = s.status === "Inactive" ? "Already Inactive" : "Deactivate Station";
-      deactBtn.disabled = s.status === "Inactive";
+      // Inactive stations have nothing to deactivate: hide the button entirely
+      // rather than showing a confusing "Already Inactive" state.
+      // (Reactivation is via Edit Station → Status → Active.)
+      deactBtn.textContent = "Deactivate Station";
+      deactBtn.disabled = false;
+      deactBtn.style.display = s.status === "Inactive" ? "none" : "";
       deactBtn.onclick = () => askDeactivate(s.stationId);
       bootstrap.Modal.getOrCreateInstance($("detailsModal")).show();
     } catch (err) {
@@ -499,28 +526,34 @@
   function init() {
     $("addStationBtn").addEventListener("click", () => openModal());
     $("stationForm").addEventListener("submit", submitForm);
-    $("searchInput").addEventListener("input", () => {
-      if ($("topSearchInput").value !== $("searchInput").value) {
-        $("topSearchInput").value = $("searchInput").value;
-      }
-      page = 1;
-      renderTable();
-    });
-    $("topSearchInput").addEventListener("input", () => {
-      if ($("searchInput").value !== $("topSearchInput").value) {
-        $("searchInput").value = $("topSearchInput").value;
-      }
+    $("stationForm").addEventListener("input", refreshFilled);
+    $("stationForm").addEventListener("change", refreshFilled);
+    $("topSearchInput")?.addEventListener("input", () => {
       page = 1;
       renderTable();
     });
     $("statusFilter").addEventListener("change", () => { page = 1; renderTable(); });
-    $("filterBtn").addEventListener("click", () => {
-      $("statusFilter").scrollIntoView({ behavior: REDUCED_MOTION ? "auto" : "smooth", block: "center" });
-      $("statusFilter").focus({ preventScroll: true });
-      $("statusFilter").classList.remove("flash");
-      $("filterBtn").classList.remove("flash");
-      void $("filterBtn").offsetWidth; // restart animation
-      $("filterBtn").classList.add("flash");
+    document.querySelectorAll("#statusDropdown .dropdown-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll("#statusDropdown .dropdown-item").forEach((x) => x.classList.remove("active"));
+        item.classList.add("active");
+        $("statusFilter").value = item.dataset.value;
+        $("statusFilterLabel").textContent = item.textContent.trim();
+        page = 1;
+        renderTable();
+      });
+    });
+    $("filterBtn")?.addEventListener("click", () => {
+      const btn = $("statusFilterBtn");
+      btn.scrollIntoView({ behavior: REDUCED_MOTION ? "auto" : "smooth", block: "center" });
+      btn.focus({ preventScroll: true });
+      try {
+        bootstrap.Dropdown.getOrCreateInstance(btn).toggle();
+      } catch { /* best-effort */ }
+      btn.classList.remove("flash");
+      $("filterBtn")?.classList.remove("flash");
+      if ($("filterBtn")) void $("filterBtn").offsetWidth; // restart animation
+      $("filterBtn")?.classList.add("flash");
     });
     $("exportCsvBtn").addEventListener("click", exportCsv);
     $("confirmModalBtn").addEventListener("click", confirmDeactivate);
@@ -562,7 +595,7 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) {
         e.preventDefault();
-        $("searchInput").focus();
+        $("topSearchInput")?.focus();
       }
     });
 
