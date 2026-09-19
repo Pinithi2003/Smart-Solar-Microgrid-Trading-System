@@ -598,6 +598,16 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: inherit;
 }
 
+/* Row menu Edit item: keep text blue like its icon (works even with cached JS). */
+.directory-card .table .dropdown-item[data-action="edit"] {
+  color: #0d6efd;
+}
+.directory-card .table .dropdown-item[data-action="edit"]:hover,
+.directory-card .table .dropdown-item[data-action="edit"]:focus {
+  color: #0a58ca;
+  background-color: #e7f0fe;
+}
+
 .table thead th {
   white-space: nowrap;
   font-size: 0.7rem;
@@ -754,6 +764,7 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 .btn-pill-view {
   background-color: #eef2f7;
   color: #344054;
+  border-color: #d3d9df;
 }
 
 .btn-pill-edit {
@@ -785,10 +796,34 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   transform: translateY(-1px);
 }
 
+/* keep light-ash border on click / focus / open (override Bootstrap .btn dark ring) */
+.btn-pill-view:focus,
+.btn-pill-view:focus-visible,
+.btn-pill-view:active,
+.btn-pill-view.active,
+.btn-pill-view.show,
+.show > .btn-pill-view,
+.btn-pill-view[aria-expanded="true"] {
+  border-color: #d3d9df;
+  box-shadow: 0 0 0 0.2rem rgba(211, 217, 223, 0.35);
+}
+
+[data-bs-theme="dark"] .btn-pill-view:focus,
+[data-bs-theme="dark"] .btn-pill-view:focus-visible,
+[data-bs-theme="dark"] .btn-pill-view:active,
+[data-bs-theme="dark"] .btn-pill-view.active,
+[data-bs-theme="dark"] .btn-pill-view.show,
+[data-bs-theme="dark"] .show > .btn-pill-view,
+[data-bs-theme="dark"] .btn-pill-view[aria-expanded="true"] {
+  border-color: #3a4a63;
+  box-shadow: 0 0 0 0.2rem rgba(58, 74, 99, 0.45);
+}
+
 [data-bs-theme="dark"] .btn-pill-view,
 [data-bs-theme="dark"] .btn-pill-neutral {
   background-color: #243145;
   color: #dbe4f0;
+  border-color: #3a4a63;
 }
 
 [data-bs-theme="dark"] .btn-pill-edit {
@@ -843,6 +878,24 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   background-color: #1e3a5f;
   border-color: #1e3a5f;
   color: #fff;
+}
+
+/* Map popup View details: sky blue */
+.btn-sky {
+  background-color: #87ceeb;
+  border-color: #87ceeb;
+  color: #0c3a54;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.btn-sky:hover,
+.btn-sky:focus,
+.btn-sky:active,
+.btn-sky:focus-visible {
+  background-color: #6cbfe3;
+  border-color: #6cbfe3;
+  color: #0c3a54;
 }
 
 /* Destructive action as outlined red: details modal + confirm cancel state.
@@ -935,10 +988,13 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
 }
 
 #stationModal .form-control:focus,
-#stationModal .form-select:focus {
-  border-color: #dee2e6;
-  box-shadow: 0 0 0 0.2rem rgba(222, 226, 230, 0.45);
+#stationModal .form-select:focus,
+#stationModal .form-control:focus-visible,
+#stationModal .form-select:focus-visible {
+  border-color: #d3d9df;
+  box-shadow: 0 0 0 0.2rem rgba(211, 217, 223, 0.35);
   outline: 0;
+  --bs-focus-ring-color: rgba(211, 217, 223, 0.35);
 }
 
 /* System-generated Station ID: distinctly muted so it reads as locked. */
@@ -947,6 +1003,38 @@ h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
   color: #6c757d;
   background-color: #f2f4f7;
   border-color: #e6ebf1;
+}
+
+/* Filled modal inputs: ash background like the locked Station ID. */
+#stationModal .form-control.is-filled,
+#stationModal .form-select.is-filled {
+  background-color: #f2f4f7;
+  border-color: #e6ebf1;
+}
+
+/* Kill Chrome/Safari autofill blue (#e8f0fe) — force ash grey like Image 2. */
+#stationModal .form-control:-webkit-autofill,
+#stationModal .form-control:-webkit-autofill:hover,
+#stationModal .form-control:-webkit-autofill:focus,
+#stationModal .form-control:-webkit-autofill:active,
+#stationModal .form-select:-webkit-autofill,
+#stationModal .form-select:-webkit-autofill:hover,
+#stationModal .form-select:-webkit-autofill:focus,
+#stationModal .form-select:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #f2f4f7 inset !important;
+  -webkit-text-fill-color: #101828 !important;
+  caret-color: #101828;
+  border-color: #e6ebf1 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Firefox autofill — same ash grey. */
+#stationModal .form-control:autofill,
+#stationModal .form-select:autofill {
+  box-shadow: 0 0 0 1000px #f2f4f7 inset !important;
+  -webkit-text-fill-color: #101828 !important;
+  color: #101828 !important;
+  border-color: #e6ebf1 !important;
 }
 
 /* skeleton shimmer while loading */
