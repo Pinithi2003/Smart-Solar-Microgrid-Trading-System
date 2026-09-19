@@ -25,6 +25,8 @@ foreach (var (envKey, configKey) in new[]
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings"));
 builder.Services.AddSingleton<SolarStationService>();
+builder.Services.AddSingleton<MongoDbService>();
+builder.Services.AddSingleton<UserService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
