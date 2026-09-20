@@ -514,10 +514,26 @@
     });
     // Placeholder modules (Members 1/3/4 + shared docs): toast the owner.
     // Swap a toast for a real link when the owning member delivers the page.
-    document.querySelectorAll(".sidebar-nav .nav-item[data-owner]").forEach((btn) => {
+    document.querySelectorAll(".sidebar-nav .nav-item").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const label = btn.querySelector("span")?.textContent?.trim() || btn.dataset.module;
-        toast(`${label} belongs to ${btn.dataset.owner} — coming soon.`);
+        const mod = btn.dataset.module;
+        if (mod === "qr") {
+          window.location.href = "../SmartSolarFieldOpsUI/index.html";
+          return;
+        }
+        if (mod === "reservations") {
+          window.location.href = "../SmartSolarReservationsUI/index.html";
+          return;
+        }
+        if (mod === "dashboard" || mod === "users") {
+          window.location.href = "../SmartSolarUsersUI/index.html";
+          return;
+        }
+        if (mod === "stations") {
+          return;
+        }
+        const label = btn.querySelector("span")?.textContent?.trim() || mod;
+        toast(`${label} belongs to ${btn.dataset.owner || "team"} — coming soon.`);
         setSidebar(false);
       });
     });
