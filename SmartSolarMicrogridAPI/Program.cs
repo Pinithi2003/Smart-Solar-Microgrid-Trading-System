@@ -1,6 +1,9 @@
 using MongoDB.Driver;
 using SmartSolarMicrogridAPI.Models;
 using SmartSolarMicrogridAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,41 @@ builder.Services.AddSingleton<MongoDbService>();
 
 // Register User Service
 builder.Services.AddSingleton<UserService>();
+
+// Register Authentication Service
+builder.Services.AddSingleton<AuthService>();
+
+// JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"];
+
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException(
+        "JWT key is not configured.");
+}
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)),
+
+            ValidateIssuer = false,
+            ValidateAudience = false,
+
+            ValidateLifetime = true,
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+// Authorization
+builder.Services.AddAuthorization();
 
 // MongoDB Configuration
 var mongoConnectionString =
@@ -42,6 +80,10 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
+
+// Authentication must come before Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

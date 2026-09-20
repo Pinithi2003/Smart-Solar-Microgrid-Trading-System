@@ -26,6 +26,10 @@ public class UserService
 
     public async Task CreateUserAsync(User user)
     {
+        // Hash the password before saving it to MongoDB
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(
+            user.PasswordHash);
+
         await _users.InsertOneAsync(user);
     }
 }
