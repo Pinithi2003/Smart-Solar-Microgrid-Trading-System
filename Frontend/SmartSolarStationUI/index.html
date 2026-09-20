@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar Stations — Infrastructure Management</title>
+  <meta name="description" content="Member 2: Solar Station / Infrastructure Management UI for the Smart Solar Microgrid Trading System." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+      <a class="sidebar-brand d-flex align-items-center gap-2" href="#">
+        <span class="logo-glow"><img src="assets/logo.svg" alt="SolarGrid logo" /></span>
+        <span><strong>SolarGrid</strong></span>
+      </a>
+      <hr class="sidebar-divider" />
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-module="dashboard" data-owner="Member 1">
+          <i class="fa-solid fa-house"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-module="users" data-owner="Member 1">
+          <i class="fa-solid fa-users"></i><span>User Management</span>
+        </button>
+        <button class="nav-item active" data-module="stations" aria-current="page">
+          <i class="fa-solid fa-solar-panel"></i><span>Solar Stations</span>
+        </button>
+        <button class="nav-item" data-module="reservations" data-owner="Member 3">
+          <i class="fa-solid fa-clipboard-list"></i><span>Reservations</span>
+        </button>
+        <button class="nav-item" data-module="qr" data-owner="Member 4">
+          <i class="fa-solid fa-qrcode"></i><span>QR Verification</span>
+        </button>
+        <button class="nav-item" data-module="profile" data-owner="Member 1">
+          <i class="fa-solid fa-user"></i><span>Profile</span>
+        </button>
+        <button class="nav-item" data-module="about" data-owner="team docs">
+          <i class="fa-solid fa-circle-info"></i><span>About System</span>
+        </button>
+        <button class="nav-item" data-module="technology" data-owner="team docs">
+          <i class="fa-solid fa-microchip"></i><span>Technology</span>
+        </button>
+        <button class="nav-item" data-module="architecture" data-owner="team docs">
+          <i class="fa-solid fa-diagram-project"></i><span>Architecture</span>
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+
+    <div class="content-wrap">
+  <nav class="navbar navbar-expand bg-white border-bottom sticky-top topbar">
+    <div class="container-fluid gap-2">
+      <button id="sidebarToggle" class="icon-btn d-lg-none" aria-label="Open navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="topbar-search flex-grow-1">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="topSearchInput" class="form-control" type="search" placeholder="Search station here" aria-label="Search station" />
+      </div>
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <button class="icon-btn" title="Notifications (demo)" aria-label="Notifications">
+          <i class="fa-solid fa-bell"></i><span class="notif-dot"></span>
+        </button>
+        <span class="profile-chip" title="Signed in as Grid Operator (demo)">
+          <span class="profile-avatar">GO</span><span class="d-none d-sm-inline">Operator</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <h1 class="page-title mb-0">Solar Stations</h1>
+      <div class="d-flex gap-2 align-items-center">
+        <button id="addStationBtn" class="btn btn-add">
+          <i class="fa-solid fa-plus"></i> Add Station
+        </button>
+        <button id="refreshBtn" class="btn btn-outline-secondary" title="Refresh data">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
+    </div>
+    <p class="text-muted mt-1 mb-4">Monitor station performance, availability and maintenance operations.</p>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="card stat-card"><div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="stat-label">TOTAL</span>
+            <i class="fa-solid fa-solar-panel stat-icon"></i>
+          </div>
+          <div id="statTotal" class="stat-value">–</div>
+          <span class="trend-pill"><i class="fa-solid fa-arrow-trend-up"></i> Solar sites</span>
+        </div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card stat-card"><div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="stat-label">ACTIVE</span>
+            <i class="fa-solid fa-circle-check stat-icon"></i>
+          </div>
+          <div id="statActive" class="stat-value">–</div>
+          <span class="trend-pill"><i class="fa-solid fa-bolt"></i> Generating today</span>
+        </div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card stat-card"><div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="stat-label">MAINTENANCE</span>
+            <i class="fa-solid fa-wrench stat-icon"></i>
+          </div>
+          <div id="statMaintenance" class="stat-value">–</div>
+          <span class="trend-pill trend-warn"><i class="fa-solid fa-triangle-exclamation"></i> Requires attention</span>
+        </div></div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card stat-card"><div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="stat-label">AVAILABLE</span>
+            <i class="fa-solid fa-battery-half stat-icon"></i>
+          </div>
+          <div class="stat-value"><span id="statAvailable">–</span> <small class="stat-unit">kWh</small></div>
+          <span class="trend-pill"><i class="fa-solid fa-bolt"></i> kWh available</span>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="card directory-card">
+      <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+          <h2 class="h6 mb-0 fw-bold">Station Directory</h2>
+          <div class="d-flex flex-wrap gap-2 directory-filters">
+            <select id="statusFilter" class="d-none" aria-hidden="true" tabindex="-1">
+              <option value="All">All statuses</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+            <div class="dropdown custom-status" id="statusDropdown">
+              <button id="statusFilterBtn" class="form-select custom-status-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="custom-status-label"><i class="fa-solid fa-filter"></i><span id="statusFilterLabel">All statuses</span></span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <ul class="dropdown-menu w-100" aria-labelledby="statusFilterBtn">
+                <li><button type="button" class="dropdown-item active" data-value="All">All statuses</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Active">Active</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Inactive">Inactive</button></li>
+                <li><button type="button" class="dropdown-item" data-value="Maintenance">Maintenance</button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0 station-table">
+            <colgroup>
+              <col class="col-id" />
+              <col class="col-name" />
+              <col class="col-location" />
+              <col class="col-total" />
+              <col class="col-available" />
+              <col class="col-status" />
+              <col class="col-operator" />
+              <col class="col-actions" />
+            </colgroup>
+            <thead class="table-light">
+              <tr>
+                <th data-sort="stationId" role="button" tabindex="0" class="text-nowrap">ID</th>
+                <th data-sort="stationName" role="button" tabindex="0">Name</th>
+                <th data-sort="location" role="button" tabindex="0">Location</th>
+                <th data-sort="totalCapacity" role="button" tabindex="0" class="text-center text-nowrap">Total (kWh)</th>
+                <th data-sort="availableCapacity" role="button" tabindex="0" class="text-center text-nowrap">Available (kWh)</th>
+                <th data-sort="status" role="button" tabindex="0" class="text-nowrap">Status</th>
+                <th class="text-nowrap">Operator</th><th class="text-end text-nowrap">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="stationsBody">
+              <tr><td colspan="8" class="text-center text-muted py-4">Loading stations…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+          <small id="lastRefreshed" class="text-muted"></small>
+          <div class="d-flex align-items-center gap-2">
+            <button id="exportCsvBtn" class="btn btn-outline-secondary btn-sm" title="Download filtered view as CSV">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <nav aria-label="Station pages"><ul id="pager" class="pagination pagination-sm mb-0"></ul></nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+          <h2 class="h5 mb-0"><i class="fa-solid fa-map-location-dot text-success"></i> Station Map <span class="badge text-bg-info">Preview</span></h2>
+          <div class="map-legend" aria-label="Map legend">
+            <span><i class="legend-dot legend-active"></i>Active</span>
+            <span><i class="legend-dot legend-maintenance"></i>Maintenance</span>
+            <span><i class="legend-dot legend-inactive"></i>Inactive</span>
+          </div>
+        </div>
+        <div id="stationMap" class="station-map"></div>
+        <div id="mapFallback" class="alert alert-warning d-none mt-2 mb-0" role="alert">
+          Map tiles could not load (offline?). Station data above is unaffected.
+        </div>
+      </div>
+    </div>
+
+  </main>
+    </div><!-- /.content-wrap -->
+  </div><!-- /.app-shell -->
+
+  <!-- Add / Edit modal -->
+  <div class="modal fade" id="stationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form id="stationForm">
+          <div class="modal-header">
+            <h5 id="modalTitle" class="modal-title">Add Solar Station</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="formError" class="alert alert-danger d-none" role="alert"></div>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label" for="f_stationId">Station ID <i class="fa-solid fa-lock text-muted" title="System-generated — locked"></i></label>
+                <input id="f_stationId" class="form-control" required maxlength="20" pattern="ST[0-9]{3,}" title="ST followed by at least 3 digits (e.g. ST008)" placeholder="ST008" />
+                <div class="form-text" id="stationIdHint">Auto-generated — no need to type.</div>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label" for="f_stationName">Station name</label>
+                <input id="f_stationName" class="form-control" required minlength="2" maxlength="120" placeholder="City Solar Station" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="f_location">Location</label>
+                <input id="f_location" class="form-control" required minlength="2" maxlength="120" placeholder="City" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="f_operator">Operator</label>
+                <input id="f_operator" class="form-control" maxlength="120" value="Grid Operator" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="f_latitude">Latitude (-90…90)</label>
+                <input id="f_latitude" class="form-control" type="number" step="0.0001" min="-90" max="90" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="f_longitude">Longitude (-180…180)</label>
+                <input id="f_longitude" class="form-control" type="number" step="0.0001" min="-180" max="180" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-nowrap" for="f_totalCapacity">Total (kWh)</label>
+                <input id="f_totalCapacity" class="form-control" type="number" step="0.01" min="0.01" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-nowrap" for="f_availableCapacity">Available (kWh)</label>
+                <input id="f_availableCapacity" class="form-control" type="number" step="0.01" min="0" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-nowrap" for="f_status">Status</label>
+                <select id="f_status" class="form-select">
+                  <option>Active</option>
+                  <option>Inactive</option>
+                  <option>Maintenance</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="mb-2">
+                  <button type="button" id="geoLookupBtn" class="btn w-100 btn-peacock">
+                    <i class="fa-solid fa-magnifying-glass-location"></i> Edit this location on the map
+                  </button>
+                </div>
+                <div id="geoResults" class="list-group list-group-flush mb-2 d-none"></div>
+                <div id="pickerMap" class="picker-map"></div>
+                <div id="geoError" class="text-danger small mt-1 d-none"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-footer-close" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-save-dark">Save Station</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details modal -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="detailsTitle" class="modal-title">Station Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="detailsBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-footer-close me-auto" data-bs-dismiss="modal">Close</button>
+          <div class="d-flex gap-2">
+            <button type="button" id="detailsEdit" class="btn btn-footer-edit">Edit Station</button>
+            <button type="button" id="detailsDeactivate" class="btn btn-footer-deactivate">Deactivate Station</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deactivate confirmation modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Deactivate Station?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body"><p id="confirmModalMsg" class="mb-1"></p><p class="text-muted small mb-0">This will temporarily remove the station from active service.</p></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-footer-close" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmModalBtn" class="btn btn-footer-deactivate">Deactivate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/picker.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
