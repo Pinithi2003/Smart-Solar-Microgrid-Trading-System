@@ -25,11 +25,11 @@ foreach (var (envKey, configKey) in new[]
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings"));
 builder.Services.AddSingleton<SolarStationService>();
+builder.Services.AddSingleton<FieldOperationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddOpenApi();
 
 // Allow demo frontend / Postman / mobile clients during development
 builder.Services.AddCors(options =>
@@ -57,7 +57,6 @@ else
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
