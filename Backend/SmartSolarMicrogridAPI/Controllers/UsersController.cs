@@ -11,305 +11,345 @@ namespace SmartSolarMicrogridAPI.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly UserService _userService;
+private readonly UserService _userService;
 
-    public UsersController(UserService userService)
+
+public UsersController(UserService userService)
+{
+    _userService = userService;
+}
+
+// GET: api/users
+// Only Backoffice users can view all users
+[HttpGet]
+[Authorize(Roles = "Backoffice")]
+public async Task<IActionResult> GetUsers()
+{
+    var users = await _userService.GetUsersAsync();
+
+    var result = users.Select(user => new
     {
-        _userService = userService;
-    }
+        id = user.Id,
+        fullName = user.FullName,
+        email = user.Email,
+        role = user.Role,
+        isActive = user.IsActive,
+        createdAt = user.CreatedAt
+    });
 
-    // GET: api/users
-    // Only Backoffice users can view all users
-    [HttpGet]
-    [Authorize(Roles = "Backoffice")]
-    public async Task<IActionResult> GetUsers()
+    return Ok(result);
+}
+
+// GET: api/users/{id}
+// Only authenticated users can view a user by ID
+[HttpGet("{id}")]
+[Authorize]
+public async Task<IActionResult> GetUserById(string id)
+{
+    if (!ObjectId.TryParse(id, out _))
     {
-        var users = await _userService.GetUsersAsync();
-
-        var result = users.Select(user => new
+        return BadRequest(new
         {
-            id = user.Id,
-            fullName = user.FullName,
-            email = user.Email,
-            role = user.Role,
-            isActive = user.IsActive,
-            createdAt = user.CreatedAt
-        });
-
-        return Ok(result);
-    }
-
-    // GET: api/users/{id}
-    // Only authenticated users can view a user by ID
-    [HttpGet("{id}")]
-    [Authorize]
-    public async Task<IActionResult> GetUserById(string id)
-    {
-        if (!ObjectId.TryParse(id, out _))
-        {
-            return BadRequest(new
-            {
-                message = "Invalid user id. Must be a 24-digit hex string."
-            });
-        }
-
-        var user = await _userService.GetByIdAsync(id);
-
-        if (user == null)
-        {
-            return NotFound(new
-            {
-                message = "User not found."
-            });
-        }
-
-        return Ok(new
-        {
-            id = user.Id,
-            fullName = user.FullName,
-            email = user.Email,
-            role = user.Role,
-            isActive = user.IsActive,
-            createdAt = user.CreatedAt
+            message = "Invalid user id. Must be a 24-digit hex string."
         });
     }
 
-    // GET: api/users/email/{email}
-    // Only authenticated users can search a user by email
-    [HttpGet("email/{email}")]
-    [Authorize]
-    public async Task<IActionResult> GetUserByEmail(string email)
+    var user = await _userService.GetByIdAsync(id);
+
+    if (user == null)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        return NotFound(new
         {
-            return BadRequest(new
-            {
-                message = "Email is required."
-            });
-        }
-
-        var user = await _userService.GetUserByEmailAsync(email);
-
-        if (user == null)
-        {
-            return NotFound(new
-            {
-                message = "User not found."
-            });
-        }
-
-        // Do NOT return PasswordHash
-        return Ok(new
-        {
-            id = user.Id,
-            fullName = user.FullName,
-            email = user.Email,
-            role = user.Role,
-            isActive = user.IsActive,
-            createdAt = user.CreatedAt
+            message = "User not found."
         });
     }
 
-    // POST: api/users
-    // Only Backoffice users can create users manually
-    [HttpPost]
-    [Authorize(Roles = "Backoffice")]
-    public async Task<IActionResult> CreateUser([FromBody] User user)
+    return Ok(new
     {
-        if (!ModelState.IsValid)
+        id = user.Id,
+        fullName = user.FullName,
+        email = user.Email,
+        role = user.Role,
+        isActive = user.IsActive,
+        createdAt = user.CreatedAt
+    });
+}
+
+// GET: api/users/email/{email}
+// Only authenticated users can search a user by email
+[HttpGet("email/{email}")]
+[Authorize]
+public async Task<IActionResult> GetUserByEmail(string email)
+{
+    if (string.IsNullOrWhiteSpace(email))
+    {
+        return BadRequest(new
         {
-            return ValidationProblem(ModelState);
-        }
-
-        user.Id = null;
-        user.CreatedAt = DateTime.UtcNow;
-
-        var existingUser =
-            await _userService.GetUserByEmailAsync(user.Email);
-
-        if (existingUser != null)
-        {
-            return Conflict(new
-            {
-                message = "Email already exists."
-            });
-        }
-
-        try
-        {
-            await _userService.CreateUserAsync(user);
-        }
-        catch (MongoWriteException ex)
-            when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
-        {
-            return Conflict(new
-            {
-                message = "Email already exists."
-            });
-        }
-
-        var created =
-            await _userService.GetUserByEmailAsync(user.Email);
-
-        return CreatedAtAction(
-            nameof(GetUserById),
-            new { id = created!.Id },
-            new
-            {
-                id = created.Id,
-                fullName = created.FullName,
-                email = created.Email,
-                role = created.Role,
-                isActive = created.IsActive,
-                createdAt = created.CreatedAt
-            });
+            message = "Email is required."
+        });
     }
 
-    // POST: api/users/register
-    // Public registration
-    // New public users are always Prosumer
-    [HttpPost("register")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Register(
-        [FromBody] RegisterRequest request)
+    var user = await _userService.GetUserByEmailAsync(email);
+
+    if (user == null)
     {
-        var existingUser =
-            await _userService.GetUserByEmailAsync(request.Email);
-
-        if (existingUser != null)
+        return NotFound(new
         {
-            return Conflict(new
-            {
-                message = "Email already exists."
-            });
-        }
+            message = "User not found."
+        });
+    }
 
-        // Public registration can only create Prosumer accounts
-        var user = new User
+    // Do NOT return PasswordHash
+    return Ok(new
+    {
+        id = user.Id,
+        fullName = user.FullName,
+        email = user.Email,
+        role = user.Role,
+        isActive = user.IsActive,
+        createdAt = user.CreatedAt
+    });
+}
+
+// POST: api/users
+// Only Backoffice users can create users manually
+[HttpPost]
+[Authorize(Roles = "Backoffice")]
+public async Task<IActionResult> CreateUser([FromBody] User user)
+{
+    if (!ModelState.IsValid)
+    {
+        return ValidationProblem(ModelState);
+    }
+
+    user.Id = null;
+    user.CreatedAt = DateTime.UtcNow;
+
+    var existingUser =
+        await _userService.GetUserByEmailAsync(user.Email);
+
+    if (existingUser != null)
+    {
+        return Conflict(new
         {
-            FullName = request.FullName,
-            Email = request.Email,
-            PasswordHash = request.Password,
-            Role = "Prosumer",
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
+            message = "Email already exists."
+        });
+    }
 
-        // UserService hashes the password before saving
+    try
+    {
         await _userService.CreateUserAsync(user);
-
-        return Ok(new
-        {
-            message = "Registration successful."
-        });
     }
-
-    // PUT: api/users/{id}
-    // Only Backoffice users can update users
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Backoffice")]
-    public async Task<IActionResult> Update(
-        string id,
-        [FromBody] User updated)
+    catch (MongoWriteException ex)
+        when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
     {
-        if (!ModelState.IsValid)
+        return Conflict(new
         {
-            return ValidationProblem(ModelState);
-        }
-
-        if (!ObjectId.TryParse(id, out _))
-        {
-            return BadRequest(new
-            {
-                message = "Invalid user id. Must be a 24-digit hex string."
-            });
-        }
-
-        var existing = await _userService.GetByIdAsync(id);
-
-        if (existing is null)
-        {
-            return NotFound(new
-            {
-                message = "User not found."
-            });
-        }
-
-        // If email is changing, ensure no other user owns it
-        var owner =
-            await _userService.GetUserByEmailAsync(updated.Email);
-
-        if (owner is not null && owner.Id != id)
-        {
-            return Conflict(new
-            {
-                message = "Email already exists."
-            });
-        }
-
-        try
-        {
-            await _userService.UpdateAsync(id, updated);
-        }
-        catch (MongoWriteException ex)
-            when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
-        {
-            return Conflict(new
-            {
-                message = "Email already exists."
-            });
-        }
-
-        var result = await _userService.GetByIdAsync(id);
-
-        if (result == null)
-        {
-            return NotFound(new
-            {
-                message = "User not found."
-            });
-        }
-
-        return Ok(new
-        {
-            id = result.Id,
-            fullName = result.FullName,
-            email = result.Email,
-            role = result.Role,
-            isActive = result.IsActive,
-            createdAt = result.CreatedAt
+            message = "Email already exists."
         });
     }
 
-    // DELETE: api/users/{id}
-    // Only Backoffice users can delete users
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "Backoffice")]
-    public async Task<IActionResult> Delete(string id)
+    var created =
+        await _userService.GetUserByEmailAsync(user.Email);
+
+    if (created == null)
     {
-        if (!ObjectId.TryParse(id, out _))
+        return StatusCode(500, new
         {
-            return BadRequest(new
-            {
-                message = "Invalid user id. Must be a 24-digit hex string."
-            });
-        }
-
-        var existing = await _userService.GetByIdAsync(id);
-
-        if (existing is null)
-        {
-            return NotFound(new
-            {
-                message = "User not found."
-            });
-        }
-
-        await _userService.DeleteAsync(id);
-
-        return Ok(new
-        {
-            message = "User deleted successfully."
+            message = "User was created but could not be retrieved."
         });
     }
+
+    return CreatedAtAction(
+        nameof(GetUserById),
+        new { id = created.Id },
+        new
+        {
+            id = created.Id,
+            fullName = created.FullName,
+            email = created.Email,
+            role = created.Role,
+            isActive = created.IsActive,
+            createdAt = created.CreatedAt
+        });
+}
+
+// POST: api/users/register
+// Public registration
+// Public users are always registered as Prosumer
+[HttpPost("register")]
+[AllowAnonymous]
+public async Task<IActionResult> Register(
+    [FromBody] RegisterRequest request)
+{
+    if (!ModelState.IsValid)
+    {
+        return ValidationProblem(ModelState);
+    }
+
+    if (string.IsNullOrWhiteSpace(request.FullName))
+    {
+        return BadRequest(new
+        {
+            message = "Full name is required."
+        });
+    }
+
+    if (string.IsNullOrWhiteSpace(request.Email))
+    {
+        return BadRequest(new
+        {
+            message = "Email is required."
+        });
+    }
+
+    if (string.IsNullOrWhiteSpace(request.Password))
+    {
+        return BadRequest(new
+        {
+            message = "Password is required."
+        });
+    }
+
+    var existingUser =
+        await _userService.GetUserByEmailAsync(request.Email);
+
+    if (existingUser != null)
+    {
+        return Conflict(new
+        {
+            message = "Email already exists."
+        });
+    }
+
+    // Public registration can only create Prosumer accounts
+    var user = new User
+    {
+        FullName = request.FullName.Trim(),
+        Email = request.Email.Trim(),
+        PasswordHash = request.Password,
+        Role = "Prosumer",
+        IsActive = true,
+        CreatedAt = DateTime.UtcNow
+    };
+
+    // UserService is responsible for password hashing
+    await _userService.CreateUserAsync(user);
+
+    return Ok(new
+    {
+        message = "Registration successful."
+    });
+}
+
+// PUT: api/users/{id}
+// Only Backoffice users can update users
+[HttpPut("{id}")]
+[Authorize(Roles = "Backoffice")]
+public async Task<IActionResult> Update(
+    string id,
+    [FromBody] User updated)
+{
+    if (!ModelState.IsValid)
+    {
+        return ValidationProblem(ModelState);
+    }
+
+    if (!ObjectId.TryParse(id, out _))
+    {
+        return BadRequest(new
+        {
+            message = "Invalid user id. Must be a 24-digit hex string."
+        });
+    }
+
+    var existing = await _userService.GetByIdAsync(id);
+
+    if (existing is null)
+    {
+        return NotFound(new
+        {
+            message = "User not found."
+        });
+    }
+
+    // If email is changing, ensure no other user owns it
+    var owner =
+        await _userService.GetUserByEmailAsync(updated.Email);
+
+    if (owner is not null && owner.Id != id)
+    {
+        return Conflict(new
+        {
+            message = "Email already exists."
+        });
+    }
+
+    try
+    {
+        await _userService.UpdateAsync(id, updated);
+    }
+    catch (MongoWriteException ex)
+        when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+    {
+        return Conflict(new
+        {
+            message = "Email already exists."
+        });
+    }
+
+    var result = await _userService.GetByIdAsync(id);
+
+    if (result == null)
+    {
+        return NotFound(new
+        {
+            message = "User not found."
+        });
+    }
+
+    return Ok(new
+    {
+        id = result.Id,
+        fullName = result.FullName,
+        email = result.Email,
+        role = result.Role,
+        isActive = result.IsActive,
+        createdAt = result.CreatedAt
+    });
+}
+
+// DELETE: api/users/{id}
+// Only Backoffice users can delete users
+[HttpDelete("{id}")]
+[Authorize(Roles = "Backoffice")]
+public async Task<IActionResult> Delete(string id)
+{
+    if (!ObjectId.TryParse(id, out _))
+    {
+        return BadRequest(new
+        {
+            message = "Invalid user id. Must be a 24-digit hex string."
+        });
+    }
+
+    var existing = await _userService.GetByIdAsync(id);
+
+    if (existing is null)
+    {
+        return NotFound(new
+        {
+            message = "User not found."
+        });
+    }
+
+    await _userService.DeleteAsync(id);
+
+    return Ok(new
+    {
+        message = "User deleted successfully."
+    });
+}
+
+
 }

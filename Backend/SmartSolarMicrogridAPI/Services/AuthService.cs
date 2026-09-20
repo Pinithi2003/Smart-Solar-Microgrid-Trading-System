@@ -25,8 +25,12 @@ namespace SmartSolarMicrogridAPI.Services
             var collection = _mongoDbService.Database
                 .GetCollection<User>("Users");
 
+            var normalizedEmail = email
+                .Trim()
+                .ToLowerInvariant();
+
             return await collection
-                .Find(u => u.Email == email)
+                .Find(u => u.Email == normalizedEmail)
                 .FirstOrDefaultAsync();
         }
 
@@ -60,7 +64,7 @@ namespace SmartSolarMicrogridAPI.Services
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey!));
+                Encoding.UTF8.GetBytes(jwtKey));
 
             var credentials = new SigningCredentials(
                 key,
