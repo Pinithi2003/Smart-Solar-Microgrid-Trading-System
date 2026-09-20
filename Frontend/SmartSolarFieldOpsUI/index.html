@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Field Operations & QR Verification — Smart Solar Microgrid</title>
+  <meta name="description" content="Member 4: Field Operations, QR Code Verification and Nearby Solar Station Geospatial View for Smart Solar Microgrid Trading System." />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- CSS Dependencies -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Custom Styles -->
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+      <a class="sidebar-brand d-flex align-items-center gap-2" href="#">
+        <span class="logo-glow"><img src="assets/logo.svg" alt="SolarGrid logo" /></span>
+        <span><strong>SolarGrid</strong></span>
+      </a>
+      <hr class="sidebar-divider" />
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-module="dashboard" data-owner="Member 1">
+          <i class="fa-solid fa-house"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-module="users" data-owner="Member 1">
+          <i class="fa-solid fa-users"></i><span>User Management</span>
+        </button>
+        <button class="nav-item" data-module="stations" data-owner="Member 2">
+          <i class="fa-solid fa-solar-panel"></i><span>Solar Stations</span>
+        </button>
+        <button class="nav-item" data-module="reservations" data-owner="Member 3">
+          <i class="fa-solid fa-clipboard-list"></i><span>Reservations</span>
+        </button>
+        <button class="nav-item active" data-module="qr" aria-current="page">
+          <i class="fa-solid fa-qrcode"></i><span>QR Verification</span>
+        </button>
+        <button class="nav-item" data-module="profile" data-owner="Member 1">
+          <i class="fa-solid fa-user"></i><span>Profile</span>
+        </button>
+        <button class="nav-item" data-module="about" data-owner="team docs">
+          <i class="fa-solid fa-circle-info"></i><span>About System</span>
+        </button>
+        <button class="nav-item" data-module="technology" data-owner="team docs">
+          <i class="fa-solid fa-microchip"></i><span>Technology</span>
+        </button>
+        <button class="nav-item" data-module="architecture" data-owner="team docs">
+          <i class="fa-solid fa-diagram-project"></i><span>Architecture</span>
+        </button>
+      </nav>
+    </aside>
+    <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
+
+    <!-- Main Content Area -->
+    <div class="content-wrap">
+      <!-- Topbar -->
+      <nav class="navbar navbar-expand sticky-top topbar">
+        <div class="container-fluid gap-2">
+          <button id="sidebarToggle" class="icon-btn d-lg-none" aria-label="Open navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="topbar-search flex-grow-1">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="topSearchInput" class="form-control" type="search" placeholder="Search reservation, code or station…" aria-label="Search operations" />
+          </div>
+          <div class="d-flex align-items-center gap-2 ms-auto">
+            <button id="openDemoQrBtn" class="btn btn-sm btn-outline-secondary" title="View sample printable QR codes">
+              <i class="fa-solid fa-qrcode"></i> <span class="d-none d-sm-inline">Sample QRs</span>
+            </button>
+            <span class="profile-chip" title="Signed in as Field Operator">
+              <span class="profile-avatar">FO</span>
+              <span class="d-none d-sm-inline">Field Operator #01</span>
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Page Content -->
+      <main class="container py-4 flex-grow-1">
+        <!-- Title & Action Bar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div>
+            <h1 class="page-title mb-1">Field Operations & QR Verification</h1>
+            <p class="text-muted mb-0">Verify bookings in the field, execute energy transactions, and locate nearby microgrid stations.</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button id="refreshBtn" class="btn btn-outline-secondary" title="Refresh data">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="module-tabs">
+          <button class="module-tab-btn active" data-tab="operations">
+            <i class="fa-solid fa-clipboard-check"></i> Field Operations & QR
+          </button>
+          <button class="module-tab-btn" data-tab="nearby">
+            <i class="fa-solid fa-map-location-dot"></i> Nearby Stations & Map
+          </button>
+        </div>
+
+        <!-- ==================== TAB 1: FIELD OPERATIONS & VERIFICATION ==================== -->
+        <div id="tabOperationsView">
+          <!-- Metric Stat Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+              <div class="card stat-card"><div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="stat-label">PENDING VERIFICATION</span>
+                  <i class="fa-solid fa-clock stat-icon text-warning"></i>
+                </div>
+                <div id="statPending" class="stat-value text-warning">0</div>
+                <span class="trend-pill trend-warn"><i class="fa-solid fa-user-clock"></i> Awaiting field arrival</span>
+              </div></div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="card stat-card"><div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="stat-label">VERIFIED / IN-PROGRESS</span>
+                  <i class="fa-solid fa-circle-check stat-icon text-info"></i>
+                </div>
+                <div id="statVerified" class="stat-value text-info">0</div>
+                <span class="trend-pill trend-info"><i class="fa-solid fa-bolt"></i> Transferring now</span>
+              </div></div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="card stat-card"><div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="stat-label">COMPLETED OPERATIONS</span>
+                  <i class="fa-solid fa-flag-checkered stat-icon text-success"></i>
+                </div>
+                <div id="statCompleted" class="stat-value text-success">0</div>
+                <span class="trend-pill"><i class="fa-solid fa-check"></i> Verified & discharged</span>
+              </div></div>
+            </div>
+            <div class="col-6 col-lg-3">
+              <div class="card stat-card"><div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="stat-label">ENERGY DISPATCHED</span>
+                  <i class="fa-solid fa-battery-three-quarters stat-icon text-primary"></i>
+                </div>
+                <div class="stat-value"><span id="statEnergy">0</span> <small class="fs-6 text-muted">kWh</small></div>
+                <span class="trend-pill"><i class="fa-solid fa-chart-line"></i> Total verified energy</span>
+              </div></div>
+            </div>
+          </div>
+
+          <!-- Quick QR Verification Hero Box -->
+          <div class="verify-hero-box">
+            <div class="row align-items-center g-3">
+              <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="badge bg-warning text-dark"><i class="fa-solid fa-bolt"></i> Field Verification Station</span>
+                  <span class="small text-white-50">Member 4 Live API</span>
+                </div>
+                <h4 class="mb-2 fw-bold text-white">Scan QR Code or Enter Verification Code</h4>
+                <p class="small text-white-50 mb-3">Validate customer's confirmed reservation before commencing solar energy transfer.</p>
+                
+                <form id="quickVerifyForm" class="verify-input-wrap">
+                  <input id="quickVerifyInput" class="form-control" placeholder="Enter code (e.g. SG-RES001 or RES001)" required />
+                  <button type="submit" class="btn btn-verify-action">
+                    <i class="fa-solid fa-magnifying-glass"></i> Check Details
+                  </button>
+                </form>
+              </div>
+              <div class="col-lg-5 text-lg-end">
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-lg-end">
+                  <button id="openScannerBtn" class="btn btn-scan-camera btn-lg">
+                    <i class="fa-solid fa-camera"></i> Open Camera Scanner
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operations Queue Directory Table -->
+          <div class="card directory-card">
+            <div class="card-body">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                <h2 class="h6 mb-0 fw-bold">Field Operations Directory</h2>
+                <div class="d-flex gap-2">
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa-solid fa-filter"></i> <span id="statusFilterLabel">All Statuses</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><button class="dropdown-item" data-status-filter="All">All Statuses</button></li>
+                      <li><button class="dropdown-item text-warning" data-status-filter="Confirmed">Confirmed (Pending)</button></li>
+                      <li><button class="dropdown-item text-primary" data-status-filter="Verified">Verified (In Progress)</button></li>
+                      <li><button class="dropdown-item text-success" data-status-filter="Completed">Completed</button></li>
+                      <li><button class="dropdown-item text-danger" data-status-filter="Cancelled">Cancelled</button></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 station-table">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Reservation</th>
+                      <th>Solar Station</th>
+                      <th>Customer</th>
+                      <th>Code</th>
+                      <th class="text-center">Energy</th>
+                      <th>Slot</th>
+                      <th>Status</th>
+                      <th class="text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="operationsBody">
+                    <tr><td colspan="8" class="text-center text-muted py-4">Loading field operations…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== TAB 2: NEARBY STATIONS & MAP ==================== -->
+        <div id="tabNearbyView" class="d-none">
+          <!-- Location Control Bar -->
+          <div class="card p-3 mb-3 border bg-white shadow-sm">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <div class="pulse-beacon"></div>
+                <div>
+                  <small class="text-muted d-block">Operator Simulated Location:</small>
+                  <strong id="currentLocationLabel" class="text-primary">Colombo (Grid HQ)</strong>
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <button id="useGpsBtn" class="btn btn-sm btn-outline-primary">
+                  <i class="fa-solid fa-location-crosshairs"></i> Use My GPS Location
+                </button>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-city"></i> Switch City Preset
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><button class="dropdown-item" data-city-preset="colombo">Colombo (Grid HQ)</button></li>
+                    <li><button class="dropdown-item" data-city-preset="kalutara">Kalutara</button></li>
+                    <li><button class="dropdown-item" data-city-preset="kandy">Kandy</button></li>
+                    <li><button class="dropdown-item" data-city-preset="galle">Galle</button></li>
+                    <li><button class="dropdown-item" data-city-preset="negombo">Negombo</button></li>
+                    <li><button class="dropdown-item" data-city-preset="matara">Matara</button></li>
+                    <li><button class="dropdown-item" data-city-preset="malabe">Malabe</button></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map & Station List Split View -->
+          <div class="row g-3">
+            <div class="col-lg-8">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0 fw-bold"><i class="fa-solid fa-map-location-dot text-success"></i> Geospatial Infrastructure Map</h6>
+                  <div class="d-flex gap-3 small text-muted">
+                    <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#198754;margin-right:4px;"></span>Active</span>
+                    <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e0a800;margin-right:4px;"></span>Maintenance</span>
+                    <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dc3545;margin-right:4px;"></span>Inactive</span>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <div id="nearbyMap" class="nearby-map-container"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-2">
+                  <h6 class="mb-0 fw-bold"><i class="fa-solid fa-list-ol text-primary"></i> Nearest Solar Stations</h6>
+                  <small class="text-muted">Ranked by Haversine GPS proximity</small>
+                </div>
+                <div class="card-body p-2" style="max-height: 480px; overflow-y: auto;" id="nearbyCardsList">
+                  <div class="text-center text-muted py-4">Loading nearby stations…</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Camera QR Scanner Modal -->
+  <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-qrcode text-success"></i> Scan Customer QR Code</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center p-3">
+          <div class="scanner-viewport mb-2">
+            <div id="qr-reader"></div>
+            <div class="scanner-overlay">
+              <div class="scanner-target-box">
+                <div class="scanner-laser-line"></div>
+              </div>
+            </div>
+          </div>
+          <small id="scannerStatus" class="text-muted d-block">Initializing camera feed…</small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Operation Modal -->
+  <div class="modal fade" id="completeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-flag-checkered text-success"></i> Complete Field Operation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info py-2 small mb-3">
+            Confirming that the customer's solar energy transfer has concluded successfully.
+          </div>
+          <dl class="row mb-3">
+            <dt class="col-sm-4">Reservation</dt><dd class="col-sm-8" id="completeResId">–</dd>
+            <dt class="col-sm-4">Station</dt><dd class="col-sm-8" id="completeStation">–</dd>
+            <dt class="col-sm-4">Customer</dt><dd class="col-sm-8" id="completeCustomer">–</dd>
+            <dt class="col-sm-4">Energy</dt><dd class="col-sm-8"><strong id="completeEnergy" class="text-success">–</strong></dd>
+          </dl>
+          <div class="mb-3">
+            <label class="form-label fw-bold" for="completeNotes">Field Notes / Telemetry Log</label>
+            <textarea id="completeNotes" class="form-control" rows="3" placeholder="Enter transfer notes or meter reading…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="confirmCompleteBtn" class="btn btn-success">
+            <i class="fa-solid fa-check-double"></i> Mark Completed
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operation Details Modal -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalTitle">Operation Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="detailsModalBody"></div>
+        <div class="modal-footer" id="detailsModalFooter">
+          <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo Scannable QR Codes Modal -->
+  <div class="modal fade" id="demoQrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-qrcode text-primary"></i> Sample Reservation QR Codes (Presentation Demo)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small">Scan any of these QR codes with your mobile device or laptop camera to test real-world field verification:</p>
+          <div class="row g-3" id="demoQrContainer"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 2000;"></div>
+
+  <!-- External JS Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Member 4 App Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/qr-scanner.js"></script>
+  <script src="js/nearby-map.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
