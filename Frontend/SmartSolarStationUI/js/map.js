@@ -97,7 +97,7 @@
           `<strong>${esc(s.stationName)}</strong><br>`
           + `<span>${esc(s.stationId)} • ${esc(s.location)}</span><br>`
           + `<span>${esc(s.status)} • ${esc(s.availableCapacity)} kWh available</span><br>`
-          + `<button class="btn btn-sm btn-primary mt-2" data-view="${esc(s.stationId)}">View details</button>`
+          + `<button class="btn btn-sm btn-sky mt-2" data-view="${esc(s.stationId)}">View details</button>`
         )
         .addTo(layer);
     });

@@ -166,7 +166,7 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><button class="dropdown-item" data-action="view" data-id="${esc(s.stationId)}"><i class="fa-solid fa-eye fa-fw me-2 text-secondary"></i>View</button></li>
-                <li><button class="dropdown-item" data-action="edit" data-id="${esc(s.stationId)}"><i class="fa-solid fa-pen fa-fw me-2 text-primary"></i>Edit</button></li>
+                <li><button class="dropdown-item text-primary" data-action="edit" data-id="${esc(s.stationId)}"><i class="fa-solid fa-pen fa-fw me-2 text-primary"></i>Edit</button></li>
                 <li><button class="dropdown-item ${s.status === "Active" ? "text-danger" : "text-success"}" data-action="toggle" data-id="${esc(s.stationId)}"><i class="fa-solid ${s.status === "Active" ? "fa-ban" : "fa-circle-check"} fa-fw me-2"></i>${s.status === "Active" ? "Deactivate" : "Activate"}</button></li>
               </ul>
             </div>
@@ -298,8 +298,15 @@
     return `ST${String(max + 1).padStart(width, "0")}`;
   }
 
-  function openModal(stationId = null) {
-    editingId = stationId;
+  /* Filled modal inputs read ash like the locked Station ID. */
+  function refreshFilled() {
+    document.querySelectorAll("#stationModal .form-control, #stationModal .form-select").forEach((el) => {
+      if (el.id === "f_stationId") return;
+      el.classList.toggle("is-filled", String(el.value ?? "").trim() !== "");
+    });
+  }
+
+  function openModal(stationId = null) {    editingId = stationId;
     showFormError(null);
     const s = stationId ? stations.find((x) => x.stationId === stationId) : null;
     $("modalTitle").textContent = s ? `Edit Station: ${s.stationName}` : "Add Solar Station";
@@ -316,6 +323,7 @@
     $("f_availableCapacity").value = s?.availableCapacity ?? "";
     $("f_status").value = s?.status ?? "Active";
     $("f_operator").value = s?.operator ?? "Grid Operator";
+    refreshFilled();
     // Keep the mini-map pin in sync with the form (pins follow coordinates).
     if (window.SolarUI.picker) {
       window.SolarUI.picker.reset(s?.latitude, s?.longitude);
@@ -534,6 +542,8 @@
   function init() {
     $("addStationBtn").addEventListener("click", () => openModal());
     $("stationForm").addEventListener("submit", submitForm);
+    $("stationForm").addEventListener("input", refreshFilled);
+    $("stationForm").addEventListener("change", refreshFilled);
     $("topSearchInput")?.addEventListener("input", () => {
       page = 1;
       renderTable();
