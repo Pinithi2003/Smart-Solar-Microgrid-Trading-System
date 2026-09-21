@@ -1,58 +1,112 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using SmartSolarMicrogridAPI.Models;
 using SmartSolarMicrogridAPI.Services;
+using System.Text;
 
 // Team convention: load SmartSolarMicrogridAPI/.env into environment variables.
-// No-op when the file is absent (e.g. production). Never overwrites real env vars.
+// No-op when the file is absent.
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Optional .env overrides (MONGODB_*), applied only when set.
-// Precedence: real env var > .env file > user-secrets > appsettings.json.
+// Optional .env overrides for MongoDB configuration.
 foreach (var (envKey, configKey) in new[]
-    {
-        ("MONGODB_CONNECTION_STRING", "MongoDBSettings:ConnectionString"),
-        ("MONGODB_DATABASE", "MongoDBSettings:DatabaseName"),
-        ("MONGODB_COLLECTION", "MongoDBSettings:CollectionName")
-    })
+{
+    ("MONGODB_CONNECTION_STRING", "MongoDBSettings:ConnectionString"),
+    ("MONGODB_DATABASE", "MongoDBSettings:DatabaseName"),
+    ("MONGODB_COLLECTION", "MongoDBSettings:CollectionName")
+})
 {
     var value = Environment.GetEnvironmentVariable(envKey);
+
     if (!string.IsNullOrWhiteSpace(value))
+    {
         builder.Configuration[configKey] = value;
+    }
 }
 
-// MongoDB (secret comes from .env / user-secrets / env in dev, appsettings placeholder in repo)
+// MongoDB
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings"));
+
 builder.Services.AddSingleton<SolarStationService>();
 builder.Services.AddSingleton<FieldOperationService>();
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<AuthService>();
+
+// JWT Authentication
+// First check configuration, then fallback to JWT_KEY from .env.
+var jwtKey =
+    builder.Configuration["Jwt:Key"]
+    ?? Environment.GetEnvironmentVariable("JWT_KEY");
+
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new InvalidOperationException(
+        "JWT key is not configured. Set JWT_KEY in .env, user-secrets, or environment variables.");
+}
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)),
+
+            ValidateIssuer = false,
+            ValidateAudience = false,
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Allow demo frontend / Postman / mobile clients during development
+// Allow demo frontend / Postman / mobile clients during development.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
 });
 
 var app = builder.Build();
 
-// Secret-free startup check: warn early if no real connection string is configured.
-var configuredConn = app.Configuration["MongoDBSettings:ConnectionString"] ?? "";
-if (string.IsNullOrWhiteSpace(configuredConn) || configuredConn == "YOUR_MONGODB_CONNECTION_STRING")
+// MongoDB startup check
+var configuredConn =
+    app.Configuration["MongoDBSettings:ConnectionString"] ?? "";
+
+if (string.IsNullOrWhiteSpace(configuredConn) ||
+    configuredConn == "YOUR_MONGODB_CONNECTION_STRING")
 {
-    app.Logger.LogWarning("MongoDB connection string is NOT configured. Set it via .env (MONGODB_CONNECTION_STRING), user-secrets, or the MongoDBSettings__ConnectionString env var.");
+    app.Logger.LogWarning(
+        "MongoDB connection string is NOT configured. " +
+        "Set MONGODB_CONNECTION_STRING in .env, user-secrets, " +
+        "or environment variables.");
 }
 else
 {
-    var fromEnv = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"));
-    app.Logger.LogInformation("MongoDB configured from {Source}: database '{Db}', collection '{Coll}'.",
-        fromEnv ? "environment (.env or system env)" : "user-secrets/appsettings",
+    var fromEnv =
+        !string.IsNullOrWhiteSpace(
+            Environment.GetEnvironmentVariable(
+                "MONGODB_CONNECTION_STRING"));
+
+    app.Logger.LogInformation(
+        "MongoDB configured from {Source}: database '{Db}', collection '{Coll}'.",
+        fromEnv
+            ? "environment (.env or system env)"
+            : "user-secrets/appsettings",
         app.Configuration["MongoDBSettings:DatabaseName"],
         app.Configuration["MongoDBSettings:CollectionName"]);
 }
@@ -64,8 +118,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("AllowAll");
+
+// Authentication MUST come before Authorization.
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
