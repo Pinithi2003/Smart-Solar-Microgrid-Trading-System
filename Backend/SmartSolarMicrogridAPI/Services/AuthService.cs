@@ -36,12 +36,16 @@ namespace SmartSolarMicrogridAPI.Services
 
         public string GenerateJwtToken(User user)
         {
-            var jwtKey = _configuration["Jwt:Key"];
+            // First check configuration, then fallback to JWT_KEY
+            // from the .env file / environment variables.
+            var jwtKey =
+                _configuration["Jwt:Key"]
+                ?? Environment.GetEnvironmentVariable("JWT_KEY");
 
             if (string.IsNullOrWhiteSpace(jwtKey))
             {
                 throw new InvalidOperationException(
-                    "JWT key is not configured.");
+                    "JWT key is not configured. Set JWT_KEY in .env, user-secrets, or environment variables.");
             }
 
             var claims = new[]
