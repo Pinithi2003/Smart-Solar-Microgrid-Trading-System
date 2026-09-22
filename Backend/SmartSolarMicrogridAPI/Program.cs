@@ -55,6 +55,7 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
+
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtKey)),
 
@@ -126,5 +127,52 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// ============================================================
+// SEED DEFAULT BACKOFFICE ACCOUNT
+// ============================================================
+
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var userService =
+            scope.ServiceProvider.GetRequiredService<UserService>();
+
+        var existingBackoffice =
+            await userService.GetUserByEmailAsync(
+                "backoffice@smartsolar.com");
+
+        if (existingBackoffice == null)
+        {
+            var backofficeUser = new User
+            {
+                FullName = "System Backoffice",
+                Email = "backoffice@smartsolar.com",
+                PasswordHash = "Backoffice@123",
+                Role = "Backoffice",
+                Status = "Approved",
+                IsActive = true
+            };
+
+            await userService.CreateUserAsync(
+                backofficeUser);
+
+            app.Logger.LogInformation(
+                "Default Backoffice account created successfully.");
+        }
+        else
+        {
+            app.Logger.LogInformation(
+                "Backoffice account already exists.");
+        }
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(
+            ex,
+            "Failed to seed default Backoffice account.");
+    }
+}
 
 app.Run();
