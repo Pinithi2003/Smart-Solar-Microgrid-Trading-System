@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Login — SolarGrid</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="assets/logo.svg"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="css/styles.css"
+    rel="stylesheet"
+  />
+
+
+  <style>
+
+    body {
+
+      min-height: 100vh;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background: #f5f8f7;
+
+    }
+
+
+    .login-wrapper {
+
+      width: 100%;
+
+      max-width: 440px;
+
+      padding: 20px;
+
+    }
+
+
+    .login-card {
+
+      background: #ffffff;
+
+      border-radius: 20px;
+
+      padding: 40px;
+
+      box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.08);
+
+      border: 1px solid #e7ecea;
+
+    }
+
+
+    .login-logo {
+
+      width: 70px;
+
+      height: 70px;
+
+      margin: 0 auto 18px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 18px;
+
+      background: #eef8f2;
+
+    }
+
+
+    .login-logo img {
+
+      width: 48px;
+
+      height: 48px;
+
+    }
+
+
+    .login-title {
+
+      font-family: "Space Grotesk", sans-serif;
+
+      font-weight: 700;
+
+      text-align: center;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    .login-subtitle {
+
+      text-align: center;
+
+      color: #6c757d;
+
+      margin-bottom: 30px;
+
+    }
+
+
+    .form-label {
+
+      font-weight: 600;
+
+    }
+
+
+    .input-group-text {
+
+      background: #f8faf9;
+
+    }
+
+
+    .btn-login {
+
+      width: 100%;
+
+      padding: 12px;
+
+      font-weight: 600;
+
+      border-radius: 10px;
+
+    }
+
+
+    .login-footer {
+
+      text-align: center;
+
+      margin-top: 24px;
+
+      color: #6c757d;
+
+    }
+
+
+    .login-footer a {
+
+      text-decoration: none;
+
+      font-weight: 600;
+
+    }
+
+
+    #loginMessage {
+
+      display: none;
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <div class="login-wrapper">
+
+
+    <div class="login-card">
+
+
+      <!-- =================================================
+           LOGO
+      ================================================== -->
+
+      <div class="login-logo">
+
+        <img
+          src="assets/logo.svg"
+          alt="SolarGrid logo"
+        />
+
+      </div>
+
+
+      <!-- =================================================
+           HEADING
+      ================================================== -->
+
+      <h1 class="login-title">
+        Welcome to SolarGrid
+      </h1>
+
+
+      <p class="login-subtitle">
+        Smart Solar Microgrid Trading System
+      </p>
+
+
+      <!-- =================================================
+           LOGIN FORM
+      ================================================== -->
+
+      <form id="loginForm">
+
+
+        <!-- EMAIL -->
+
+        <div class="mb-3">
+
+          <label
+            for="email"
+            class="form-label"
+          >
+            Email Address
+          </label>
+
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+
+              <i class="fa-solid fa-envelope"></i>
+
+            </span>
+
+
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              placeholder="Enter your email"
+              autocomplete="email"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+
+        <!-- PASSWORD -->
+
+        <div class="mb-3">
+
+          <label
+            for="password"
+            class="form-label"
+          >
+            Password
+          </label>
+
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+
+              <i class="fa-solid fa-lock"></i>
+
+            </span>
+
+
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              id="togglePassword"
+              aria-label="Show password"
+            >
+
+              <i class="fa-solid fa-eye"></i>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- REMEMBER ME -->
+
+        <div class="form-check mb-4">
+
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="rememberMe"
+          />
+
+
+          <label
+            class="form-check-label"
+            for="rememberMe"
+          >
+            Remember me
+          </label>
+
+        </div>
+
+
+
+        <!-- MESSAGE -->
+
+        <div
+          id="loginMessage"
+          class="alert"
+          role="alert"
+        ></div>
+
+
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+          type="submit"
+          class="btn btn-success btn-login"
+          id="loginButton"
+        >
+
+          <i
+            class="fa-solid fa-right-to-bracket me-2"
+          ></i>
+
+          Login
+
+        </button>
+
+      </form>
+
+
+
+      <!-- REGISTER -->
+
+      <div class="login-footer">
+
+        Don't have an account?
+
+        <a href="register.html">
+          Create an account
+        </a>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+
+    // =====================================================
+    // API CONFIGURATION
+    // =====================================================
+
+    const API_BASE_URL =
+      "http://localhost:5205";
+
+
+
+    // =====================================================
+    // DOM ELEMENTS
+    // =====================================================
+
+    const loginForm =
+      document.getElementById(
+        "loginForm"
+      );
+
+
+    const emailInput =
+      document.getElementById(
+        "email"
+      );
+
+
+    const passwordInput =
+      document.getElementById(
+        "password"
+      );
+
+
+    const togglePassword =
+      document.getElementById(
+        "togglePassword"
+      );
+
+
+    const rememberMe =
+      document.getElementById(
+        "rememberMe"
+      );
+
+
+    const loginButton =
+      document.getElementById(
+        "loginButton"
+      );
+
+
+    const loginMessage =
+      document.getElementById(
+        "loginMessage"
+      );
+
+
+
+    // =====================================================
+    // SHOW / HIDE PASSWORD
+    // =====================================================
+
+    togglePassword.addEventListener(
+      "click",
+      function () {
+
+        const icon =
+          this.querySelector("i");
+
+
+        if (
+          passwordInput.type ===
+          "password"
+        ) {
+
+          passwordInput.type =
+            "text";
+
+
+          icon.classList.remove(
+            "fa-eye"
+          );
+
+
+          icon.classList.add(
+            "fa-eye-slash"
+          );
+
+
+          this.setAttribute(
+            "aria-label",
+            "Hide password"
+          );
+
+        }
+        else {
+
+          passwordInput.type =
+            "password";
+
+
+          icon.classList.remove(
+            "fa-eye-slash"
+          );
+
+
+          icon.classList.add(
+            "fa-eye"
+          );
+
+
+          this.setAttribute(
+            "aria-label",
+            "Show password"
+          );
+
+        }
+
+      }
+    );
+
+
+
+    // =====================================================
+    // SHOW MESSAGE
+    // =====================================================
+
+    function showMessage(
+      message,
+      type
+    ) {
+
+      loginMessage.className =
+        `alert alert-${type}`;
+
+
+      loginMessage.textContent =
+        message;
+
+
+      loginMessage.style.display =
+        "block";
+
+    }
+
+
+
+    // =====================================================
+    // HIDE MESSAGE
+    // =====================================================
+
+    function hideMessage() {
+
+      loginMessage.style.display =
+        "none";
+
+      loginMessage.textContent =
+        "";
+
+    }
+
+
+
+    // =====================================================
+    // LOGIN
+    // =====================================================
+
+    loginForm.addEventListener(
+      "submit",
+      async function (event) {
+
+        event.preventDefault();
+
+
+        hideMessage();
+
+
+        const email =
+          emailInput.value.trim();
+
+
+        const password =
+          passwordInput.value;
+
+
+
+        // -----------------------------------------------
+        // BASIC VALIDATION
+        // -----------------------------------------------
+
+        if (!email) {
+
+          showMessage(
+            "Please enter your email address.",
+            "danger"
+          );
+
+          emailInput.focus();
+
+          return;
+
+        }
+
+
+        if (!password) {
+
+          showMessage(
+            "Please enter your password.",
+            "danger"
+          );
+
+          passwordInput.focus();
+
+          return;
+
+        }
+
+
+
+        // -----------------------------------------------
+        // LOADING
+        // -----------------------------------------------
+
+        loginButton.disabled =
+          true;
+
+
+        loginButton.innerHTML =
+
+          '<span class="spinner-border spinner-border-sm me-2"></span>' +
+          'Logging in...';
+
+
+
+        try {
+
+
+          // ---------------------------------------------
+          // API REQUEST
+          // ---------------------------------------------
+
+          const response =
+            await fetch(
+              `${API_BASE_URL}/api/Auth/login`,
+              {
+
+                method: "POST",
+
+                headers: {
+
+                  "Content-Type":
+                    "application/json"
+
+                },
+
+                body:
+                  JSON.stringify({
+
+                    email: email,
+
+                    password: password
+
+                  })
+
+              }
+            );
+
+
+
+          // ---------------------------------------------
+          // READ RESPONSE SAFELY
+          // ---------------------------------------------
+
+          const responseText =
+            await response.text();
+
+
+          let data = null;
+
+
+          if (responseText) {
+
+            try {
+
+              data =
+                JSON.parse(
+                  responseText
+                );
+
+            }
+            catch (jsonError) {
+
+              console.error(
+                "JSON parsing error:",
+                jsonError
+              );
+
+              throw new Error(
+                "The server returned an invalid response."
+              );
+
+            }
+
+          }
+
+
+
+          // ---------------------------------------------
+          // LOGIN FAILED
+          // ---------------------------------------------
+
+          if (!response.ok) {
+
+            let errorMessage =
+              "Login failed.";
+
+
+            if (
+              data &&
+              data.message
+            ) {
+
+              errorMessage =
+                data.message;
+
+            }
+            else if (
+              data &&
+              data.title
+            ) {
+
+              errorMessage =
+                data.title;
+
+            }
+
+
+            throw new Error(
+              errorMessage
+            );
+
+          }
+
+
+
+          // ---------------------------------------------
+          // CHECK TOKEN
+          // ---------------------------------------------
+
+          if (
+            !data ||
+            !data.token
+          ) {
+
+            throw new Error(
+              "Login succeeded but no authentication token was received."
+            );
+
+          }
+
+
+
+          // ---------------------------------------------
+          // GET USER DATA
+          //
+          // Backend returns:
+          //
+          // data.user
+          //
+          // ---------------------------------------------
+
+          const user =
+            data.user;
+
+
+          if (!user) {
+
+            throw new Error(
+              "Login succeeded but user information was not received."
+            );
+
+          }
+
+
+
+          // ---------------------------------------------
+          // SAVE JWT TOKEN
+          // ---------------------------------------------
+
+          localStorage.setItem(
+            "solarGridToken",
+            data.token
+          );
+
+
+
+          // ---------------------------------------------
+          // SAVE USER INFORMATION
+          // ---------------------------------------------
+
+          const userData = {
+
+            id:
+              user.id || "",
+
+            fullName:
+              user.fullName || "",
+
+            email:
+              user.email || "",
+
+            role:
+              user.role || "",
+
+            status:
+              user.status || "",
+
+            isActive:
+              user.isActive === true
+
+          };
+
+
+          localStorage.setItem(
+            "solarGridUser",
+            JSON.stringify(
+              userData
+            )
+          );
+
+
+
+          // ---------------------------------------------
+          // REMEMBER ME
+          // ---------------------------------------------
+
+          if (
+            rememberMe.checked
+          ) {
+
+            localStorage.setItem(
+              "solarGridRememberEmail",
+              email
+            );
+
+          }
+          else {
+
+            localStorage.removeItem(
+              "solarGridRememberEmail"
+            );
+
+          }
+
+
+
+          // ---------------------------------------------
+          // CONSOLE DEBUG
+          // ---------------------------------------------
+
+          console.log(
+            "Login successful."
+          );
+
+
+          console.log(
+            "Logged-in user:",
+            userData
+          );
+
+
+
+          // ---------------------------------------------
+          // SUCCESS MESSAGE
+          // ---------------------------------------------
+
+          showMessage(
+            `Login successful. Welcome ${userData.fullName || "User"}! Redirecting...`,
+            "success"
+          );
+
+
+
+          // ---------------------------------------------
+          // REDIRECT
+          // ---------------------------------------------
+
+          setTimeout(
+            function () {
+
+              window.location.href =
+                "index.html";
+
+            },
+            700
+          );
+
+
+        }
+        catch (error) {
+
+
+          // ---------------------------------------------
+          // ERROR
+          // ---------------------------------------------
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          showMessage(
+            error.message ||
+            "Unable to connect to the server.",
+            "danger"
+          );
+
+        }
+        finally {
+
+
+          // ---------------------------------------------
+          // RESET BUTTON
+          // ---------------------------------------------
+
+          loginButton.disabled =
+            false;
+
+
+          loginButton.innerHTML =
+
+            '<i class="fa-solid fa-right-to-bracket me-2"></i>' +
+            'Login';
+
+        }
+
+      }
+    );
+
+
+
+    // =====================================================
+    // LOAD REMEMBERED EMAIL
+    // =====================================================
+
+    const rememberedEmail =
+      localStorage.getItem(
+        "solarGridRememberEmail"
+      );
+
+
+    if (rememberedEmail) {
+
+      emailInput.value =
+        rememberedEmail;
+
+
+      rememberMe.checked =
+        true;
+
+    }
+
+
+  </script>
+
+
+</body>
+
+</html>
+

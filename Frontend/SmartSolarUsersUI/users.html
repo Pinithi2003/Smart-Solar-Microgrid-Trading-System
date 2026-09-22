@@ -1,0 +1,1562 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>User Management | Smart Solar Microgrid</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            color: #1f2937;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* =========================================
+           TOP BAR
+        ========================================= */
+
+        .topbar {
+            height: 70px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #facc15;
+            color: #111827;
+
+            border-radius: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #111827;
+            color: white;
+
+            border-radius: 50%;
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .page-container {
+            padding: 35px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 25px;
+        }
+
+        .page-title {
+            margin: 0;
+
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            margin-top: 6px;
+            color: #6b7280;
+        }
+
+
+        /* =========================================
+           CARD
+        ========================================= */
+
+        .card {
+            border: none;
+            border-radius: 14px;
+
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+
+        /* =========================================
+           TABLE
+        ========================================= */
+
+        .table-card {
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            padding: 16px;
+
+            background: #f8fafc;
+
+            color: #374151;
+
+            font-weight: 600;
+
+            border-bottom:
+                1px solid #e5e7eb;
+        }
+
+        .table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+        }
+
+
+        /* =========================================
+           STATUS
+        ========================================= */
+
+        .status {
+            display: inline-block;
+
+            padding: 7px 11px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-approved {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+
+        /* =========================================
+           ROLE
+        ========================================= */
+
+        .role {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 15px;
+
+            background: #eef2ff;
+            color: #4338ca;
+
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           LOADING
+        ========================================= */
+
+        .loading {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+
+        /* =========================================
+           EMPTY
+        ========================================= */
+
+        .empty {
+            padding: 60px 20px;
+            text-align: center;
+
+            color: #6b7280;
+        }
+
+        .empty i {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+
+        /* =========================================
+           ERROR
+        ========================================= */
+
+        #errorBox {
+            display: none;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 768px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .page-container {
+                padding: 20px 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .table-responsive {
+                font-size: 14px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="fa-solid fa-solar-panel"></i>
+        </div>
+
+        <span>
+            Smart Solar Microgrid
+        </span>
+
+    </div>
+
+
+    <div class="user-info">
+
+        <div>
+
+            <div
+                id="loggedUserName"
+                class="user-name"
+            >
+                Loading...
+            </div>
+
+            <div
+                id="loggedUserRole"
+                class="user-role"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="user-avatar">
+
+            <i class="fa-solid fa-user"></i>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="page-container">
+
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1 class="page-title">
+                User Management
+            </h1>
+
+            <div class="page-subtitle">
+                Manage registered users and account approvals.
+            </div>
+
+        </div>
+
+
+        <div class="d-flex gap-2">
+
+            <button
+                id="refreshBtn"
+                class="btn btn-dark"
+            >
+
+                <i class="fa-solid fa-rotate me-1"></i>
+
+                Refresh
+
+            </button>
+
+
+            <button
+                id="logoutBtn"
+                class="btn btn-outline-danger"
+            >
+
+                <i class="fa-solid fa-right-from-bracket me-1"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ERROR -->
+
+    <div
+        id="errorBox"
+        class="alert alert-danger"
+    >
+
+        <i class="fa-solid fa-circle-exclamation me-2"></i>
+
+        <span id="errorMessage"></span>
+
+    </div>
+
+
+
+    <!-- USERS CARD -->
+
+    <div class="card table-card">
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="loading"
+        >
+
+            <div
+                class="spinner-border text-dark mb-3"
+                role="status"
+            ></div>
+
+            <div>
+                Loading users...
+            </div>
+
+        </div>
+
+
+
+        <!-- TABLE -->
+
+        <div
+            id="tableContainer"
+            class="table-responsive"
+            style="display: none;"
+        >
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Full Name</th>
+
+                        <th>Email</th>
+
+                        <th>Role</th>
+
+                        <th>Status</th>
+
+                        <th>Active</th>
+
+                        <th>Created</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="usersTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- EMPTY -->
+
+        <div
+            id="emptyState"
+            class="empty"
+            style="display: none;"
+        >
+
+            <i class="fa-solid fa-users-slash"></i>
+
+            <h5>
+                No users found
+            </h5>
+
+            <p>
+                There are currently no registered users.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   API
+===================================================== */
+
+const API_BASE_URL =
+    "http://localhost:5205";
+
+
+
+/* =====================================================
+   GET LOGIN DATA
+===================================================== */
+
+const token =
+    localStorage.getItem(
+        "solarGridToken"
+    );
+
+
+const storedUser =
+    localStorage.getItem(
+        "solarGridUser"
+    );
+
+
+let currentUser = null;
+
+
+try {
+
+    if (storedUser) {
+
+        currentUser =
+            JSON.parse(
+                storedUser
+            );
+
+    }
+
+}
+catch (error) {
+
+    console.error(
+        "Invalid user data:",
+        error
+    );
+
+    currentUser = null;
+
+}
+
+
+
+/* =====================================================
+   DISPLAY USER
+===================================================== */
+
+if (currentUser) {
+
+    document.getElementById(
+        "loggedUserName"
+    ).textContent =
+        currentUser.fullName ||
+        "User";
+
+
+    document.getElementById(
+        "loggedUserRole"
+    ).textContent =
+        currentUser.role ||
+        "Unknown";
+
+}
+
+
+
+/* =====================================================
+   IMPORTANT
+   NO ACCESS-DENIED REDIRECT HERE
+
+   Backend will decide whether this user
+   is allowed to access the API.
+===================================================== */
+
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const tableContainer =
+    document.getElementById(
+        "tableContainer"
+    );
+
+
+const emptyState =
+    document.getElementById(
+        "emptyState"
+    );
+
+
+const usersTableBody =
+    document.getElementById(
+        "usersTableBody"
+    );
+
+
+const errorBox =
+    document.getElementById(
+        "errorBox"
+    );
+
+
+const errorMessage =
+    document.getElementById(
+        "errorMessage"
+    );
+
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+function showError(message) {
+
+    errorMessage.textContent =
+        message;
+
+    errorBox.style.display =
+        "block";
+}
+
+
+function hideError() {
+
+    errorBox.style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
+
+function escapeHtml(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "-";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+function statusBadge(status) {
+
+    const value =
+        String(
+            status || "Pending"
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (value === "approved") {
+
+        return `
+            <span class="status status-approved">
+                Approved
+            </span>
+        `;
+
+    }
+
+
+    if (value === "rejected") {
+
+        return `
+            <span class="status status-rejected">
+                Rejected
+            </span>
+        `;
+
+    }
+
+
+    return `
+        <span class="status status-pending">
+            Pending
+        </span>
+    `;
+
+}
+
+
+
+/* =====================================================
+   LOAD USERS
+===================================================== */
+
+async function loadUsers() {
+
+    hideError();
+
+
+    loading.style.display =
+        "block";
+
+
+    tableContainer.style.display =
+        "none";
+
+
+    emptyState.style.display =
+        "none";
+
+
+    usersTableBody.innerHTML =
+        "";
+
+
+    try {
+
+
+        /* ---------------------------------------------
+           CHECK TOKEN
+        --------------------------------------------- */
+
+        if (!token) {
+
+            throw new Error(
+                "No login token found. Please login again."
+            );
+
+        }
+
+
+
+        /* ---------------------------------------------
+           API REQUEST
+        --------------------------------------------- */
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/Users`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+
+        /* ---------------------------------------------
+           SAFE RESPONSE
+        --------------------------------------------- */
+
+        const responseText =
+            await response.text();
+
+
+        let data = null;
+
+
+        if (responseText) {
+
+            try {
+
+                data =
+                    JSON.parse(
+                        responseText
+                    );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "JSON error:",
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        /* ---------------------------------------------
+           401
+        --------------------------------------------- */
+
+        if (
+            response.status === 401
+        ) {
+
+            showError(
+                "Your login session is invalid or expired. Please login again."
+            );
+
+            return;
+
+        }
+
+
+
+        /* ---------------------------------------------
+           403
+        --------------------------------------------- */
+
+        if (
+            response.status === 403
+        ) {
+
+            showError(
+                "Access denied. Only Backoffice users can manage users."
+            );
+
+            return;
+
+        }
+
+
+
+        /* ---------------------------------------------
+           OTHER ERROR
+        --------------------------------------------- */
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                data &&
+                data.message
+                    ? data.message
+                    : `Server error: ${response.status}`
+
+            );
+
+        }
+
+
+
+        /* ---------------------------------------------
+           SUCCESS
+        --------------------------------------------- */
+
+        const users =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        loading.style.display =
+            "none";
+
+
+
+        /* ---------------------------------------------
+           EMPTY
+        --------------------------------------------- */
+
+        if (
+            users.length === 0
+        ) {
+
+            emptyState.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+
+        /* ---------------------------------------------
+           SHOW TABLE
+        --------------------------------------------- */
+
+        tableContainer.style.display =
+            "block";
+
+
+
+        /* ---------------------------------------------
+           CREATE ROWS
+        --------------------------------------------- */
+
+        users.forEach(
+            (user, index) => {
+
+
+                const status =
+                    String(
+                        user.status ||
+                        "Pending"
+                    )
+                    .trim();
+
+
+                const role =
+                    user.role ||
+                    "-";
+
+
+                const active =
+                    user.isActive === true;
+
+
+
+                let actions = "";
+
+
+
+                /* -----------------------------------------
+                   PENDING USER
+                ----------------------------------------- */
+
+                if (
+                    status.toLowerCase() ===
+                    "pending"
+                ) {
+
+                    actions = `
+
+                        <button
+                            class="btn btn-sm btn-success me-1"
+                            onclick="approveUser('${user.id}')"
+                        >
+
+                            <i class="fa-solid fa-check"></i>
+
+                            Approve
+
+                        </button>
+
+
+                        <button
+                            class="btn btn-sm btn-outline-danger"
+                            onclick="rejectUser('${user.id}')"
+                        >
+
+                            <i class="fa-solid fa-xmark"></i>
+
+                            Reject
+
+                        </button>
+
+                    `;
+
+                }
+                else {
+
+                    actions = `
+                        <span class="text-muted">
+                            No action
+                        </span>
+                    `;
+
+                }
+
+
+
+                /* -----------------------------------------
+                   ROW
+                ----------------------------------------- */
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            ${escapeHtml(user.fullName)}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(user.email)}
+                    </td>
+
+
+                    <td>
+
+                        <span class="role">
+                            ${escapeHtml(role)}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        ${statusBadge(status)}
+
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            active
+
+                            ? `
+                                <span class="text-success">
+
+                                    <i
+                                        class="fa-solid fa-circle-check"
+                                    ></i>
+
+                                    Yes
+
+                                </span>
+                              `
+
+                            : `
+                                <span class="text-danger">
+
+                                    <i
+                                        class="fa-solid fa-circle-xmark"
+                                    ></i>
+
+                                    No
+
+                                </span>
+                              `
+                        }
+
+                    </td>
+
+
+                    <td>
+                        ${formatDate(user.createdAt)}
+                    </td>
+
+
+                    <td>
+                        ${actions}
+                    </td>
+
+                `;
+
+
+                usersTableBody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Load users error:",
+            error
+        );
+
+
+        loading.style.display =
+            "none";
+
+
+        showError(
+            error.message ||
+            "Unable to load users."
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   APPROVE USER
+===================================================== */
+
+async function approveUser(userId) {
+
+
+    if (!userId) {
+
+        alert(
+            "Invalid user ID."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "Are you sure you want to approve this user?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/Users/${userId}/approve`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let data = null;
+
+
+        if (responseText) {
+
+            try {
+
+                data =
+                    JSON.parse(
+                        responseText
+                    );
+
+            }
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        if (
+            response.status === 401
+        ) {
+
+            alert(
+                "Your login session has expired. Please login again."
+            );
+
+            return;
+
+        }
+
+
+
+        if (
+            response.status === 403
+        ) {
+
+            alert(
+                "Only Backoffice users can approve users."
+            );
+
+            return;
+
+        }
+
+
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                data &&
+                data.message
+                    ? data.message
+                    : "Unable to approve user."
+
+            );
+
+        }
+
+
+
+        alert(
+
+            data &&
+            data.message
+                ? data.message
+                : "User approved successfully."
+
+        );
+
+
+        await loadUsers();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Approve error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to approve user."
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   REJECT USER
+===================================================== */
+
+async function rejectUser(userId) {
+
+
+    if (!userId) {
+
+        alert(
+            "Invalid user ID."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "Are you sure you want to reject this user?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/Users/${userId}/reject`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let data = null;
+
+
+        if (responseText) {
+
+            try {
+
+                data =
+                    JSON.parse(
+                        responseText
+                    );
+
+            }
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        if (
+            response.status === 401
+        ) {
+
+            alert(
+                "Your login session has expired. Please login again."
+            );
+
+            return;
+
+        }
+
+
+
+        if (
+            response.status === 403
+        ) {
+
+            alert(
+                "Only Backoffice users can reject users."
+            );
+
+            return;
+
+        }
+
+
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                data &&
+                data.message
+                    ? data.message
+                    : "Unable to reject user."
+
+            );
+
+        }
+
+
+
+        alert(
+
+            data &&
+            data.message
+                ? data.message
+                : "User rejected successfully."
+
+        );
+
+
+        await loadUsers();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Reject error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to reject user."
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+document
+    .getElementById(
+        "refreshBtn"
+    )
+    .addEventListener(
+        "click",
+        loadUsers
+    );
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+document
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
+
+
+            localStorage.removeItem(
+                "solarGridToken"
+            );
+
+
+            localStorage.removeItem(
+                "solarGridUser"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadUsers();
+
+
+</script>
+
+
+</body>
+
+</html>
