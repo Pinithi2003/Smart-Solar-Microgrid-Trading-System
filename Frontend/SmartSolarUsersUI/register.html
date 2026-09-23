@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Register — SolarGrid</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <link href="css/styles.css" rel="stylesheet" />
+
+  <style>
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f8f7;
+      padding: 30px 0;
+    }
+
+    .register-wrapper {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+    }
+
+    .register-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e7ecea;
+    }
+
+    .register-logo {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      background: #eef8f2;
+    }
+
+    .register-logo img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .register-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .register-subtitle {
+      text-align: center;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .form-label {
+      font-weight: 600;
+    }
+
+    .input-group-text {
+      background: #f8faf9;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 12px;
+      font-weight: 600;
+      border-radius: 10px;
+    }
+
+    .register-footer {
+      text-align: center;
+      margin-top: 24px;
+      color: #6c757d;
+    }
+
+    .register-footer a {
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    #registerMessage {
+      display: none;
+    }
+
+    .approval-note {
+      background: #f0f8f3;
+      border: 1px solid #d8eee0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #356b4a;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <div class="register-wrapper">
+
+    <div class="register-card">
+
+      <!-- Logo -->
+
+      <div class="register-logo">
+
+        <img
+          src="assets/logo.svg"
+          alt="SolarGrid logo"
+        />
+
+      </div>
+
+
+      <!-- Heading -->
+
+      <h1 class="register-title">
+        Create Your Account
+      </h1>
+
+      <p class="register-subtitle">
+        Join the Smart Solar Microgrid
+      </p>
+
+
+      <!-- Approval Information -->
+
+      <div class="approval-note">
+
+        <i class="fa-solid fa-circle-info me-2"></i>
+
+        New accounts require
+        <strong>Backoffice approval</strong>
+        before you can log in.
+
+      </div>
+
+
+      <!-- Register Form -->
+
+      <form id="registerForm">
+
+
+        <!-- Full Name -->
+
+        <div class="mb-3">
+
+          <label
+            for="fullName"
+            class="form-label"
+          >
+            Full Name
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-user"></i>
+            </span>
+
+            <input
+              type="text"
+              id="fullName"
+              class="form-control"
+              placeholder="Enter your full name"
+              minlength="2"
+              maxlength="120"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Email -->
+
+        <div class="mb-3">
+
+          <label
+            for="email"
+            class="form-label"
+          >
+            Email Address
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-envelope"></i>
+            </span>
+
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              placeholder="Enter your email"
+              maxlength="160"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Password -->
+
+        <div class="mb-3">
+
+          <label
+            for="password"
+            class="form-label"
+          >
+            Password
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              placeholder="Create a password"
+              minlength="6"
+              required
+            />
+
+          </div>
+
+          <small class="text-muted">
+            Password must be at least 6 characters.
+          </small>
+
+        </div>
+
+
+        <!-- Confirm Password -->
+
+        <div class="mb-3">
+
+          <label
+            for="confirmPassword"
+            class="form-label"
+          >
+            Confirm Password
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              placeholder="Confirm your password"
+              minlength="6"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- Account Type -->
+
+        <div class="mb-4">
+
+          <label
+            for="role"
+            class="form-label"
+          >
+            Account Type
+          </label>
+
+          <select
+            id="role"
+            class="form-select"
+            disabled
+          >
+
+            <option
+              value="Prosumer"
+              selected
+            >
+              Prosumer
+            </option>
+
+          </select>
+
+          <small class="text-muted">
+            Public registration is available for Prosumer accounts.
+            Grid Operator and Backoffice accounts are managed by Backoffice.
+          </small>
+
+        </div>
+
+
+        <!-- Message -->
+
+        <div
+          id="registerMessage"
+          class="alert"
+          role="alert"
+        ></div>
+
+
+        <!-- Register Button -->
+
+        <button
+          type="submit"
+          class="btn btn-success btn-register"
+          id="registerButton"
+        >
+
+          <i class="fa-solid fa-user-plus me-2"></i>
+
+          Create Account
+
+        </button>
+
+
+      </form>
+
+
+      <!-- Login -->
+
+      <div class="register-footer">
+
+        Already have an account?
+
+        <a href="login.html">
+          Login
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const API_BASE_URL = "http://localhost:5205";
+
+
+    document
+      .getElementById("registerForm")
+      .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        const fullName =
+          document
+            .getElementById("fullName")
+            .value
+            .trim();
+
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+        const password =
+          document
+            .getElementById("password")
+            .value;
+
+
+        const confirmPassword =
+          document
+            .getElementById("confirmPassword")
+            .value;
+
+
+        const message =
+          document.getElementById("registerMessage");
+
+
+        const button =
+          document.getElementById("registerButton");
+
+
+        message.style.display = "none";
+
+
+        // Check password confirmation
+
+        if (password !== confirmPassword) {
+
+          message.className =
+            "alert alert-danger";
+
+          message.textContent =
+            "Passwords do not match.";
+
+          message.style.display =
+            "block";
+
+          return;
+
+        }
+
+
+        // Check password length
+
+        if (password.length < 6) {
+
+          message.className =
+            "alert alert-danger";
+
+          message.textContent =
+            "Password must be at least 6 characters.";
+
+          message.style.display =
+            "block";
+
+          return;
+
+        }
+
+
+        // Check full name
+
+        if (fullName.length < 2) {
+
+          message.className =
+            "alert alert-danger";
+
+          message.textContent =
+            "Full name must be at least 2 characters.";
+
+          message.style.display =
+            "block";
+
+          return;
+
+        }
+
+
+        // Loading state
+
+        button.disabled = true;
+
+        button.innerHTML =
+          '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+
+
+        try {
+
+          // Public registration endpoint
+
+          const response = await fetch(
+            `${API_BASE_URL}/api/Users/register`,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json"
+              },
+
+              // Role is NOT sent from frontend.
+              // Backend automatically creates a Prosumer account.
+
+              body: JSON.stringify({
+
+                fullName: fullName,
+
+                email: email,
+
+                password: password
+
+              })
+
+            }
+          );
+
+
+          // Read response safely
+
+          const responseText =
+            await response.text();
+
+
+          let data = {};
+
+          if (responseText) {
+
+            try {
+
+              data =
+                JSON.parse(responseText);
+
+            } catch (jsonError) {
+
+              console.error(
+                "Invalid JSON response:",
+                responseText
+              );
+
+            }
+
+          }
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.message ||
+              "Registration failed."
+            );
+
+          }
+
+
+          // Success message
+
+          message.className =
+            "alert alert-success";
+
+          message.textContent =
+            data.message ||
+            "Registration submitted successfully. Your account is pending approval.";
+
+          message.style.display =
+            "block";
+
+
+          // Disable button after success
+
+          button.disabled = true;
+
+
+          // Redirect to login
+
+          setTimeout(function() {
+
+            window.location.href =
+              "login.html";
+
+          }, 2500);
+
+
+        } catch (error) {
+
+          console.error(error);
+
+
+          message.className =
+            "alert alert-danger";
+
+          message.textContent =
+            error.message ||
+            "Unable to connect to the server.";
+
+          message.style.display =
+            "block";
+
+
+          button.disabled = false;
+
+        }
+
+
+        if (
+          !message.classList.contains(
+            "alert-success"
+          )
+        ) {
+
+          button.disabled = false;
+
+          button.innerHTML =
+            '<i class="fa-solid fa-user-plus me-2"></i>Create Account';
+
+        }
+
+      });
+
+  </script>
+
+</body>
+
+</html>

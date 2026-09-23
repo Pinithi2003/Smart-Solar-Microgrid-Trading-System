@@ -1,0 +1,157 @@
+/* Shared Theme & Sidebar Design System for SmartSolarUsersUI (Member 1) */
+:root {
+  --navy: #111d2d;
+  --sidebar-width: 250px;
+  --green: #1e7e4d;
+  --green-dark: #14603a;
+  --mint-bg: #e6f6ec;
+  --mint-text: #157347;
+  --gold: #f3c85e;
+  --page-bg: #f2f5f9;
+  --card-bg: #ffffff;
+  --card-border: #e6ebf1;
+  --card-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  --card-shadow-hover: 0 10px 24px rgba(16, 24, 40, 0.12);
+  --label-grey: #8a94a6;
+  --ink: #101828;
+  --input-bg: #f2f4f7;
+  --radius: 14px;
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, .navbar-brand, .stat-value, .modal-title {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+.page-title {
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- app shell + sidebar ---------- */
+.app-shell {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
+  background-color: var(--navy);
+  color: #dbe4f0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.1rem 0.9rem;
+  z-index: 1040;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.2rem 0.6rem 0;
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar-brand img {
+  height: 34px;
+  width: 34px;
+}
+
+.sidebar-brand strong {
+  display: block;
+  font-size: 1.05rem;
+  line-height: 1.1;
+}
+
+.logo-glow {
+  position: relative;
+  display: inline-flex;
+  border-radius: 8px;
+}
+
+.logo-glow::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 12px;
+  background: conic-gradient(from 0deg, transparent 0 70%, rgba(243, 200, 94, 0.55) 85%, transparent 100%);
+  animation: logo-spin 24s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes logo-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sidebar-divider {
+  border-color: rgba(255, 255, 255, 0.14);
+  margin: 0.9rem 0.4rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #c4cfdf;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+
+.nav-item i {
+  width: 1.1rem;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.nav-item.active {
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-weight: 600;
+}
+
+.content-wrap {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+.topbar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--card-border);
+  padding: 0.75rem 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .content-wrap { margin-left: 0; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.22s ease-out; }
+  .sidebar.open { transform: translateX(0); }
+}

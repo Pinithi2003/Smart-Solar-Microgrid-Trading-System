@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="light">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+<meta
+ name="viewport"
+ content="width=device-width, initial-scale=1.0"
+/>
+
+  <title>Dashboard — Smart Solar Microgrid</title>
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="assets/logo.svg"
+  />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="css/styles.css"
+    rel="stylesheet"
+  />
+
+  <style>
+
+    /* =========================================================
+       DASHBOARD
+       ========================================================= */
+
+    .dashboard-header {
+      margin-bottom: 28px;
+    }
+
+    .dashboard-title {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #172033;
+      margin-bottom: 8px;
+    }
+
+    .dashboard-subtitle {
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+
+
+    /* =========================================================
+       USER PROFILE
+       ========================================================= */
+
+    .user-welcome {
+      background: linear-gradient(
+        135deg,
+        #ffffff,
+        #f3f8ff
+      );
+
+      border: 1px solid #e6ebf2;
+
+      border-radius: 18px;
+
+      padding: 24px;
+
+      margin-bottom: 28px;
+
+      box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .user-avatar {
+      width: 58px;
+      height: 58px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #e8f1ff;
+
+      color: #0d6efd;
+
+      font-size: 24px;
+    }
+
+    .welcome-name {
+      font-size: 20px;
+      font-weight: 700;
+
+      color: #172033;
+    }
+
+    .role-badge {
+      display: inline-block;
+
+      background: #e8f1ff;
+
+      color: #0d6efd;
+
+      border-radius: 20px;
+
+      padding: 5px 12px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+    }
+
+
+    /* =========================================================
+       STAT CARDS
+       ========================================================= */
+
+    .stat-card {
+      background: #ffffff;
+
+      border: 1px solid #e7ebf0;
+
+      border-radius: 18px;
+
+      padding: 22px;
+
+      height: 100%;
+
+      box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+
+      border-radius: 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 20px;
+
+      margin-bottom: 18px;
+    }
+
+    .stat-label {
+      color: #6c757d;
+
+      font-size: 14px;
+
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-family: "Space Grotesk", sans-serif;
+
+      font-size: 30px;
+
+      font-weight: 700;
+
+      color: #172033;
+    }
+
+
+    /* =========================================================
+       QUICK ACTIONS
+       ========================================================= */
+
+    .section-title {
+      font-family: "Space Grotesk", sans-serif;
+
+      font-size: 20px;
+
+      font-weight: 700;
+
+      color: #172033;
+
+      margin-bottom: 18px;
+    }
+
+    .quick-card {
+      background: #ffffff;
+
+      border: 1px solid #e7ebf0;
+
+      border-radius: 16px;
+
+      padding: 20px;
+
+      height: 100%;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.07);
+    }
+
+    .quick-icon {
+      width: 45px;
+      height: 45px;
+
+      border-radius: 11px;
+
+      background: #f0f5ff;
+
+      color: #0d6efd;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      margin-bottom: 14px;
+
+      font-size: 19px;
+    }
+
+    .quick-title {
+      font-weight: 700;
+
+      color: #172033;
+
+      margin-bottom: 5px;
+    }
+
+    .quick-text {
+      font-size: 13px;
+
+      color: #6c757d;
+
+      margin-bottom: 0;
+    }
+
+
+    /* =========================================================
+       RECENT USERS
+       ========================================================= */
+
+    .dashboard-panel {
+      background: #ffffff;
+
+      border: 1px solid #e7ebf0;
+
+      border-radius: 18px;
+
+      padding: 22px;
+
+      box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .table th {
+      font-size: 13px;
+
+      color: #6c757d;
+
+      font-weight: 600;
+
+      white-space: nowrap;
+    }
+
+    .table td {
+      font-size: 14px;
+
+      vertical-align: middle;
+    }
+
+    .status-badge {
+      display: inline-block;
+
+      padding: 5px 10px;
+
+      border-radius: 20px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+    }
+
+    .status-approved {
+      background: #e9f8ef;
+
+      color: #198754;
+    }
+
+    .status-pending {
+      background: #fff4d6;
+
+      color: #996c00;
+    }
+
+    .status-rejected {
+      background: #fdeaea;
+
+      color: #dc3545;
+    }
+
+
+    /* =========================================================
+       SYSTEM STATUS
+       ========================================================= */
+
+    .system-status {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      font-size: 14px;
+
+      color: #495057;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+
+      border-radius: 50%;
+
+      background: #198754;
+    }
+
+
+    /* =========================================================
+       LOADING
+       ========================================================= */
+
+    .loading {
+      color: #6c757d;
+
+      font-size: 14px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <!-- =======================================================
+       SIDEBAR
+       ======================================================= -->
+
+  <aside
+    id="sidebar"
+    class="sidebar"
+    aria-label="Main navigation"
+  >
+
+```
+<a
+  class="sidebar-brand d-flex align-items-center gap-2"
+  href="index.html"
+>
+
+  <span class="logo-glow">
+
+    <img
+      src="assets/logo.svg"
+      alt="SolarGrid logo"
+    />
+
+  </span>
+
+  <span>
+    <strong>SolarGrid</strong>
+  </span>
+
+</a>
+
+
+<hr class="sidebar-divider" />
+
+
+<nav class="sidebar-nav">
+
+
+  <!-- Dashboard -->
+
+  <button
+    class="nav-item active"
+    data-module="dashboard"
+    aria-current="page"
+  >
+
+    <i class="fa-solid fa-house"></i>
+
+    <span>Dashboard</span>
+
+  </button>
+
+
+  <!-- User Management -->
+
+  <button
+    class="nav-item"
+    data-module="users"
+    id="userManagementButton"
+  >
+
+    <i class="fa-solid fa-users"></i>
+
+    <span>User Management</span>
+
+  </button>
+
+
+  <!-- Solar Stations -->
+
+  <button
+    class="nav-item"
+    data-module="stations"
+  >
+
+    <i class="fa-solid fa-solar-panel"></i>
+
+    <span>Solar Stations</span>
+
+  </button>
+
+
+  <!-- Reservations -->
+
+  <button
+    class="nav-item"
+    data-module="reservations"
+  >
+
+    <i class="fa-solid fa-clipboard-list"></i>
+
+    <span>Reservations</span>
+
+  </button>
+
+
+  <!-- QR Verification -->
+
+  <button
+    class="nav-item"
+    data-module="qr"
+  >
+
+    <i class="fa-solid fa-qrcode"></i>
+
+    <span>QR Verification</span>
+
+  </button>
+
+
+  <!-- Profile -->
+
+  <button
+    class="nav-item"
+    data-module="profile"
+  >
+
+    <i class="fa-solid fa-user"></i>
+
+    <span>Profile</span>
+
+  </button>
+
+
+  <!-- About -->
+
+  <button
+    class="nav-item"
+    data-module="about"
+  >
+
+    <i class="fa-solid fa-circle-info"></i>
+
+    <span>About System</span>
+
+  </button>
+
+
+  <!-- Technology -->
+
+  <button
+    class="nav-item"
+    data-module="technology"
+  >
+
+    <i class="fa-solid fa-microchip"></i>
+
+    <span>Technology</span>
+
+  </button>
+
+
+  <!-- Architecture -->
+
+  <button
+    class="nav-item"
+    data-module="architecture"
+  >
+
+    <i class="fa-solid fa-diagram-project"></i>
+
+    <span>Architecture</span>
+
+  </button>
+
+
+</nav>
+```
+
+  </aside>
+
+  <!-- =======================================================
+       MAIN CONTENT
+       ======================================================= -->
+
+  <div class="content-wrap">
+
+```
+<!-- TOP NAVBAR -->
+
+<nav class="navbar navbar-expand topbar">
+
+  <div class="container-fluid">
+
+    <span class="navbar-brand mb-0 h6 fw-bold">
+
+      Member 1 — User & Identity Management
+
+    </span>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+
+      <div class="text-end">
+
+        <div
+          id="topUserName"
+          class="fw-semibold"
+          style="font-size: 14px;"
+        >
+          User
+        </div>
+
+        <div
+          id="topUserRole"
+          class="text-muted"
+          style="font-size: 12px;"
+        >
+          Loading...
+        </div>
+
+      </div>
+
+      <div class="user-avatar">
+
+        <i class="fa-solid fa-user"></i>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
+
+<!-- =======================================================
+     DASHBOARD CONTENT
+     ======================================================= -->
+
+<main class="container-fluid py-4 px-4">
+
+
+  <!-- HEADER -->
+
+  <div class="dashboard-header">
+
+    <h1 class="dashboard-title">
+      Dashboard
+    </h1>
+
+    <p class="dashboard-subtitle">
+      Manage users, approvals and identity access for the
+      Smart Solar Microgrid system.
+    </p>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       WELCOME CARD
+       ===================================================== -->
+
+  <div class="user-welcome">
+
+    <div class="d-flex align-items-center gap-3">
+
+      <div class="user-avatar">
+
+        <i class="fa-solid fa-user-shield"></i>
+
+      </div>
+
+      <div>
+
+        <div class="welcome-name">
+
+          Welcome,
+          <span id="welcomeUser">
+            User
+          </span>
+
+        </div>
+
+        <div class="text-muted mt-1">
+
+          You are logged in as
+
+          <span
+            id="welcomeRole"
+            class="role-badge"
+          >
+            User
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       USER STATISTICS
+       ===================================================== -->
+
+  <div class="row g-4 mb-5">
+
+
+    <!-- Total Users -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div class="stat-card">
+
+        <div
+          class="stat-icon"
+          style="background:#e8f1ff;color:#0d6efd;"
+        >
+
+          <i class="fa-solid fa-users"></i>
+
+        </div>
+
+        <div class="stat-label">
+          Total Users
+        </div>
+
+        <div
+          class="stat-value"
+          id="totalUsers"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Pending -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div class="stat-card">
+
+        <div
+          class="stat-icon"
+          style="background:#fff4d6;color:#996c00;"
+        >
+
+          <i class="fa-solid fa-user-clock"></i>
+
+        </div>
+
+        <div class="stat-label">
+          Pending Approvals
+        </div>
+
+        <div
+          class="stat-value"
+          id="pendingUsers"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Approved -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div class="stat-card">
+
+        <div
+          class="stat-icon"
+          style="background:#e9f8ef;color:#198754;"
+        >
+
+          <i class="fa-solid fa-user-check"></i>
+
+        </div>
+
+        <div class="stat-label">
+          Approved Users
+        </div>
+
+        <div
+          class="stat-value"
+          id="approvedUsers"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Rejected -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div class="stat-card">
+
+        <div
+          class="stat-icon"
+          style="background:#fdeaea;color:#dc3545;"
+        >
+
+          <i class="fa-solid fa-user-xmark"></i>
+
+        </div>
+
+        <div class="stat-label">
+          Rejected Users
+        </div>
+
+        <div
+          class="stat-value"
+          id="rejectedUsers"
+        >
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       QUICK ACTIONS
+       ===================================================== -->
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h2 class="section-title mb-0">
+      Quick Actions
+    </h2>
+
+  </div>
+
+
+  <div class="row g-4 mb-5">
+
+
+    <!-- User Management -->
+
+    <div
+      class="col-xl-3 col-md-6"
+      id="userManagementQuickAction"
+    >
+
+      <div
+        class="quick-card"
+        onclick="openUserManagement()"
+      >
+
+        <div class="quick-icon">
+
+          <i class="fa-solid fa-users"></i>
+
+        </div>
+
+        <div class="quick-title">
+          User Management
+        </div>
+
+        <p class="quick-text">
+          View users and manage account approvals.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Solar Stations -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div
+        class="quick-card"
+        onclick="openStations()"
+      >
+
+        <div class="quick-icon">
+
+          <i class="fa-solid fa-solar-panel"></i>
+
+        </div>
+
+        <div class="quick-title">
+          Solar Stations
+        </div>
+
+        <p class="quick-text">
+          View and manage solar station information.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Reservations -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div
+        class="quick-card"
+        onclick="openReservations()"
+      >
+
+        <div class="quick-icon">
+
+          <i class="fa-solid fa-calendar-check"></i>
+
+        </div>
+
+        <div class="quick-title">
+          Reservations
+        </div>
+
+        <p class="quick-text">
+          View energy booking and reservation information.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- QR Verification -->
+
+    <div class="col-xl-3 col-md-6">
+
+      <div
+        class="quick-card"
+        onclick="openQR()"
+      >
+
+        <div class="quick-icon">
+
+          <i class="fa-solid fa-qrcode"></i>
+
+        </div>
+
+        <div class="quick-title">
+          QR Verification
+        </div>
+
+        <p class="quick-text">
+          Verify transaction QR codes and field operations.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       RECENT USERS + SYSTEM STATUS
+       ===================================================== -->
+
+  <div class="row g-4">
+
+
+    <!-- Recent Users -->
+
+    <div class="col-xl-8">
+
+      <div class="dashboard-panel">
+
+        <div
+          class="d-flex justify-content-between align-items-center mb-3"
+        >
+
+          <div>
+
+            <h2 class="section-title mb-1">
+              Recent Registrations
+            </h2>
+
+            <p class="text-muted small mb-0">
+              Recently registered users in the system.
+            </p>
+
+          </div>
+
+          <button
+            id="viewUsersButton"
+            class="btn btn-outline-primary btn-sm"
+            onclick="openUserManagement()"
+          >
+
+            View All
+
+            <i class="fa-solid fa-arrow-right ms-1"></i>
+
+          </button>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+          <table class="table align-middle">
+
+            <thead>
+
+              <tr>
+
+                <th>USER</th>
+
+                <th>EMAIL</th>
+
+                <th>ROLE</th>
+
+                <th>STATUS</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody id="recentUsersTable">
+
+              <tr>
+
+                <td
+                  colspan="4"
+                  class="text-center loading py-4"
+                >
+
+                  Loading users...
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- System Status -->
+
+    <div class="col-xl-4">
+
+      <div class="dashboard-panel">
+
+        <h2 class="section-title">
+          System Status
+        </h2>
+
+
+        <div class="system-status mb-4">
+
+          <span class="status-dot"></span>
+
+          <span>
+            Frontend Interface
+          </span>
+
+          <strong class="ms-auto text-success">
+            Online
+          </strong>
+
+        </div>
+
+
+        <div class="system-status mb-4">
+
+          <span class="status-dot"></span>
+
+          <span>
+            Authentication
+          </span>
+
+          <strong class="ms-auto text-success">
+            Active
+          </strong>
+
+        </div>
+
+
+        <div class="system-status mb-4">
+
+          <span
+            id="apiStatusDot"
+            class="status-dot"
+          ></span>
+
+          <span>
+            Backend API
+          </span>
+
+          <strong
+            id="apiStatus"
+            class="ms-auto"
+          >
+            Checking...
+          </strong>
+
+        </div>
+
+
+        <hr />
+
+
+        <div class="small text-muted">
+
+          <div class="mb-2">
+
+            <strong>Module:</strong>
+
+            User & Identity Management
+
+          </div>
+
+          <div class="mb-2">
+
+            <strong>Platform:</strong>
+
+            Web Application
+
+          </div>
+
+          <div>
+
+            <strong>Database:</strong>
+
+            MongoDB Atlas
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+</main>
+```
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+  const API_BASE_URL = "http://localhost:5205";
+
+
+  /* =========================================================
+     GET LOGGED-IN USER
+     ========================================================= */
+
+  let currentUser = null;
+
+  try {
+
+    currentUser = JSON.parse(
+      localStorage.getItem("solarGridUser")
+    );
+
+  } catch (error) {
+
+    currentUser = null;
+
+  }
+
+
+  /* =========================================================
+     DISPLAY USER INFORMATION
+     ========================================================= */
+
+  if (currentUser) {
+
+    const fullName =
+      currentUser.fullName || "User";
+
+    const role =
+      currentUser.role || "User";
+
+
+    document.getElementById("topUserName")
+      .textContent = fullName;
+
+    document.getElementById("topUserRole")
+      .textContent = role;
+
+    document.getElementById("welcomeUser")
+      .textContent = fullName;
+
+    document.getElementById("welcomeRole")
+      .textContent = role;
+
+  }
+
+
+  /* =========================================================
+     BACKOFFICE-ONLY USER MANAGEMENT
+     ========================================================= */
+
+  const userManagementButton =
+    document.getElementById(
+      "userManagementButton"
+    );
+
+  const userManagementQuickAction =
+    document.getElementById(
+      "userManagementQuickAction"
+    );
+
+  const viewUsersButton =
+    document.getElementById(
+      "viewUsersButton"
+    );
+
+
+  if (
+    !currentUser ||
+    currentUser.role !== "Backoffice"
+  ) {
+
+    if (userManagementButton) {
+
+      userManagementButton.style.display =
+        "none";
+
+    }
+
+    if (userManagementQuickAction) {
+
+      userManagementQuickAction.style.display =
+        "none";
+
+    }
+
+    if (viewUsersButton) {
+
+      viewUsersButton.style.display =
+        "none";
+
+    }
+
+  }
+
+
+  /* =========================================================
+     LOAD USERS
+     ========================================================= */
+
+  async function loadDashboardUsers() {
+
+    const token =
+      localStorage.getItem(
+        "solarGridToken"
+      );
+
+
+    if (!token) {
+
+      showUserStatistics([]);
+
+      return;
+
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${API_BASE_URL}/api/Users`,
+          {
+            method: "GET",
+
+            headers: {
+              "Authorization":
+                `Bearer ${token}`,
+
+              "Content-Type":
+                "application/json"
+            }
+          }
+        );
+
+
+      const responseText =
+        await response.text();
+
+
+      let data = [];
+
+      try {
+
+        data =
+          responseText
+            ? JSON.parse(responseText)
+            : [];
+
+      } catch (error) {
+
+        data = [];
+
+      }
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Unable to load users."
+        );
+
+      }
+
+
+      showUserStatistics(data);
+
+      showRecentUsers(data);
+
+
+      document.getElementById(
+        "apiStatus"
+      ).textContent = "Online";
+
+      document.getElementById(
+        "apiStatus"
+      ).className =
+        "ms-auto text-success";
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      document.getElementById(
+        "apiStatus"
+      ).textContent = "Unavailable";
+
+      document.getElementById(
+        "apiStatus"
+      ).className =
+        "ms-auto text-danger";
+
+
+      document.getElementById(
+        "recentUsersTable"
+      ).innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="4"
+            class="text-center text-muted py-4"
+          >
+
+            Unable to load user information.
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     USER STATISTICS
+     ========================================================= */
+
+  function showUserStatistics(users) {
+
+    const total =
+      users.length;
+
+
+    const pending =
+      users.filter(
+        user =>
+          user.status === "Pending"
+      ).length;
+
+
+    const approved =
+      users.filter(
+        user =>
+          user.status === "Approved"
+      ).length;
+
+
+    const rejected =
+      users.filter(
+        user =>
+          user.status === "Rejected"
+      ).length;
+
+
+    document.getElementById(
+      "totalUsers"
+    ).textContent = total;
+
+
+    document.getElementById(
+      "pendingUsers"
+    ).textContent = pending;
+
+
+    document.getElementById(
+      "approvedUsers"
+    ).textContent = approved;
+
+
+    document.getElementById(
+      "rejectedUsers"
+    ).textContent = rejected;
+
+  }
+
+
+  /* =========================================================
+     RECENT USERS TABLE
+     ========================================================= */
+
+  function showRecentUsers(users) {
+
+    const table =
+      document.getElementById(
+        "recentUsersTable"
+      );
+
+
+    if (!users.length) {
+
+      table.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="4"
+            class="text-center text-muted py-4"
+          >
+
+            No users registered yet.
+
+          </td>
+
+        </tr>
+
+      `;
+
+      return;
+
+    }
+
+
+    const sortedUsers =
+      [...users]
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        )
+        .slice(0, 5);
+
+
+    table.innerHTML =
+      sortedUsers
+        .map(user => {
+
+          let statusClass =
+            "status-pending";
+
+
+          if (
+            user.status === "Approved"
+          ) {
+
+            statusClass =
+              "status-approved";
+
+          }
+
+          else if (
+            user.status === "Rejected"
+          ) {
+
+            statusClass =
+              "status-rejected";
+
+          }
+
+
+          return `
+
+            <tr>
+
+              <td>
+
+                <strong>
+                  ${escapeHtml(
+                    user.fullName || "Unknown"
+                  )}
+                </strong>
+
+              </td>
+
+
+              <td>
+
+                ${escapeHtml(
+                  user.email || "-"
+                )}
+
+              </td>
+
+
+              <td>
+
+                ${escapeHtml(
+                  user.role || "-"
+                )}
+
+              </td>
+
+
+              <td>
+
+                <span
+                  class="status-badge ${statusClass}"
+                >
+
+                  ${escapeHtml(
+                    user.status || "Unknown"
+                  )}
+
+                </span>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        })
+        .join("");
+
+  }
+
+
+  /* =========================================================
+     HTML ESCAPE
+     ========================================================= */
+
+  function escapeHtml(value) {
+
+    return String(value)
+
+      .replaceAll("&", "&amp;")
+
+      .replaceAll("<", "&lt;")
+
+      .replaceAll(">", "&gt;")
+
+      .replaceAll('"', "&quot;")
+
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  /* =========================================================
+     NAVIGATION FUNCTIONS
+     ========================================================= */
+
+  function openUserManagement() {
+
+    if (
+      !currentUser ||
+      currentUser.role !== "Backoffice"
+    ) {
+
+      window.location.href =
+        "access-denied.html";
+
+      return;
+
+    }
+
+
+    window.location.href =
+      "users.html";
+
+  }
+
+
+  function openStations() {
+
+    window.location.href =
+      "../SmartSolarStationUI/index.html";
+
+  }
+
+
+  function openReservations() {
+
+    window.location.href =
+      "../SmartSolarReservationsUI/index.html";
+
+  }
+
+
+  function openQR() {
+
+    window.location.href =
+      "../SmartSolarFieldOpsUI/index.html";
+
+  }
+
+
+  /* =========================================================
+     SIDEBAR NAVIGATION
+     ========================================================= */
+
+  document
+    .querySelectorAll(
+      ".sidebar-nav .nav-item[data-module]"
+    )
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          const mod =
+            btn.dataset.module;
+
+
+          if (mod === "users") {
+
+            openUserManagement();
+
+          }
+
+
+          else if (
+            mod === "stations"
+          ) {
+
+            openStations();
+
+          }
+
+
+          else if (
+            mod === "reservations"
+          ) {
+
+            openReservations();
+
+          }
+
+
+          else if (
+            mod === "qr"
+          ) {
+
+            openQR();
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =========================================================
+     LOAD DASHBOARD DATA
+     ========================================================= */
+
+  loadDashboardUsers();
+
+</script>
+
+</body>
+
+</html>
