@@ -1,6 +1,6 @@
-package com.smartsolar.stations.stations.util
+package com.smartsolar.stations.s_stations.util
 
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 
 /**
  * Member 2 business rules — mirrors Backend SolarStationInfo.Validate.

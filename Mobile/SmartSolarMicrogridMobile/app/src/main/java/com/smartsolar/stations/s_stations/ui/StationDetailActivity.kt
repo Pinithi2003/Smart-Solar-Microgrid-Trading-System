@@ -1,4 +1,4 @@
-package com.smartsolar.stations.stations.ui
+package com.smartsolar.stations.s_stations.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smartsolar.stations.BuildConfig
 import com.smartsolar.stations.R
-import com.smartsolar.stations.stations.data.StationsDbHelper
-import com.smartsolar.stations.stations.model.SolarStation
-import com.smartsolar.stations.stations.data.ApiClient
-import com.smartsolar.stations.stations.data.StationRepository
+import com.smartsolar.stations.s_stations.data.StationsDbHelper
+import com.smartsolar.stations.s_stations.model.SolarStation
+import com.smartsolar.stations.s_stations.data.ApiClient
+import com.smartsolar.stations.s_stations.data.StationRepository
 import com.smartsolar.stations.core.MockData
 import kotlinx.coroutines.launch
 

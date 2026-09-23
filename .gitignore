@@ -7,4 +7,23 @@ obj/
 *.sln.docstates
 # Local secrets (team convention: copy .env.example to .env, never commit .env)
 .env
+.env.local
+.env.*.local
+!.env.example
+
+# Android / Gradle generated files
+.gradle/
+**/.gradle/
+build/
+**/build/
+local.properties
+.cxx/
+.externalNativeBuild/
+.idea/
+*.iml
+
+# Frontend generated files
+node_modules/
+
+# Editor directories (from main)
 .kilo/

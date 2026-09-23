@@ -1,7 +1,7 @@
 package com.smartsolar.stations.core
 
 import com.smartsolar.stations.auth.model.LocalUser
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 
 /**
  * Demo/mock repository. UI works without backend; later swap with API calls.

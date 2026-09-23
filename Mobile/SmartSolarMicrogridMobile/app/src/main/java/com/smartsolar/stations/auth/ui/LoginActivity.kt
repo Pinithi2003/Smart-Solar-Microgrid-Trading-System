@@ -13,7 +13,7 @@ import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.data.AuthService
 import com.smartsolar.stations.core.MockData
 import com.smartsolar.stations.auth.util.Validators
-import com.smartsolar.stations.stations.ui.StationDetailActivity
+import com.smartsolar.stations.s_stations.ui.StationDetailActivity
 
 /** Demo login — local only. Later calls POST /api/auth/login (Member 1). */
 class LoginActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.smartsolar.stations.stations.ui
+package com.smartsolar.stations.s_stations.ui
 
 import android.content.Context
 import android.content.Intent
@@ -18,7 +18,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.smartsolar.stations.R
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -69,7 +69,7 @@ class MapPreviewFragment : Fragment() {
                 context?.startActivity(
                     android.content.Intent(
                         context,
-                        com.smartsolar.stations.stations.ui.StationFullDetailActivity::class.java
+                        com.smartsolar.stations.s_stations.ui.StationFullDetailActivity::class.java
                     ).putExtra("stationId", target)
                 )
             }
@@ -183,7 +183,7 @@ class MapPreviewFragment : Fragment() {
                     context?.startActivity(
                         android.content.Intent(
                             context,
-                            com.smartsolar.stations.stations.ui.StationFullDetailActivity::class.java
+                            com.smartsolar.stations.s_stations.ui.StationFullDetailActivity::class.java
                         ).putExtra("stationId", st.stationId)
                     )
                     true
