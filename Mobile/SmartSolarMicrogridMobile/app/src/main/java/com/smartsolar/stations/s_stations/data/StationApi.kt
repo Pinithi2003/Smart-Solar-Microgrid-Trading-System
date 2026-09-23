@@ -1,6 +1,6 @@
-package com.smartsolar.stations.stations.data
+package com.smartsolar.stations.s_stations.data
 
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH

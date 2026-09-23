@@ -1,6 +1,6 @@
-package com.smartsolar.stations.stations.data
+package com.smartsolar.stations.s_stations.data
 
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 import com.smartsolar.stations.core.MockData
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

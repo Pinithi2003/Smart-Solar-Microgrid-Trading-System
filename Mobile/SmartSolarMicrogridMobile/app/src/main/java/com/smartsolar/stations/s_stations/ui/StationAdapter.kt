@@ -1,4 +1,4 @@
-package com.smartsolar.stations.stations.ui
+package com.smartsolar.stations.s_stations.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.smartsolar.stations.R
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 import com.smartsolar.stations.core.MockData
 
 /** Card list for stations — RecyclerView where useful (spec §1). */

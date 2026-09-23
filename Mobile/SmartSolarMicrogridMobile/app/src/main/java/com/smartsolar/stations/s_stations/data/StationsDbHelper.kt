@@ -1,10 +1,10 @@
-package com.smartsolar.stations.stations.data
+package com.smartsolar.stations.s_stations.data
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.s_stations.model.SolarStation
 
 /**
  * Local SQLite cache only. Central data lives in MongoDB Atlas (SmartSolarDB)

@@ -1,4 +1,4 @@
-package com.smartsolar.stations.stations.model
+package com.smartsolar.stations.s_stations.model
 
 import com.google.gson.annotations.SerializedName
 

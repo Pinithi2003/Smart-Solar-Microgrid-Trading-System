@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.smartsolar.stations.R
 import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.ui.LoginActivity
-import com.smartsolar.stations.stations.ui.StationDetailActivity
+import com.smartsolar.stations.s_stations.ui.StationDetailActivity
 
 /** Splash → Login (no session) or Map (session exists). Home page retired — Map only. */
 class SplashActivity : AppCompatActivity() {

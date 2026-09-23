@@ -1,4 +1,4 @@
-package com.smartsolar.stations.stations.ui
+package com.smartsolar.stations.s_stations.ui
 
 import android.app.Activity
 import android.content.Intent
