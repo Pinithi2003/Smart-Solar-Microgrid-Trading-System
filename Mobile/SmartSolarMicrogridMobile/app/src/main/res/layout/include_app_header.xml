@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Member 2 Stitch app header. Host sets header_title (e.g. Stations, Map). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="4dp">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_node_logo"
+        android:contentDescription="@string/brand_title"
+        android:padding="6dp"
+        android:src="@drawable/ic_solar" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/brand_title"
+            android:textColor="@color/node_green_dark"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tab_map"
+            android:textColor="@color/node_ink"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/header_bell"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Notifications"
+        android:src="@drawable/ic_bell" />
+
+    <ImageView
+        android:id="@+id/header_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginLeft="4dp"
+        android:background="@drawable/bg_avatar"
+        android:contentDescription="@string/tab_profile"
+        android:padding="7dp"
+        android:src="@drawable/ic_nav_user" />
+</LinearLayout>

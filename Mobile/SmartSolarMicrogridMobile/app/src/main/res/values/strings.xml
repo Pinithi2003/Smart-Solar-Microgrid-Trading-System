@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SolarGrid Stations</string>
+    <string name="splash_title">Smart Solar</string>
+    <string name="splash_subtitle">Microgrid Trading System</string>
+    <string name="splash_tag">Member 2 • Infrastructure</string>
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to view nearby grid nodes</string>
+    <string name="hint_nic">NIC / Email</string>
+    <string name="hint_password">Password</string>
+    <string name="action_login">Login</string>
+    <string name="action_use_prosumer_demo">Use Prosumer demo</string>
+    <string name="action_use_operator_demo">Use Operator demo</string>
+    <string name="stations_title">Solar Stations</string>
+    <string name="error_invalid_credentials">Invalid NIC or password.</string>
+    <string name="error_required_fields">Please enter all required fields.</string>
+    <string name="error_station_not_found">Station not found.</string>
+    <!-- Member 2 Stitch demo strings -->
+    <string name="brand_title">SOLARGRID P2P</string>
+    <string name="search_zones_hint">Search grid stations or zones…</string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_bookings">Bookings</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_qr">QR</string>
+    <string name="tab_profile">Profile</string>
+</resources>

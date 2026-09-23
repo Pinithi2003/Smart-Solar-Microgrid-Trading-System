@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Member 2: stations/map module. Location only for future real map. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Tile + API status checks for the Member 2 map preview. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Cleartext http://10.0.2.2 allowed for local dev API only. -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmartSolar"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="34">
+
+        <activity
+            android:name=".core.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SmartSolar.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".auth.ui.LoginActivity" android:exported="false" />
+        <activity android:name=".stations.ui.StationDetailActivity" android:exported="false" />
+        <activity android:name=".stations.ui.StationFullDetailActivity" android:exported="false" />
+    </application>
+</manifest>
