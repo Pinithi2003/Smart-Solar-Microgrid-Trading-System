@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Solar-energy theme: clean white + solar green/blue accents. -->
+    <color name="solar_green">#1B9E57</color>
+    <color name="solar_green_dark">#137A43</color>
+    <color name="solar_blue">#1B7FBF</color>
+    <color name="solar_amber">#E0A800</color>
+    <color name="solar_bg">#F6F9F6</color>
+    <color name="solar_card">#FFFFFF</color>
+    <color name="solar_text">#1A2B22</color>
+    <color name="solar_muted">#6B7B72</color>
+    <color name="solar_line">#E2EAE5</color>
+    <color name="status_active">#198754</color>
+    <color name="status_maintenance">#E0A800</color>
+    <color name="status_inactive">#DC3545</color>
+    <color name="map_grid">#D9E7DE</color>
+
+    <!-- Member 2 Stitch theme (demo): bright node green. solar_* untouched for Login/Splash. -->
+    <color name="node_green">#22C55E</color>
+    <color name="node_green_dark">#15803D</color>
+    <color name="node_pill">#DCFCE7</color>
+    <color name="node_ink">#0E3B22</color>
+    <color name="node_bg">#F3F7F4</color>
+    <color name="node_nav">#E6F3EA</color>
+    <color name="node_line">#D7E0D9</color>
+    <color name="node_booked_bg">#F1F1F1</color>
+    <color name="node_booked_fg">#9CA3AF</color>
+    <color name="node_warn_bg">#FEF3C7</color>
+    <color name="node_warn_fg">#B45309</color>
+    <color name="node_bad_bg">#FEE2E2</color>
+    <color name="node_bad_fg">#B91C1C</color>
+    <!-- Map marker bubble: ash lite background + dark edge for readability. -->
+    <color name="bubble_ash">#EDF0F2</color>
+    <color name="bubble_edge">#5B6672</color>
+</resources>

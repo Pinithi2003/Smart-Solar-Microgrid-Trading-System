@@ -393,7 +393,7 @@
     }
     try {
       await api.setStatus(stationId, "Active");
-      toast(`Station ${stationId} → Active.`);
+      toast(`${stationId}${s.stationName ? ` (${s.stationName})` : ""} is now Active.`);
       await reload();
     } catch (err) {
       toast(err.message, "error");
@@ -423,8 +423,9 @@
     bootstrap.Modal.getInstance($("confirmModal")).hide();
     if (!id) return;
     try {
+      const s = stations.find((x) => x.stationId === id);
       await api.deactivate(id);
-      toast(`Station ${id} deactivated (soft delete).`);
+      toast(`${id}${s?.stationName ? ` (${s.stationName})` : ""} has been deactivated.`);
       await reload();
     } catch (err) {
       toast(err.message, "error");

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Member 2 Stitch demo filter chips (visual toggles only). -->
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+    android:paddingTop="8dp"
+    android:paddingBottom="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/chip_dist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bg_node_chip_sel"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="◉ 5 km"
+            android:textColor="@color/node_ink"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/chip_sat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bg_node_chip_sel"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="🛰 Satellite"
+            android:textColor="@color/node_ink"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/chip_bi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bg_node_chip_sel"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="⇄ Bi-directional"
+            android:textColor="@color/node_ink"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/chip_tier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_node_chip_sel"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="🏆 Tier 1"
+            android:textColor="@color/node_ink"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</HorizontalScrollView>
