@@ -32,6 +32,7 @@ builder.Services.Configure<MongoDBSettings>(
 
 builder.Services.AddSingleton<SolarStationService>();
 builder.Services.AddSingleton<FieldOperationService>();
+builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<AuthService>();
