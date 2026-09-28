@@ -8,3 +8,13 @@ obj/
 # Local secrets (team convention: copy .env.example to .env, never commit .env)
 .env
 .kilo/
+
+# Android / Gradle
+Mobile/**/.gradle/
+Mobile/**/build/
+Mobile/**/local.properties
+Mobile/**/.idea/
+Mobile/**/*.iml
+Mobile/**/.cxx/
+Mobile/**/captures/
+Mobile/**/.externalNativeBuild/
