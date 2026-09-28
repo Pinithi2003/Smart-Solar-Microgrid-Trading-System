@@ -22,7 +22,11 @@
       Confirmed: "text-bg-success",
       Verified: "text-bg-info",
       Completed: "text-bg-secondary",
-      Cancelled: "text-bg-danger"
+      Cancelled: "text-bg-danger",
+      Available: "text-bg-success",
+      Full: "text-bg-secondary",
+      Inactive: "text-bg-warning",
+      Unavailable: "text-bg-warning"
     };
     return `<span class="badge ${map[status] || "text-bg-dark"}">${esc(status)}</span>`;
   }
@@ -59,18 +63,36 @@
     } catch {
       currentUserId = "";
     }
+    if (!currentUserId) currentUserId = "USR001";
     $("userIdInput").value = currentUserId;
   }
 
   /* ---------------- date bounds: today .. today+7 (7-day booking window) ---------------- */
 
+  function localDateValue(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function slotDay(value) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? "" : localDateValue(d);
+  }
+
   function setDateBounds() {
     const today = new Date();
     const max = new Date();
     max.setDate(today.getDate() + 7);
-    const fmt = (d) => d.toISOString().slice(0, 10);
-    $("dateInput").min = fmt(today);
-    $("dateInput").max = fmt(max);
+    const min = localDateValue(today);
+    const end = localDateValue(max);
+    if (!$("dateInput").value) $("dateInput").value = min;
+    if ($("slotDate")) {
+      $("slotDate").min = min;
+      $("slotDate").max = end;
+      if (!$("slotDate").value) $("slotDate").value = min;
+    }
   }
 
   /* ---------------- stations dropdown ---------------- */
@@ -82,22 +104,25 @@
       stations = [];
       toast(`Could not load stations: ${err.message}`, "error");
     }
-    const select = $("stationSelect");
-    select.innerHTML = '<option value="">Select a station…</option>' +
-      stations
-        .filter((s) => s.status === "Active")
-        .map((s) => `<option value="${esc(s.stationId)}">${esc(s.stationId)} — ${esc(s.stationName)}</option>`)
-        .join("");
+    const option = (s) => {
+      const blocked = s.status === "Active" ? "" : ` (${esc(s.status)} — booking rejected)`;
+      return `<option value="${esc(s.stationId)}">${esc(s.stationId)} — ${esc(s.stationName)}${blocked}</option>`;
+    };
+    const options = stations.map(option).join("");
+    $("stationSelect").innerHTML = '<option value="">Select a station…</option>' + options;
+    if ($("slotStation")) $("slotStation").innerHTML = '<option value="">Select a station…</option>' + stations.filter((s) => s.status === "Active").map(option).join("");
   }
 
   /* ---------------- slots dropdown, filtered by station + date ---------------- */
 
+  let editingSlotId = "";
+  let slotCatalog = [];
+
   async function loadSlots() {
     const stationId = $("stationSelect").value;
-    const date = $("dateInput").value;
     const slotSelect = $("slotSelect");
 
-    if (!stationId || !date) {
+    if (!stationId) {
       slots = [];
       slotSelect.innerHTML = '<option value="">Choose a station and date first…</option>';
       slotSelect.disabled = true;
@@ -106,30 +131,77 @@
       return;
     }
 
+    if (!$("dateInput").value) $("dateInput").value = localDateValue(new Date());
     slotSelect.disabled = false;
     slotSelect.innerHTML = '<option value="">Loading slots…</option>';
 
+    let stationSlots = [];
     try {
-      slots = await api.getSlots(stationId, date);
+      stationSlots = await api.getSlots(stationId);
     } catch (err) {
-      slots = [];
       toast(`Could not load slots: ${err.message}`, "error");
     }
 
-    const available = slots.filter((s) => s.status === "Available" && s.availableEnergy > 0);
+    const today = localDateValue(new Date());
+    const upcoming = stationSlots
+      .filter((s) => slotDay(s.date) >= today)
+      .sort((a, b) => slotDay(a.date).localeCompare(slotDay(b.date)) || a.startTime.localeCompare(b.startTime));
+
+    let date = $("dateInput").value;
+    let daySlots = upcoming.filter((s) => slotDay(s.date) === date);
+    if (!daySlots.length && upcoming.length) {
+      date = slotDay(upcoming[0].date);
+      $("dateInput").value = date;
+      daySlots = upcoming.filter((s) => slotDay(s.date) === date);
+    }
+
+    slots = daySlots;
+    const available = daySlots.filter((s) => s.status === "Available" && s.availableEnergy > 0);
     slotSelect.innerHTML = available.length
       ? available.map((s) => `<option value="${esc(s.slotId)}">${esc(s.startTime)} – ${esc(s.endTime)} (${s.availableEnergy} kWh left)</option>`).join("")
       : '<option value="">No available slots for this date</option>';
 
+    const openDays = [...new Set(upcoming.filter((s) => s.status === "Available" && s.availableEnergy > 0).map((s) => slotDay(s.date)))];
+    $("slotHint").textContent = available.length
+      ? `${available.length} open slot(s) on ${date}.`
+      : (openDays.length ? `No open slots on ${date}. Open days: ${openDays.join(", ")}` : "This station has no open slots in the next 7 days.");
+
     updateSlotHint();
     $("energyAmount").disabled = available.length === 0;
+    updateStats();
+  }
+
+  async function loadSlotCatalog() {
+    try {
+      slotCatalog = await api.getSlots();
+    } catch (err) {
+      slotCatalog = [];
+      toast(`Could not load booking slots: ${err.message}`, "error");
+    }
+    const body = $("slotsBody");
+    if (!body) return;
+    if (!slotCatalog.length) {
+      body.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No booking slots yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = slotCatalog.map((s) => `
+      <tr>
+        <td><strong>${esc(s.slotId)}</strong></td>
+        <td>${esc(s.stationId)}</td>
+        <td>${slotDay(s.date)}<br><small class="text-muted">${esc(s.startTime)} – ${esc(s.endTime)}</small></td>
+        <td>${s.availableEnergy} / ${s.energyCapacity || s.availableEnergy} kWh</td>
+        <td>${statusBadge(s.status)}</td>
+        <td class="text-end text-nowrap">
+          <button class="btn btn-sm btn-outline-secondary me-1" data-edit-slot="${esc(s.slotId)}">Edit</button>
+          <button class="btn btn-sm btn-outline-danger" data-delete-slot="${esc(s.slotId)}">Delete</button>
+        </td>
+      </tr>`).join("");
   }
 
   function updateSlotHint() {
     const slotId = $("slotSelect").value;
     const slot = slots.find((s) => s.slotId === slotId);
     if (!slot) {
-      $("slotHint").textContent = "";
       $("energyAmount").removeAttribute("max");
       return;
     }
@@ -161,7 +233,13 @@
 
     try {
       const result = await api.createReservation(payload);
-      toast(`Reservation ${result.reservation.reservationId} confirmed (code ${result.reservation.verificationCode}).`);
+      const booked = result.reservation;
+      toast(`Reservation ${booked.reservationId} confirmed.`);
+      const box = $("confirmBox");
+      if (box) {
+        box.classList.remove("d-none");
+        box.innerHTML = `<strong>Reservation confirmed.</strong><br>ID: ${esc(booked.reservationId)}<br>Verification code for Member 4: <code>${esc(booked.verificationCode)}</code>`;
+      }
       $("reservationForm").reset();
       loadCurrentUser();
       setDateBounds();
@@ -192,10 +270,10 @@
           <td>${r.energyAmount} kWh</td>
           <td>${statusBadge(r.status)}</td>
           <td><code>${esc(r.verificationCode)}</code></td>
-          <td>
-            <button class="btn btn-sm btn-outline-danger" data-cancel="${esc(r.reservationId)}" ${canCancel ? "" : "disabled"}>
-              Cancel
-            </button>
+          <td class="text-end text-nowrap">
+            <button class="btn btn-sm btn-outline-secondary me-1" data-details="${esc(r.reservationId)}">Edit</button>
+            <button class="btn btn-sm btn-outline-danger me-1" data-cancel="${esc(r.reservationId)}" ${canCancel ? "" : "disabled"}>Cancel</button>
+            <button class="btn btn-sm btn-outline-dark" data-delete="${esc(r.reservationId)}">Delete</button>
           </td>
         </tr>`;
     }).join("");
@@ -218,6 +296,188 @@
       allReservations = [];
     }
     $("allReservationsBody").innerHTML = renderReservationRows(allReservations, { showUser: true });
+    updateStats();
+  }
+
+  /* ---------------- stat cards ---------------- */
+
+  function updateStats() {
+    const confirmed = allReservations.filter((r) => r.status === "Confirmed").length;
+    const cancelled = allReservations.filter((r) => r.status === "Cancelled").length;
+    const openSlots = slots.filter((s) => s.status === "Available" && s.availableEnergy > 0).length;
+
+    $("statTotal").textContent = allReservations.length;
+    $("statConfirmed").textContent = confirmed;
+    $("statCancelled").textContent = cancelled;
+    $("statOpenSlots").textContent = openSlots;
+  }
+
+  /* ---------------- sidebar (mobile) ---------------- */
+
+  function setSidebar(open) {
+    $("sidebar").classList.toggle("open", open);
+    $("sidebarBackdrop").classList.toggle("d-none", !open);
+  }
+
+  function initSidebar() {
+    $("sidebarToggle")?.addEventListener("click", () => {
+      setSidebar(!$("sidebar").classList.contains("open"));
+    });
+    $("sidebarBackdrop")?.addEventListener("click", () => setSidebar(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setSidebar(false);
+    });
+    document.querySelectorAll(".sidebar-nav .nav-item[data-module]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mod = btn.dataset.module;
+        if (mod === "stations") window.location.href = "../SmartSolarStationUI/index.html";
+        else if (mod === "qr") window.location.href = "../SmartSolarFieldOpsUI/index.html";
+        else if (mod === "dashboard" || mod === "users") window.location.href = "../SmartSolarUsersUI/index.html";
+        else if (mod === "reservations") setSidebar(false);
+      });
+    });
+  }
+
+  let detailsReservationId = "";
+
+  async function submitSlot(e) {
+    e.preventDefault();
+    const box = $("slotFormError");
+    box.classList.add("d-none");
+    const payload = {
+      stationId: $("slotStation").value,
+      date: $("slotDate").value,
+      startTime: $("slotStart").value.trim(),
+      endTime: $("slotEnd").value.trim(),
+      energyCapacity: parseFloat($("slotCapacity").value)
+    };
+    const btn = $("slotSubmitBtn");
+    btn.disabled = true;
+    try {
+      if (editingSlotId) {
+        await api.updateSlot(editingSlotId, payload);
+        toast(`Slot ${editingSlotId} updated.`);
+      } else {
+        const result = await api.createSlot(payload);
+        toast(`Slot ${result.slot.slotId} created (${result.slot.availableEnergy} kWh available).`);
+      }
+      editingSlotId = "";
+      btn.textContent = "Create slot";
+      $("slotForm").reset();
+      setDateBounds();
+      await loadStations();
+      await loadSlotCatalog();
+      await loadSlots();
+    } catch (err) {
+      box.textContent = err.message;
+      box.classList.remove("d-none");
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function openDetails(reservationId) {
+    let reservation;
+    try {
+      reservation = await api.getReservation(reservationId);
+    } catch (err) {
+      toast(err.message, "error");
+      return;
+    }
+    detailsReservationId = reservation.reservationId;
+    $("detailsTitle").textContent = reservation.reservationId;
+    $("detailsBody").innerHTML = `
+      <p class="mb-1"><strong>${esc(reservation.stationId)}</strong> · ${esc(reservation.slotId)}</p>
+      <p class="mb-1">${new Date(reservation.date || reservation.bookingDate).toLocaleDateString()} ${esc(reservation.startTime)}–${esc(reservation.endTime)}</p>
+      <p class="mb-1">${reservation.energyAmount} kWh · ${statusBadge(reservation.status)}</p>
+      <p class="mb-0">Verification code: <code>${esc(reservation.verificationCode)}</code></p>`;
+    $("detailsUpdate").classList.toggle("d-none", reservation.status !== "Confirmed");
+    $("updateEnergy").value = reservation.energyAmount;
+    $("markVerifiedBtn").classList.toggle("d-none", reservation.status !== "Confirmed");
+    $("markCompletedBtn").classList.toggle("d-none", reservation.status !== "Verified");
+    bootstrap.Modal.getOrCreateInstance($("detailsModal")).show();
+  }
+
+  async function changeStatus(status) {
+    try {
+      await api.updateStatus(detailsReservationId, status);
+      toast(`Reservation ${detailsReservationId} is now ${status}.`);
+      bootstrap.Modal.getOrCreateInstance($("detailsModal")).hide();
+      await refreshTables();
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  }
+
+  async function submitUpdate(e) {
+    e.preventDefault();
+    try {
+      await api.updateReservation(detailsReservationId, { energyAmount: parseFloat($("updateEnergy").value) });
+      toast(`Reservation ${detailsReservationId} updated.`);
+      bootstrap.Modal.getOrCreateInstance($("detailsModal")).hide();
+      await loadSlots();
+      await refreshTables();
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  }
+
+  function beginSlotEdit(slotId) {
+    const slot = slotCatalog.find((s) => s.slotId === slotId);
+    if (!slot) return;
+    editingSlotId = slotId;
+    $("slotStation").value = slot.stationId;
+    $("slotDate").value = slotDay(slot.date);
+    $("slotStart").value = slot.startTime;
+    $("slotEnd").value = slot.endTime;
+    $("slotCapacity").value = slot.energyCapacity || slot.availableEnergy;
+    $("slotSubmitBtn").textContent = `Save ${slotId}`;
+    $("slotForm").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  async function deleteSlot(slotId) {
+    if (!confirm(`Delete booking slot ${slotId}?`)) return;
+    try {
+      await api.deleteSlot(slotId);
+      toast(`Slot ${slotId} deleted.`);
+      if (editingSlotId === slotId) {
+        editingSlotId = "";
+        $("slotSubmitBtn").textContent = "Create slot";
+        $("slotForm").reset();
+        setDateBounds();
+      }
+      await loadSlotCatalog();
+      await loadSlots();
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  }
+
+  async function deleteReservation(reservationId) {
+    if (!confirm(`Delete reservation ${reservationId}? A confirmed booking is cancelled first, which is only allowed up to 12 hours before the start time.`)) return;
+    try {
+      await api.deleteReservation(reservationId);
+      toast(`Reservation ${reservationId} deleted.`);
+      await loadSlotCatalog();
+      await loadSlots();
+      await refreshTables();
+    } catch (err) {
+      toast(err.message, "error");
+    }
+  }
+
+  async function handleRowClick(e) {
+    const details = e.target.closest("[data-details]");
+    if (details) {
+      openDetails(details.dataset.details);
+      return;
+    }
+    const remove = e.target.closest("[data-delete]");
+    if (remove) {
+      deleteReservation(remove.dataset.delete);
+      return;
+    }
+    await handleCancelClick(e);
   }
 
   async function handleCancelClick(e) {
@@ -241,9 +501,11 @@
   /* ---------------- wire up ---------------- */
 
   document.addEventListener("DOMContentLoaded", async () => {
+    initSidebar();
     loadCurrentUser();
     setDateBounds();
     await loadStations();
+    await loadSlotCatalog();
     await loadSlots();
     await refreshTables();
 
@@ -251,11 +513,22 @@
     $("dateInput").addEventListener("change", loadSlots);
     $("slotSelect").addEventListener("change", updateSlotHint);
     $("reservationForm").addEventListener("submit", submitReservation);
+    $("slotForm")?.addEventListener("submit", submitSlot);
+    $("detailsUpdate")?.addEventListener("submit", submitUpdate);
+    $("markVerifiedBtn")?.addEventListener("click", () => changeStatus("Verified"));
+    $("markCompletedBtn")?.addEventListener("click", () => changeStatus("Completed"));
     $("userIdInput").addEventListener("change", refreshTables);
-    $("myReservationsBody").addEventListener("click", handleCancelClick);
-    $("allReservationsBody").addEventListener("click", handleCancelClick);
+    $("myReservationsBody").addEventListener("click", handleRowClick);
+    $("allReservationsBody").addEventListener("click", handleRowClick);
+    $("slotsBody")?.addEventListener("click", (e) => {
+      const edit = e.target.closest("[data-edit-slot]");
+      const remove = e.target.closest("[data-delete-slot]");
+      if (edit) beginSlotEdit(edit.dataset.editSlot);
+      if (remove) deleteSlot(remove.dataset.deleteSlot);
+    });
     $("refreshBtn").addEventListener("click", async () => {
       await loadStations();
+      await loadSlotCatalog();
       await loadSlots();
       await refreshTables();
       toast("Refreshed.");

@@ -35,6 +35,10 @@ public class EnergyBookingSlot : IValidatableObject
     [Required(ErrorMessage = "EndTime is required (e.g. 12:00 PM).")]
     public string EndTime { get; set; } = string.Empty;
 
+    [BsonElement("energyCapacity")]
+    [Range(0, double.MaxValue, ErrorMessage = "Energy capacity cannot be negative.")]
+    public double EnergyCapacity { get; set; }
+
     [BsonElement("availableEnergy")]
     [Range(0, double.MaxValue, ErrorMessage = "Available energy cannot be negative.")]
     public double AvailableEnergy { get; set; }
@@ -42,7 +46,7 @@ public class EnergyBookingSlot : IValidatableObject
     [BsonElement("status")]
     public string Status { get; set; } = "Available";
 
-    public static readonly string[] AllowedStatuses = ["Available", "Full", "Unavailable"];
+    public static readonly string[] AllowedStatuses = ["Available", "Full", "Inactive", "Unavailable"];
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

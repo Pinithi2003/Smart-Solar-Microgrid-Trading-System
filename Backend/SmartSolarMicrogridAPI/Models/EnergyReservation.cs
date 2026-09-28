@@ -33,6 +33,14 @@ public class EnergyReservation
     [BsonElement("date")]
     public DateTime Date { get; set; }
 
+    /// <summary>Same value as <see cref="Date"/>. Exposed for the Member 3 API contract.</summary>
+    [BsonIgnore]
+    public DateTime BookingDate
+    {
+        get => Date;
+        set => Date = value;
+    }
+
     [BsonElement("startTime")]
     public string StartTime { get; set; } = string.Empty;
 
@@ -47,7 +55,10 @@ public class EnergyReservation
     public string Status { get; set; } = "Confirmed";
 
     [BsonElement("createdAt")]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    [BsonElement("updatedAt")]
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
     [BsonElement("cancelledAt")]
     public DateTime? CancelledAt { get; set; }
