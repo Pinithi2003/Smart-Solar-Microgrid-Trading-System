@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common & Brand -->
+    <string name="app_name">SolarGrid Stations</string>
+    <string name="brand_title">SOLARGRID P2P</string>
+    <string name="splash_title">Smart Solar</string>
+    <string name="splash_subtitle">Microgrid Trading System</string>
+    <string name="splash_tag">P2P Renewable Energy Platform</string>
+
+    <!-- Member 2: Infrastructure Strings -->
+    <string name="stations_title">Solar Stations</string>
+    <string name="stations_subtitle">Monitor performance, availability and maintenance.</string>
+    <string name="search_hint">Search station here</string>
+    <string name="search_zones_hint">Search grid stations or zones…</string>
+    <string name="telemetry_badge">● Live Telemetry</string>
+    <string name="map_preview_badge">Preview — Full Maps by Member 4</string>
+    <string name="map_offline_note">Map tiles offline (demo). Station data above is unaffected.</string>
+    <string name="detail_book">Book Slot (Member 3)</string>
+    <string name="select_date">Select Date</string>
+    <string name="seven_day_window">7-Day Window</string>
+    <string name="select_slot">Select Slot</string>
+    <string name="trade_amount">Trade Amount</string>
+    <string name="rate_demo">$0.24 / kWh</string>
+    <string name="confirm_booking">Confirm Booking</string>
+
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_bookings">Bookings</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_qr">QR</string>
+    <string name="tab_profile">Profile</string>
+    <string name="tab_scan">Scan QR</string>
+    <string name="tab_transactions">Transfers</string>
+
+    <!-- Login & Register -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to trade solar energy on the microgrid</string>
+    <string name="hint_nic">NIC / Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="hint_email">Email Address</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="action_login">Login</string>
+    <string name="action_register">Create Account</string>
+    <string name="action_goto_register">Don\'t have an account? Register</string>
+    <string name="action_goto_login">Already have an account? Login</string>
+    <string name="action_use_prosumer_demo">Demo Prosumer (Nimal)</string>
+    <string name="action_use_operator_demo">Demo Grid Operator (Kamal)</string>
+
+    <!-- Prosumer Dashboard -->
+    <string name="greeting_prosumer">Hello, %s 👋</string>
+    <string name="role_prosumer">Solar Prosumer</string>
+    <string name="stat_active_bookings">Active Bookings</string>
+    <string name="stat_pending_bookings">Pending Bookings</string>
+    <string name="stat_completed_bookings">Completed</string>
+    <string name="action_nearby_nodes">Nearby Grid Nodes</string>
+    <string name="action_book_slot">Book a Slot</string>
+    <string name="action_my_bookings">My Bookings</string>
+    <string name="action_booking_history">Booking History</string>
+    <string name="action_transaction_qr">Transaction QR</string>
+    <string name="action_profile">Profile</string>
+    <string name="action_search_bookings">Search Bookings</string>
+
+    <!-- Member 4: Grid Operator Dashboard & QR Verification -->
+    <string name="greeting_operator">Hello, Operator 👷</string>
+    <string name="role_operator">Grid Operator #01</string>
+    <string name="stat_today_transactions">Today\'s Transactions</string>
+    <string name="stat_pending_verification">Pending Verification</string>
+    <string name="stat_completed_transfers">Completed Transfers</string>
+    <string name="action_scan_qr">Scan QR Code</string>
+    <string name="action_verify_transaction">Verify Transaction</string>
+    <string name="action_completed_transactions">Completed Transactions</string>
+    <string name="title_scan_qr">Scan Transaction QR</string>
+    <string name="title_verify_transaction">Verify Transaction</string>
+    <string name="action_finalize_transfer">Finalize Energy Transfer</string>
+
+    <!-- Grid Nodes & Booking -->
+    <string name="title_nearby_nodes">Nearby Grid Nodes</string>
+    <string name="subtitle_nearby_nodes">Locate microgrid stations within trading range</string>
+    <string name="title_node_details">Grid Node Details</string>
+    <string name="title_booking">Book Energy Slot</string>
+    <string name="select_time_slot">Select Time Slot</string>
+    <string name="hint_energy_amount">Energy Amount (kWh)</string>
+    <string name="estimated_cost">Estimated Trading Rate: $0.24 / kWh</string>
+    <string name="action_confirm_booking">Confirm Booking</string>
+    <string name="action_cancel_booking">Cancel Reservation</string>
+    <string name="action_modify_booking">Modify Reservation</string>
+    <string name="action_generate_qr">Generate Transaction QR</string>
+
+    <!-- Errors & Validation Messages -->
+    <string name="error_invalid_credentials">Invalid NIC or password.</string>
+    <string name="error_required_fields">Please enter all required fields.</string>
+    <string name="error_station_not_found">Station not found.</string>
+    <string name="error_invalid_email">Please enter a valid email address.</string>
+    <string name="error_password_mismatch">Passwords do not match.</string>
+    <string name="error_password_length">Password must be at least 6 characters.</string>
+    <string name="error_booking_window">Bookings are only permitted within the 7-day window.</string>
+    <string name="error_cancel_12h">You cannot cancel this booking within 12 hours of the scheduled
+        time.</string>
+    <string name="error_qr_not_approved">Transaction QR is only available for APPROVED reservations.</string>
+    <string name="error_deactivation_active_bookings">You cannot deactivate your account while
+        active reservations exist.</string>
+    <string name="error_txn_not_found">Transaction ID not found.</string>
+    <string name="error_txn_already_completed">This reservation has already been completed.</string>
+    <string name="error_txn_cancelled">This reservation has been cancelled.</string>
+</resources>

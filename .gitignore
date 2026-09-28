@@ -27,3 +27,13 @@ node_modules/
 
 # Editor directories (from main)
 .kilo/
+
+# Android / Gradle
+Mobile/**/.gradle/
+Mobile/**/build/
+Mobile/**/local.properties
+Mobile/**/.idea/
+Mobile/**/*.iml
+Mobile/**/.cxx/
+Mobile/**/captures/
+Mobile/**/.externalNativeBuild/

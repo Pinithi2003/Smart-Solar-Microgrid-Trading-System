@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SmartSolar" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/solar_green</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">@color/solar_blue</item>
+        <item name="android:windowBackground">@color/solar_bg</item>
+    </style>
+    <style name="Theme.SmartSolar.Splash" parent="Theme.SmartSolar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+    <style name="Widget.SmartSolar.Card" parent="">
+        <item name="android:background">@drawable/bg_card_rounded</item>
+    </style>
+</resources>
