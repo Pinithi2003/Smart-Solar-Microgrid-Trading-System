@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : ReservationService.cs
+// Description : Business rules for booking slots and energy reservations.
+// ------------------------------------------------------------
+
 using System.Globalization;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
@@ -26,6 +34,7 @@ public class ReservationService
 
     public ReservationService(IOptions<MongoDBSettings> settings, ILogger<ReservationService> logger)
     {
+        // Opens MongoDB and prepares the booking slot and reservation collections.
         _logger = logger;
         _databaseName = settings.Value.DatabaseName;
 
@@ -66,6 +75,7 @@ public class ReservationService
 
     private void EnsureReady()
     {
+        // Stops the request when MongoDB failed to start.
         if (_initError is not null)
             throw new InvalidOperationException(
                 $"Database unavailable for Reservations ({_initError.GetType().Name}: {_initError.Message}).",
@@ -76,11 +86,14 @@ public class ReservationService
     // Booking slots
     // ---------------------------------------------------------------
 
-    public async Task<List<EnergyBookingSlot>> GetAvailableSlots() =>
-        await GetSlotsAsync(null, null);
+    public async Task<List<EnergyBookingSlot>> GetAvailableSlots() {
+        // Returns every booking slot.
+        return await GetSlotsAsync(null, null);
+    }
 
     public async Task<List<EnergyBookingSlot>> GetSlotsAsync(string? stationId, DateTime? date)
     {
+        // Returns booking slots, optionally filtered by station and calendar date.
         EnsureReady();
         var filter = Builders<EnergyBookingSlot>.Filter.Empty;
         if (!string.IsNullOrWhiteSpace(stationId))
@@ -96,12 +109,14 @@ public class ReservationService
 
     public async Task<EnergyBookingSlot?> GetSlotByIdAsync(string slotId)
     {
+        // Returns one booking slot by its slot id.
         EnsureReady();
         return await _slots.Find(s => s.SlotId == slotId).FirstOrDefaultAsync();
     }
 
     public async Task<(bool Success, int StatusCode, string Message, EnergyBookingSlot? Slot)> CreateSlotAsync(CreateBookingSlotDto dto)
     {
+        // Creates a slot on an active station inside the 7-day window.
         EnsureReady();
 
         var station = await _stations.Find(s => s.StationId == dto.StationId).FirstOrDefaultAsync();
@@ -142,6 +157,7 @@ public class ReservationService
 
     public async Task<(bool Success, int StatusCode, string Message, EnergyBookingSlot? Slot)> UpdateSlotAsync(string slotId, UpdateBookingSlotDto dto)
     {
+        // Updates a slot date, time, capacity or status.
         EnsureReady();
 
         var slot = await _slots.Find(s => s.SlotId == slotId).FirstOrDefaultAsync();
@@ -188,6 +204,7 @@ public class ReservationService
 
     public async Task<(bool Success, int StatusCode, string Message)> DeleteSlotAsync(string slotId)
     {
+        // Deletes a slot that has no confirmed reservation.
         EnsureReady();
 
         var slot = await _slots.Find(s => s.SlotId == slotId).FirstOrDefaultAsync();
@@ -205,6 +222,7 @@ public class ReservationService
     public async Task<(bool Success, int StatusCode, string Message)> DeleteReservationAsync(
         string reservationId, string? callerUserId = null, string? callerRole = null)
     {
+        // Deletes a reservation, cancelling a confirmed booking first.
         EnsureReady();
 
         var reservation = await _reservations.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
@@ -236,18 +254,21 @@ public class ReservationService
 
     public async Task<List<EnergyReservation>> GetAllReservationsAsync()
     {
+        // Returns every reservation, newest first.
         EnsureReady();
         return await _reservations.Find(_ => true).SortByDescending(r => r.CreatedAt).ToListAsync();
     }
 
     public async Task<EnergyReservation?> GetReservationByIdAsync(string reservationId)
     {
+        // Returns one reservation by its reservation id.
         EnsureReady();
         return await _reservations.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
     }
 
     public async Task<List<EnergyReservation>> GetUserReservationsAsync(string userId)
     {
+        // Returns the reservations that belong to one user.
         EnsureReady();
         return await _reservations.Find(r => r.UserId == userId)
             .SortByDescending(r => r.CreatedAt)
@@ -261,6 +282,7 @@ public class ReservationService
     /// </summary>
     public async Task<(bool Success, int StatusCode, string Message, EnergyReservation? Reservation)> CreateReservationAsync(CreateReservationDto dto)
     {
+        // Validates the booking, stores the reservation and consumes energy.
         EnsureReady();
 
         var (ok, statusCode, message, station, slot) = await ValidateBooking(dto);
@@ -311,6 +333,7 @@ public class ReservationService
     public async Task<(bool Success, int StatusCode, string Message, EnergyReservation? Reservation)> CancelReservationAsync(
         string reservationId, string? callerUserId = null, string? callerRole = null)
     {
+        // Cancels a confirmed reservation when at least 12 hours remain.
         EnsureReady();
 
         var reservation = await _reservations.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
@@ -346,6 +369,7 @@ public class ReservationService
     public async Task<(bool Success, int StatusCode, string Message, EnergyReservation? Reservation)> UpdateReservationAsync(
         string reservationId, UpdateReservationDto dto, string? callerUserId = null, string? callerRole = null)
     {
+        // Updates energy or slot when at least 12 hours remain.
         EnsureReady();
 
         var reservation = await _reservations.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
@@ -415,6 +439,7 @@ public class ReservationService
     public async Task<(bool Success, int StatusCode, string Message, EnergyReservation? Reservation)> UpdateStatusAsync(
         string reservationId, string status, string? callerUserId = null, string? callerRole = null)
     {
+        // Moves a reservation to Verified, Completed or Cancelled.
         EnsureReady();
 
         var reservation = await _reservations.Find(r => r.ReservationId == reservationId).FirstOrDefaultAsync();
@@ -456,6 +481,7 @@ public class ReservationService
     public async Task<(bool Ok, int StatusCode, string Message, SolarStationInfo? Station, EnergyBookingSlot? Slot)>
         ValidateBooking(CreateReservationDto dto, string? ignoreReservationId = null)
     {
+        // Checks station, slot, 7-day window, capacity and duplicate bookings.
         EnsureReady();
 
         if (dto.EnergyAmount <= 0)
@@ -507,6 +533,7 @@ public class ReservationService
 
     private static bool CanManage(string? callerUserId, string? callerRole, string ownerUserId)
     {
+        // Allows the owner, or Backoffice and Grid Operator, to change a reservation.
         if (string.IsNullOrWhiteSpace(callerUserId))
             return true;
 
@@ -518,12 +545,14 @@ public class ReservationService
 
     private static bool HasTwelveHoursRemaining(EnergyReservation reservation)
     {
+        // Returns true when the slot start is at least 12 hours away.
         var bookingStart = CombineDateAndTime(reservation.Date, reservation.StartTime);
         return (bookingStart - DateTime.Now).TotalHours >= 12;
     }
 
     private async Task<bool> UserExistsAsync(string userId)
     {
+        // Accepts a Mongo id, email, demo user id or Sri Lankan NIC.
         if (string.IsNullOrWhiteSpace(userId))
             return false;
 
@@ -542,12 +571,15 @@ public class ReservationService
                 return true;
         }
 
-        // Mobile and field-ops modules use demo ids such as USR001.
-        return Regex.IsMatch(id, "^USR\\d{3,}$", RegexOptions.IgnoreCase);
+        // Demo ids (USR001) and Sri Lankan NIC values used as the prosumer key.
+        return Regex.IsMatch(id, "^USR\\d{3,}$", RegexOptions.IgnoreCase)
+            || Regex.IsMatch(id, "^\\d{9}[VvXx]$")
+            || Regex.IsMatch(id, "^\\d{12}$");
     }
 
     private async Task<bool> TryConsumeEnergyAsync(string slotId, string stationId, double amount)
     {
+        // Atomically reduces slot and station energy for a booking.
         var slotFilter =
             Builders<EnergyBookingSlot>.Filter.Eq(s => s.SlotId, slotId) &
             Builders<EnergyBookingSlot>.Filter.Eq(s => s.Status, "Available") &
@@ -595,6 +627,7 @@ public class ReservationService
 
     private async Task RestoreEnergyAsync(string slotId, string stationId, double amount)
     {
+        // Returns energy to the slot and the station.
         await RestoreSlotOnlyAsync(slotId, amount);
 
         var station = await _stations.Find(s => s.StationId == stationId).FirstOrDefaultAsync();
@@ -611,6 +644,7 @@ public class ReservationService
 
     private async Task RestoreSlotOnlyAsync(string slotId, double amount)
     {
+        // Returns energy to the slot only.
         var slot = await _slots.Find(s => s.SlotId == slotId).FirstOrDefaultAsync();
         if (slot is null)
             return;
@@ -632,6 +666,7 @@ public class ReservationService
     /// </summary>
     private static DateTime CalendarUtc(DateTime value)
     {
+        // Stores the calendar day as UTC midnight so date filters match.
         if (value.Kind == DateTimeKind.Utc && value.TimeOfDay != TimeSpan.Zero)
             return DateTime.SpecifyKind(value.ToLocalTime().Date, DateTimeKind.Utc);
 
@@ -652,6 +687,7 @@ public class ReservationService
 
     private async Task<string> NextReservationIdAsync()
     {
+        // Builds the next unused reservation id such as RES001.
         var count = await _reservations.CountDocumentsAsync(FilterDefinition<EnergyReservation>.Empty);
         var next = count + 1;
         var candidate = $"RES{next:000}";
@@ -668,6 +704,7 @@ public class ReservationService
 
     private async Task<string> NextSlotIdAsync()
     {
+        // Builds the next unused slot id such as SLOT001.
         var count = await _slots.CountDocumentsAsync(FilterDefinition<EnergyBookingSlot>.Empty);
         var next = count + 1;
         var candidate = $"SLOT{next:000}";
@@ -681,9 +718,11 @@ public class ReservationService
 
     private void SeedIfEmpty()
     {
+        // Inserts sample slots when the collection is missing demo data.
         var today = DateTime.Now.Date;
         var seedPlan = new List<EnergyBookingSlot>
         {
+            // Inserts sample slots when the collection is missing demo data.
             new() { SlotId = "SLOT001", StationId = "ST001", Date = today.AddDays(2), StartTime = "10:00 AM", EndTime = "12:00 PM", EnergyCapacity = 50, AvailableEnergy = 50, Status = "Available" },
             new() { SlotId = "SLOT002", StationId = "ST001", Date = today.AddDays(2), StartTime = "1:00 PM",  EndTime = "3:00 PM",  EnergyCapacity = 40, AvailableEnergy = 40, Status = "Available" },
             new() { SlotId = "SLOT003", StationId = "ST002", Date = today.AddDays(3), StartTime = "9:00 AM",  EndTime = "11:00 AM", EnergyCapacity = 30, AvailableEnergy = 30, Status = "Available" },

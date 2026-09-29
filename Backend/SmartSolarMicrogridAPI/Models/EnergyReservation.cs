@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : EnergyReservation.cs
+// Description : MongoDB document for one energy reservation.
+// ------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -37,8 +45,16 @@ public class EnergyReservation
     [BsonIgnore]
     public DateTime BookingDate
     {
-        get => Date;
-        set => Date = value;
+        get
+        {
+            // Returns the stored reservation date.
+            return Date;
+        }
+        set
+        {
+            // Stores the booking date on the reservation.
+            Date = value;
+        }
     }
 
     [BsonElement("startTime")]

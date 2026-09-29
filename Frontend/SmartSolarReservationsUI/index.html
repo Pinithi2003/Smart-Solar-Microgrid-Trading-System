@@ -1,313 +1,78 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Energy Booking & Reservations — Smart Solar Microgrid</title>
-  <meta name="description" content="Member 3: Energy Booking & Reservation UI for the Smart Solar Microgrid Trading System." />
+  <title>All reservations — Smart Solar</title>
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link href="css/styles.css" rel="stylesheet" />
 </head>
 <body>
-  <div class="app-shell">
-    <aside id="sidebar" class="sidebar" aria-label="Main navigation">
-      <a class="sidebar-brand d-flex align-items-center gap-2" href="#">
-        <span class="logo-glow"><img src="assets/logo.svg" alt="SolarGrid logo" /></span>
-        <span><strong>SolarGrid</strong></span>
-      </a>
-      <hr class="sidebar-divider" />
-      <nav class="sidebar-nav">
-        <button class="nav-item" data-module="dashboard">
-          <i class="fa-solid fa-house"></i><span>Dashboard</span>
-        </button>
-        <button class="nav-item" data-module="users">
-          <i class="fa-solid fa-users"></i><span>User Management</span>
-        </button>
-        <button class="nav-item" data-module="stations">
-          <i class="fa-solid fa-solar-panel"></i><span>Solar Stations</span>
-        </button>
-        <button class="nav-item active" data-module="reservations" aria-current="page">
-          <i class="fa-solid fa-clipboard-list"></i><span>Reservations</span>
-        </button>
-        <button class="nav-item" data-module="qr">
-          <i class="fa-solid fa-qrcode"></i><span>QR Verification</span>
-        </button>
-        <button class="nav-item" data-module="profile">
-          <i class="fa-solid fa-user"></i><span>Profile</span>
-        </button>
-      </nav>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-sun"></i></span><div><strong>Smart Solar</strong><span data-user-role>Microgrid</span></div></a>
+      <a class="side-link" href="../SmartSolarUsersUI/index.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a class="side-link" href="../SmartSolarStationUI/index.html"><i class="fa-solid fa-solar-panel"></i> Stations</a>
+      <a class="side-link active" href="index.html"><i class="fa-solid fa-clipboard-list"></i> Reservations</a>
+      <a class="side-link" href="slots.html"><i class="fa-solid fa-clock"></i> Slot lookup</a>
+      <a class="side-link" href="../SmartSolarUsersUI/users.html"><i class="fa-solid fa-users"></i> User Management</a>
+      <a class="side-link" href="../SmartSolarFieldOpsUI/index.html"><i class="fa-solid fa-qrcode"></i> QR Verification</a>
+      <div class="side-spacer"></div>
+      <button class="logout" id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
     </aside>
-    <div id="sidebarBackdrop" class="sidebar-backdrop d-none"></div>
-
-    <div class="content-wrap">
-      <nav class="navbar navbar-expand bg-white border-bottom sticky-top topbar">
-        <div class="container-fluid gap-2">
-          <button id="sidebarToggle" class="icon-btn d-lg-none" aria-label="Open navigation">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-          <span class="navbar-brand mb-0 h6 fw-bold flex-grow-1">Member 3 — Energy Booking &amp; Reservation</span>
-          <div class="d-flex align-items-center gap-2 ms-auto">
-            <button class="icon-btn" title="Notifications (demo)" aria-label="Notifications">
-              <i class="fa-solid fa-bell"></i><span class="notif-dot"></span>
-            </button>
-            <span class="profile-chip" title="Signed in as Prosumer (demo)">
-              <span class="profile-avatar">PR</span><span class="d-none d-sm-inline">Prosumer</span>
-            </span>
-          </div>
-        </div>
-      </nav>
-
-      <main class="container py-4">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-          <h1 class="page-title mb-0">Energy Reservations</h1>
-          <button id="refreshBtn" class="btn btn-outline-secondary" title="Refresh data">
-            <i class="fa-solid fa-rotate"></i> Refresh
-          </button>
-        </div>
-        <p class="text-muted mt-1 mb-4">Reserve available solar energy from an active station, then track and manage your bookings.</p>
-
-        <!-- Stat cards -->
-        <div class="row g-3 mb-4">
-          <div class="col-6 col-lg-3">
-            <div class="card stat-card"><div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="stat-label">TOTAL RESERVATIONS</span>
-                <i class="fa-solid fa-clipboard-list stat-icon"></i>
-              </div>
-              <div id="statTotal" class="stat-value">–</div>
-              <span class="trend-pill"><i class="fa-solid fa-database"></i> All-time</span>
-            </div></div>
-          </div>
-          <div class="col-6 col-lg-3">
-            <div class="card stat-card"><div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="stat-label">CONFIRMED</span>
-                <i class="fa-solid fa-circle-check stat-icon"></i>
-              </div>
-              <div id="statConfirmed" class="stat-value">–</div>
-              <span class="trend-pill"><i class="fa-solid fa-bolt"></i> Active bookings</span>
-            </div></div>
-          </div>
-          <div class="col-6 col-lg-3">
-            <div class="card stat-card"><div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="stat-label">CANCELLED</span>
-                <i class="fa-solid fa-ban stat-icon"></i>
-              </div>
-              <div id="statCancelled" class="stat-value">–</div>
-              <span class="trend-pill trend-warn"><i class="fa-solid fa-rotate-left"></i> Energy restored</span>
-            </div></div>
-          </div>
-          <div class="col-6 col-lg-3">
-            <div class="card stat-card"><div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="stat-label">OPEN SLOTS</span>
-                <i class="fa-solid fa-calendar-check stat-icon"></i>
-              </div>
-              <div id="statOpenSlots" class="stat-value">–</div>
-              <span class="trend-pill"><i class="fa-solid fa-battery-three-quarters"></i> For selected date</span>
-            </div></div>
-          </div>
-        </div>
-
-        <div class="row g-4">
-          <!-- Booking form -->
-          <div class="col-lg-5">
-            <div class="card booking-card">
-              <div class="card-body">
-                <h2 class="h6 mb-3 fw-bold"><i class="fa-solid fa-plug-circle-bolt text-success"></i> Reserve Energy</h2>
-                <div id="formError" class="alert alert-danger d-none" role="alert"></div>
-                <form id="reservationForm">
-                  <div class="mb-3">
-                    <label class="form-label" for="userIdInput">User ID</label>
-                    <input id="userIdInput" class="form-control" placeholder="USR001" required />
-                    <div class="form-text">Also used to look up "My Reservations" below.</div>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="stationSelect">Solar station</label>
-                    <select id="stationSelect" class="form-select" required>
-                      <option value="">Select a station…</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="dateInput">Date <span class="text-muted fw-normal">(within next 7 days)</span></label>
-                    <input id="dateInput" type="date" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="slotSelect">Time slot</label>
-                    <select id="slotSelect" class="form-select" disabled required>
-                      <option value="">Choose a station and date first…</option>
-                    </select>
-                    <div id="slotHint" class="slot-hint mt-1"></div>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="energyAmount">Energy amount (kWh)</label>
-                    <input id="energyAmount" type="number" step="0.1" min="0.1" class="form-control" placeholder="e.g. 20" disabled required />
-                  </div>
-                  <button id="submitBtn" type="submit" class="btn btn-save-dark w-100">
-                    <i class="fa-solid fa-bolt"></i> Reserve Energy
-                  </button>
-                </form>
-                <div id="confirmBox" class="alert alert-success d-none mt-3 mb-0" role="status"></div>
-              </div>
+    <div class="main">
+      <div class="topbar"><span>Smart Solar Microgrid / Reservations</span><div class="who"><span data-user-name>Guest</span><span class="avatar"><i class="fa-solid fa-user"></i></span></div></div>
+      <div class="content">
+        <div class="kicker">RESERVATION MANAGEMENT</div>
+        <h1>All reservations</h1>
+        <p class="lead">Every booking is listed here. A new booking is approved as soon as it is created. <span id="counts"></span></p>
+        <div class="cards">
+          <section class="panel tint">
+            <div class="icon-bubble"><i class="fa-solid fa-bolt"></i></div>
+            <h2>New booking</h2>
+            <p>Book an energy slot for a prosumer at an active station within the next seven days.</p>
+            <a class="btn-yellow" href="booking.html" style="text-decoration:none">+ Create booking</a>
+          </section>
+          <section class="panel">
+            <div class="icon-bubble gray"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <h2>Find a reservation</h2>
+            <p>Open a booking by its reference to view, change or cancel it.</p>
+            <div class="find-row">
+              <input id="lookup" placeholder="e.g. RES001" />
+              <button id="openBtn" class="btn-ghost" type="button">Open</button>
             </div>
-
-            <div class="card booking-card mt-4">
-              <div class="card-body">
-                <h2 class="h6 mb-3 fw-bold"><i class="fa-solid fa-calendar-plus text-success"></i> Add Booking Slot</h2>
-                <div id="slotFormError" class="alert alert-danger d-none" role="alert"></div>
-                <form id="slotForm">
-                  <div class="mb-3">
-                    <label class="form-label" for="slotStation">Solar station</label>
-                    <select id="slotStation" class="form-select" required>
-                      <option value="">Select a station…</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="slotDate">Date</label>
-                    <input id="slotDate" type="date" class="form-control" required />
-                  </div>
-                  <div class="row g-2 mb-3">
-                    <div class="col-6">
-                      <label class="form-label" for="slotStart">Start</label>
-                      <input id="slotStart" class="form-control" placeholder="10:00 AM" required />
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label" for="slotEnd">End</label>
-                      <input id="slotEnd" class="form-control" placeholder="12:00 PM" required />
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="slotCapacity">Energy capacity (kWh)</label>
-                    <input id="slotCapacity" type="number" step="0.1" min="0.1" class="form-control" placeholder="50" required />
-                  </div>
-                  <button id="slotSubmitBtn" type="submit" class="btn btn-outline-success w-100">Create slot</button>
-                </form>
-              </div>
-            </div>
+          </section>
+        </div>
+        <section class="panel">
+          <div class="list-head"><h2 style="margin:0">Reservations</h2><span id="count" class="count"></span></div>
+          <div class="filters">
+            <input id="search" placeholder="Search name, NIC, station or reference" style="flex:1" />
+            <select id="viewFilter">
+              <option value="">All bookings</option>
+              <option value="current">Current (today)</option>
+              <option value="pending">Pending</option>
+              <option value="future">Approved future</option>
+              <option value="history">History</option>
+            </select>
+            <select id="statusFilter">
+              <option value="">All statuses</option>
+              <option value="Confirmed">Approved</option>
+              <option value="Verified">Verified</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <select id="stationFilter"><option value="">All stations</option></select>
           </div>
-
-          <!-- My reservations -->
-          <div class="col-lg-7">
-            <div class="card directory-card">
-              <div class="card-body">
-                <h2 class="h6 mb-3 fw-bold"><i class="fa-solid fa-user-clock text-success"></i> My Reservations</h2>
-                <div class="table-responsive">
-                  <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Reservation ID</th>
-                        <th>Station</th>
-                        <th>Date / Time</th>
-                        <th>Energy</th>
-                        <th>Status</th>
-                        <th>Verification Code</th>
-                        <th class="text-end">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody id="myReservationsBody">
-                      <tr><td colspan="7" class="text-center text-muted py-4">Enter a User ID to view reservations.</td></tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card directory-card mt-4">
-          <div class="card-body">
-            <h2 class="h6 mb-3 fw-bold"><i class="fa-solid fa-clock text-success"></i> Booking Slots</h2>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Slot</th>
-                    <th>Station</th>
-                    <th>Date / Time</th>
-                    <th>Energy</th>
-                    <th>Status</th>
-                    <th class="text-end">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="slotsBody">
-                  <tr><td colspan="6" class="text-center text-muted py-4">Loading slots…</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- All reservations (admin/demo overview) -->
-        <div class="card directory-card mt-4">
-          <div class="card-body">
-            <h2 class="h6 mb-3 fw-bold"><i class="fa-solid fa-list-check text-success"></i> All Reservations <span class="badge text-bg-info">Demo overview</span></h2>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Reservation ID</th>
-                    <th>User</th>
-                    <th>Station</th>
-                    <th>Date / Time</th>
-                    <th>Energy</th>
-                    <th>Status</th>
-                    <th>Verification Code</th>
-                    <th class="text-end">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="allReservationsBody">
-                  <tr><td colspan="8" class="text-center text-muted py-4">Loading reservations…</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="alert alert-info mt-4 mb-0">
-          <i class="fa-solid fa-circle-info"></i>
-          Booking rules enforced by the API: reservations must fall within the next <strong>7 days</strong>, the station must be <strong>Active</strong>
-          (try ST003 or ST005), requested energy must not exceed the slot, and cancel or update is rejected inside
-          <strong>12 hours</strong> of the start time. SLOT006 on ST001 is today's near slot for that demo. Energy is restored after a successful cancel.
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="detailsTitle">Reservation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="detailsBody"></div>
-        <form id="detailsUpdate" class="px-3 pb-3 d-none">
-          <label class="form-label" for="updateEnergy">Update energy (kWh)</label>
-          <div class="input-group">
-            <input id="updateEnergy" type="number" min="0.1" step="0.1" class="form-control" required />
-            <button class="btn btn-outline-success" type="submit">Save</button>
-          </div>
-          <div class="form-text">The 12-hour rule applies to updates as well as cancellation.</div>
-        </form>
-        <div class="modal-footer">
-          <button type="button" id="markVerifiedBtn" class="btn btn-outline-success d-none">Mark verified</button>
-          <button type="button" id="markCompletedBtn" class="btn btn-outline-primary d-none">Mark completed</button>
-        </div>
+          <div id="rows"></div>
+        </section>
       </div>
     </div>
   </div>
-
-  <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/ui.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/reservations.js"></script>
 </body>
 </html>

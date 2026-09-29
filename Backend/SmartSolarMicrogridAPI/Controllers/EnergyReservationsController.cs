@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : EnergyReservationsController.cs
+// Description : REST API for creating, updating, cancelling and listing reservations.
+// ------------------------------------------------------------
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using SmartSolarMicrogridAPI.Models;
@@ -11,12 +19,17 @@ public class EnergyReservationsController : ControllerBase
 {
     private readonly ReservationService _service;
 
-    public EnergyReservationsController(ReservationService service) => _service = service;
+    public EnergyReservationsController(ReservationService service)
+    {
+        // Receives the reservation service used by this controller.
+        _service = service;
+    }
 
     // GET /api/reservations  (all reservations - handy for an admin/demo view)
     [HttpGet]
     public async Task<ActionResult<List<EnergyReservation>>> GetAll()
     {
+        // Lists every reservation.
         var reservations = await _service.GetAllReservationsAsync();
         return Ok(reservations);
     }
@@ -26,6 +39,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpGet("my")]
     public async Task<ActionResult<List<EnergyReservation>>> GetMine([FromQuery] string? userId)
     {
+        // Lists the signed-in user reservations, or the userId query for the web UI.
         var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(id))
             id = userId;
@@ -40,6 +54,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpGet("{reservationId}")]
     public async Task<ActionResult<EnergyReservation>> GetOne(string reservationId)
     {
+        // Returns one reservation or slot by id.
         var reservation = await _service.GetReservationByIdAsync(reservationId);
         return reservation is null
             ? NotFound(new { message = $"Reservation {reservationId} not found." })
@@ -50,6 +65,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<EnergyReservation>>> GetForUser(string userId)
     {
+        // Lists reservations for a user id.
         var reservations = await _service.GetUserReservationsAsync(userId);
         return Ok(reservations);
     }
@@ -58,6 +74,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<EnergyReservation>> Create([FromBody] CreateReservationDto dto)
     {
+        // Creates a reservation or booking slot.
         if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
         var (success, statusCode, message, reservation) = await _service.CreateReservationAsync(dto);
@@ -73,6 +90,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpPatch("{reservationId}/cancel")]
     public async Task<ActionResult<EnergyReservation>> Cancel(string reservationId)
     {
+        // Cancels a reservation through the 12-hour rule.
         var (callerId, callerRole) = Caller();
         var (success, statusCode, message, reservation) = await _service.CancelReservationAsync(reservationId, callerId, callerRole);
 
@@ -86,6 +104,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpPut("{reservationId}")]
     public async Task<ActionResult<EnergyReservation>> Update(string reservationId, [FromBody] UpdateReservationDto dto)
     {
+        // Updates a reservation or booking slot.
         if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
         var (callerId, callerRole) = Caller();
@@ -100,6 +119,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpPatch("{reservationId}/status")]
     public async Task<ActionResult<EnergyReservation>> UpdateStatus(string reservationId, [FromBody] StatusUpdateDto dto)
     {
+        // Changes reservation status.
         if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
         var (callerId, callerRole) = Caller();
@@ -114,6 +134,7 @@ public class EnergyReservationsController : ControllerBase
     [HttpDelete("{reservationId}")]
     public async Task<IActionResult> Delete(string reservationId)
     {
+        // Deletes a reservation.
         var (callerId, callerRole) = Caller();
         var (success, statusCode, message) = await _service.DeleteReservationAsync(reservationId, callerId, callerRole);
         if (!success)
@@ -122,6 +143,9 @@ public class EnergyReservationsController : ControllerBase
         return Ok(new { message });
     }
 
-    private (string? UserId, string? Role) Caller() =>
-        (User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Role));
+    private (string? UserId, string? Role) Caller()
+    {
+        // Reads the user id and role from the token when one is present.
+        return (User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Role));
+    }
 }

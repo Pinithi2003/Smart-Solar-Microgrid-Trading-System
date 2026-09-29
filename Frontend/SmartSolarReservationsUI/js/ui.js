@@ -64,7 +64,7 @@
       currentUserId = "";
     }
     if (!currentUserId) currentUserId = "USR001";
-    $("userIdInput").value = currentUserId;
+    if ($("userIdInput")) $("userIdInput").value = currentUserId;
   }
 
   /* ---------------- date bounds: today .. today+7 (7-day booking window) ---------------- */
@@ -87,7 +87,7 @@
     max.setDate(today.getDate() + 7);
     const min = localDateValue(today);
     const end = localDateValue(max);
-    if (!$("dateInput").value) $("dateInput").value = min;
+    if ($("dateInput") && !$("dateInput").value) $("dateInput").value = min;
     if ($("slotDate")) {
       $("slotDate").min = min;
       $("slotDate").max = end;
@@ -109,7 +109,7 @@
       return `<option value="${esc(s.stationId)}">${esc(s.stationId)} — ${esc(s.stationName)}${blocked}</option>`;
     };
     const options = stations.map(option).join("");
-    $("stationSelect").innerHTML = '<option value="">Select a station…</option>' + options;
+    if ($("stationSelect")) $("stationSelect").innerHTML = '<option value="">Select a station…</option>' + options;
     if ($("slotStation")) $("slotStation").innerHTML = '<option value="">Select a station…</option>' + stations.filter((s) => s.status === "Active").map(option).join("");
   }
 
@@ -119,6 +119,7 @@
   let slotCatalog = [];
 
   async function loadSlots() {
+    if (!$("stationSelect") || !$("slotSelect")) return;
     const stationId = $("stationSelect").value;
     const slotSelect = $("slotSelect");
 
@@ -199,6 +200,7 @@
   }
 
   function updateSlotHint() {
+    if (!$("slotSelect") || !$("energyAmount")) return;
     const slotId = $("slotSelect").value;
     const slot = slots.find((s) => s.slotId === slotId);
     if (!slot) {
@@ -235,16 +237,11 @@
       const result = await api.createReservation(payload);
       const booked = result.reservation;
       toast(`Reservation ${booked.reservationId} confirmed.`);
-      const box = $("confirmBox");
-      if (box) {
-        box.classList.remove("d-none");
-        box.innerHTML = `<strong>Reservation confirmed.</strong><br>ID: ${esc(booked.reservationId)}<br>Verification code for Member 4: <code>${esc(booked.verificationCode)}</code>`;
-      }
+      await showSummary("Reservation created", booked);
       $("reservationForm").reset();
       loadCurrentUser();
       setDateBounds();
       await loadSlots();
-      await refreshTables();
     } catch (err) {
       showFormError(err.message);
     } finally {
@@ -255,10 +252,56 @@
 
   /* ---------------- reservation tables ---------------- */
 
+  function bookingDay(reservation) {
+    return slotDay(reservation.date || reservation.bookingDate);
+  }
+
+  function isPending(reservation) {
+    return reservation.status === "Confirmed";
+  }
+
+  function isApprovedFuture(reservation) {
+    const today = localDateValue(new Date());
+    return (reservation.status === "Confirmed" || reservation.status === "Verified") && bookingDay(reservation) >= today;
+  }
+
+  function isCurrent(reservation) {
+    const today = localDateValue(new Date());
+    return (reservation.status === "Confirmed" || reservation.status === "Verified") && bookingDay(reservation) === today;
+  }
+
+  function isHistory(reservation) {
+    return reservation.status === "Completed" || reservation.status === "Cancelled" || bookingDay(reservation) < localDateValue(new Date());
+  }
+
+  function matchesView(reservation, view) {
+    if (view === "pending") return isPending(reservation);
+    if (view === "history") return isHistory(reservation);
+    if (view === "current") return isCurrent(reservation);
+    return true;
+  }
+
+  function applyReservationFilters(list) {
+    const view = $("viewFilter")?.value || "current";
+    const status = $("statusFilter")?.value || "";
+    const query = ($("reservationSearch")?.value || "").trim().toLowerCase();
+    return list.filter((reservation) => {
+      if (!matchesView(reservation, view)) return false;
+      if (status && reservation.status !== status) return false;
+      if (!query) return true;
+      return [reservation.reservationId, reservation.userId, reservation.stationId, reservation.slotId, reservation.verificationCode, reservation.status]
+        .join(" ")
+        .toLowerCase()
+        .includes(query);
+    });
+  }
+
   function renderReservationRows(list, { showUser }) {
-    if (!list.length) {
-      return `<tr><td colspan="${showUser ? 8 : 7}" class="text-center text-muted py-4">No reservations yet.</td></tr>`;
+    const visible = applyReservationFilters(list);
+    if (!visible.length) {
+      return `<tr><td colspan="${showUser ? 8 : 7}" class="text-center text-muted py-4">No reservations in this view.</td></tr>`;
     }
+    list = visible;
     return list.map((r) => {
       const canCancel = r.status === "Confirmed";
       return `
@@ -280,7 +323,8 @@
   }
 
   async function refreshTables() {
-    const userId = $("userIdInput").value.trim() || currentUserId;
+    if (!$("myReservationsBody") && !$("allReservationsBody")) return;
+    const userId = ($("userIdInput")?.value || "").trim() || currentUserId;
 
     try {
       myReservations = userId ? await api.getUserReservations(userId) : [];
@@ -288,28 +332,61 @@
       myReservations = [];
       toast(`Could not load your reservations: ${err.message}`, "error");
     }
-    $("myReservationsBody").innerHTML = renderReservationRows(myReservations, { showUser: false });
+    if ($("myReservationsBody")) {
+      $("myReservationsBody").innerHTML = renderReservationRows(myReservations, { showUser: false });
+    }
 
     try {
       allReservations = await api.getAllReservations();
     } catch (err) {
       allReservations = [];
     }
-    $("allReservationsBody").innerHTML = renderReservationRows(allReservations, { showUser: true });
+    if ($("allReservationsBody")) {
+      $("allReservationsBody").innerHTML = renderReservationRows(allReservations, { showUser: true });
+    }
     updateStats();
   }
 
   /* ---------------- stat cards ---------------- */
 
   function updateStats() {
-    const confirmed = allReservations.filter((r) => r.status === "Confirmed").length;
-    const cancelled = allReservations.filter((r) => r.status === "Cancelled").length;
-    const openSlots = slots.filter((s) => s.status === "Available" && s.availableEnergy > 0).length;
+    if (!$("statPending")) return;
+    $("statPending").textContent = allReservations.filter(isPending).length;
+    $("statApprovedFuture").textContent = allReservations.filter(isApprovedFuture).length;
+    $("statCurrent").textContent = allReservations.filter(isCurrent).length;
+    $("statHistory").textContent = allReservations.filter(isHistory).length;
+  }
 
-    $("statTotal").textContent = allReservations.length;
-    $("statConfirmed").textContent = confirmed;
-    $("statCancelled").textContent = cancelled;
-    $("statOpenSlots").textContent = openSlots;
+  function showTextSummary(title, rows) {
+    $("summaryTitle").textContent = title;
+    $("summaryBody").innerHTML = rows
+      .map(([label, value]) => `<div class="detail-row"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`)
+      .join("");
+    const qrBox = $("summaryQr");
+    qrBox.innerHTML = "";
+    qrBox.classList.add("d-none");
+    bootstrap.Modal.getOrCreateInstance($("summaryModal")).show();
+  }
+
+  async function showSummary(title, reservation) {
+    $("summaryTitle").textContent = title;
+    $("summaryBody").innerHTML = `
+      <div class="detail-row"><span>Reservation</span><strong>${esc(reservation.reservationId)}</strong></div>
+      <div class="detail-row"><span>User</span><strong>${esc(reservation.userId)}</strong></div>
+      <div class="detail-row"><span>Station / slot</span><strong>${esc(reservation.stationId)} · ${esc(reservation.slotId)}</strong></div>
+      <div class="detail-row"><span>When</span><strong>${bookingDay(reservation)} ${esc(reservation.startTime)}–${esc(reservation.endTime)}</strong></div>
+      <div class="detail-row"><span>Energy</span><strong>${reservation.energyAmount} kWh</strong></div>
+      <div class="detail-row"><span>Status</span><strong>${statusBadge(reservation.status)}</strong></div>
+      <div class="detail-row"><span>Verification code</span><strong><code>${esc(reservation.verificationCode)}</code></strong></div>`;
+    const qrBox = $("summaryQr");
+    qrBox.innerHTML = "";
+    if (reservation.verificationCode && window.QRCode) {
+      qrBox.classList.remove("d-none");
+      new QRCode(qrBox, { text: reservation.verificationCode, width: 180, height: 180 });
+    } else {
+      qrBox.classList.add("d-none");
+    }
+    bootstrap.Modal.getOrCreateInstance($("summaryModal")).show();
   }
 
   /* ---------------- sidebar (mobile) ---------------- */
@@ -333,7 +410,8 @@
         if (mod === "stations") window.location.href = "../SmartSolarStationUI/index.html";
         else if (mod === "qr") window.location.href = "../SmartSolarFieldOpsUI/index.html";
         else if (mod === "dashboard" || mod === "users") window.location.href = "../SmartSolarUsersUI/index.html";
-        else if (mod === "reservations") setSidebar(false);
+        else if (mod === "booking") window.location.href = "index.html";
+        else if (mod === "reservations") window.location.href = "reservations.html";
       });
     });
   }
@@ -355,11 +433,27 @@
     btn.disabled = true;
     try {
       if (editingSlotId) {
-        await api.updateSlot(editingSlotId, payload);
+        const result = await api.updateSlot(editingSlotId, payload);
+        const slot = result.slot || { slotId: editingSlotId, ...payload };
         toast(`Slot ${editingSlotId} updated.`);
+        showTextSummary("Booking slot updated", [
+          ["Slot", slot.slotId || editingSlotId],
+          ["Station", slot.stationId || payload.stationId],
+          ["When", `${payload.date} ${payload.startTime}–${payload.endTime}`],
+          ["Capacity", `${payload.energyCapacity} kWh`],
+          ["Status", slot.status || "Updated"]
+        ]);
       } else {
         const result = await api.createSlot(payload);
-        toast(`Slot ${result.slot.slotId} created (${result.slot.availableEnergy} kWh available).`);
+        const slot = result.slot;
+        toast(`Slot ${slot.slotId} created (${slot.availableEnergy} kWh available).`);
+        showTextSummary("Booking slot created", [
+          ["Slot", slot.slotId],
+          ["Station", slot.stationId],
+          ["When", `${slotDay(slot.date)} ${slot.startTime}–${slot.endTime}`],
+          ["Available energy", `${slot.availableEnergy} kWh`],
+          ["Status", slot.status]
+        ]);
       }
       editingSlotId = "";
       btn.textContent = "Create slot";
@@ -367,7 +461,7 @@
       setDateBounds();
       await loadStations();
       await loadSlotCatalog();
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
     } catch (err) {
       box.textContent = err.message;
       box.classList.remove("d-none");
@@ -401,9 +495,11 @@
   async function changeStatus(status) {
     try {
       await api.updateStatus(detailsReservationId, status);
+      const updated = await api.getReservation(detailsReservationId);
       toast(`Reservation ${detailsReservationId} is now ${status}.`);
       bootstrap.Modal.getOrCreateInstance($("detailsModal")).hide();
       await refreshTables();
+      await showSummary("Reservation status updated", updated);
     } catch (err) {
       toast(err.message, "error");
     }
@@ -413,10 +509,12 @@
     e.preventDefault();
     try {
       await api.updateReservation(detailsReservationId, { energyAmount: parseFloat($("updateEnergy").value) });
+      const updated = await api.getReservation(detailsReservationId);
       toast(`Reservation ${detailsReservationId} updated.`);
       bootstrap.Modal.getOrCreateInstance($("detailsModal")).hide();
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
       await refreshTables();
+      await showSummary("Reservation updated", updated);
     } catch (err) {
       toast(err.message, "error");
     }
@@ -440,6 +538,10 @@
     try {
       await api.deleteSlot(slotId);
       toast(`Slot ${slotId} deleted.`);
+      showTextSummary("Booking slot deleted", [
+        ["Slot", slotId],
+        ["Result", "The slot was removed. Confirmed reservations must be cancelled first."]
+      ]);
       if (editingSlotId === slotId) {
         editingSlotId = "";
         $("slotSubmitBtn").textContent = "Create slot";
@@ -447,7 +549,7 @@
         setDateBounds();
       }
       await loadSlotCatalog();
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
     } catch (err) {
       toast(err.message, "error");
     }
@@ -458,8 +560,12 @@
     try {
       await api.deleteReservation(reservationId);
       toast(`Reservation ${reservationId} deleted.`);
+      showTextSummary("Reservation deleted", [
+        ["Reservation", reservationId],
+        ["Result", "The reservation was removed. A confirmed booking is cancelled first when the 12-hour rule allows it."]
+      ]);
       await loadSlotCatalog();
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
       await refreshTables();
     } catch (err) {
       toast(err.message, "error");
@@ -490,8 +596,10 @@
     try {
       const result = await api.cancelReservation(reservationId);
       toast(`Reservation ${reservationId} cancelled. Energy restored.`);
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
+      await loadSlotCatalog();
       await refreshTables();
+      if (result.reservation) await showSummary("Reservation cancelled", result.reservation);
     } catch (err) {
       toast(err.message, "error");
       btn.disabled = false;
@@ -506,30 +614,36 @@
     setDateBounds();
     await loadStations();
     await loadSlotCatalog();
-    await loadSlots();
+    if ($("stationSelect")) await loadSlots();
     await refreshTables();
 
-    $("stationSelect").addEventListener("change", loadSlots);
-    $("dateInput").addEventListener("change", loadSlots);
-    $("slotSelect").addEventListener("change", updateSlotHint);
-    $("reservationForm").addEventListener("submit", submitReservation);
+    $("stationSelect")?.addEventListener("change", loadSlots);
+    $("dateInput")?.addEventListener("change", loadSlots);
+    $("slotSelect")?.addEventListener("change", updateSlotHint);
+    $("reservationForm")?.addEventListener("submit", submitReservation);
     $("slotForm")?.addEventListener("submit", submitSlot);
     $("detailsUpdate")?.addEventListener("submit", submitUpdate);
     $("markVerifiedBtn")?.addEventListener("click", () => changeStatus("Verified"));
     $("markCompletedBtn")?.addEventListener("click", () => changeStatus("Completed"));
-    $("userIdInput").addEventListener("change", refreshTables);
-    $("myReservationsBody").addEventListener("click", handleRowClick);
-    $("allReservationsBody").addEventListener("click", handleRowClick);
+    $("userIdInput")?.addEventListener("change", refreshTables);
+    $("viewFilter")?.addEventListener("change", refreshTables);
+    $("statusFilter")?.addEventListener("change", refreshTables);
+    $("reservationSearch")?.addEventListener("input", () => {
+      if ($("myReservationsBody")) $("myReservationsBody").innerHTML = renderReservationRows(myReservations, { showUser: false });
+      if ($("allReservationsBody")) $("allReservationsBody").innerHTML = renderReservationRows(allReservations, { showUser: true });
+    });
+    $("myReservationsBody")?.addEventListener("click", handleRowClick);
+    $("allReservationsBody")?.addEventListener("click", handleRowClick);
     $("slotsBody")?.addEventListener("click", (e) => {
       const edit = e.target.closest("[data-edit-slot]");
       const remove = e.target.closest("[data-delete-slot]");
       if (edit) beginSlotEdit(edit.dataset.editSlot);
       if (remove) deleteSlot(remove.dataset.deleteSlot);
     });
-    $("refreshBtn").addEventListener("click", async () => {
+    $("refreshBtn")?.addEventListener("click", async () => {
       await loadStations();
       await loadSlotCatalog();
-      await loadSlots();
+      if ($("stationSelect")) await loadSlots();
       await refreshTables();
       toast("Refreshed.");
     });

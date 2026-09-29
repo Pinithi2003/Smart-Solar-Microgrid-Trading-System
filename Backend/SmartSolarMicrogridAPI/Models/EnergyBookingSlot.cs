@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : EnergyBookingSlot.cs
+// Description : MongoDB document for one energy booking slot.
+// ------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -50,6 +58,7 @@ public class EnergyBookingSlot : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
+        // Checks that the slot status is one of the allowed values.
         if (!AllowedStatuses.Contains(Status))
             yield return new ValidationResult(
                 $"Status must be one of: {string.Join(", ", AllowedStatuses)}.",

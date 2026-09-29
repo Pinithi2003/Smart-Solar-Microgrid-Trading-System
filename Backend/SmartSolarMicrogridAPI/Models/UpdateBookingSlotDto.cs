@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : UpdateBookingSlotDto.cs
+// Description : Request body for updating a booking slot.
+// ------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartSolarMicrogridAPI.Models;
