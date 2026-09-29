@@ -7,53 +7,136 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.smartsolar.stations.R
-import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.data.AuthService
-import com.smartsolar.stations.core.MockData
-import com.smartsolar.stations.auth.util.Validators
-import com.smartsolar.stations.s_stations.ui.StationDetailActivity
+import com.smartsolar.stations.auth.data.RetrofitClient
+import com.smartsolar.stations.auth.data.SessionManager
+import com.smartsolar.stations.stations.ui.StationDetailActivity
+import kotlinx.coroutines.launch
 
-/** Demo login — local only. Later calls POST /api/auth/login (Member 1). */
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val nic = findViewById<TextInputEditText>(R.id.inputNic)
-        val pwd = findViewById<TextInputEditText>(R.id.inputPassword)
-        val err = findViewById<TextView>(R.id.errorText)
-        val progress = findViewById<ProgressBar>(R.id.loginProgress)
+        // Initialize Retrofit with application context
+        RetrofitClient.initialize(this)
 
-        fun attempt(nicVal: String, pwdVal: String) {
-            err.visibility = View.GONE
-            Validators.requireLogin(nicVal, pwdVal)?.let {
-                err.text = it; err.visibility = View.VISIBLE; return
+        val email =
+            findViewById<TextInputEditText>(R.id.inputEmail)
+
+        val password =
+            findViewById<TextInputEditText>(R.id.inputPassword)
+
+        val errorText =
+            findViewById<TextView>(R.id.errorText)
+
+        val progress =
+            findViewById<ProgressBar>(R.id.loginProgress)
+
+        val loginButton =
+            findViewById<Button>(R.id.loginButton)
+
+        // Register button
+        val registerButton =
+            findViewById<Button>(R.id.registerButton)
+
+        registerButton.setOnClickListener {
+
+            startActivity(
+                Intent(
+                    this@LoginActivity,
+                    RegisterActivity::class.java
+                )
+            )
+        }
+
+        loginButton.setOnClickListener {
+
+            val emailValue =
+                email.text?.toString()?.trim().orEmpty()
+
+            val passwordValue =
+                password.text?.toString().orEmpty()
+
+            errorText.visibility = View.GONE
+
+            // Validate email
+            if (emailValue.isEmpty()) {
+                errorText.text = "Email is required."
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
             }
-            progress.visibility = View.VISIBLE
-            // Simulate network latency for loading-state demo.
-            nic.postDelayed({
-                progress.visibility = View.GONE
-                AuthService.demoLogin(nicVal, pwdVal)
-                    .onSuccess {
-                        SessionManager(this).save(it)
-                        startActivity(Intent(this, StationDetailActivity::class.java))
-                        finish()
-                    }
-                    .onFailure { err.text = getString(R.string.error_invalid_credentials); err.visibility = View.VISIBLE }
-            }, 600)
-        }
 
-        findViewById<Button>(R.id.loginButton).setOnClickListener {
-            attempt(nic.text.toString(), pwd.text.toString())
-        }
-        findViewById<Button>(R.id.demoProsumerButton).setOnClickListener {
-            attempt(MockData.prosumer.nic, MockData.DEMO_PASSWORD)
-        }
-        findViewById<Button>(R.id.demoOperatorButton).setOnClickListener {
-            attempt(MockData.operator.nic, MockData.DEMO_PASSWORD)
+            // Validate password
+            if (passwordValue.isEmpty()) {
+                errorText.text = "Password is required."
+                errorText.visibility = View.VISIBLE
+                return@setOnClickListener
+            }
+
+            loginButton.isEnabled = false
+            progress.visibility = View.VISIBLE
+
+            lifecycleScope.launch {
+
+                try {
+
+                    val result = AuthService.login(
+                        this@LoginActivity,
+                        emailValue,
+                        passwordValue
+                    )
+
+                    result
+                        .onSuccess { user ->
+
+                            // Save logged-in user and JWT token locally
+                            SessionManager(this@LoginActivity)
+                                .save(user)
+
+                            // Open station screen
+                            startActivity(
+                                Intent(
+                                    this@LoginActivity,
+                                    StationDetailActivity::class.java
+                                )
+                            )
+
+                            finish()
+                        }
+
+                        .onFailure { error ->
+
+                            errorText.text =
+                                error.message ?: "Login failed."
+
+                            errorText.visibility =
+                                View.VISIBLE
+                        }
+
+                } catch (e: Exception) {
+
+                    errorText.text =
+                        "Unexpected error: ${
+                            e.message ?: e.javaClass.simpleName
+                        }"
+
+                    errorText.visibility =
+                        View.VISIBLE
+
+                } finally {
+
+                    progress.visibility =
+                        View.GONE
+
+                    loginButton.isEnabled =
+                        true
+                }
+            }
         }
     }
 }

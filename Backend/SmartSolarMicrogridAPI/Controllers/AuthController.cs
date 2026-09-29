@@ -16,17 +16,48 @@ namespace SmartSolarMicrogridAPI.Controllers
             _authService = authService;
         }
 
-        // POST: api/auth/login
-        [HttpPost("login")]
+        // =========================================================
+        // POST: api/auth/register
+        // Register new Prosumer
+        // =========================================================
+        [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(
-            [FromBody] LoginRequest request)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterRequest request)
         {
+            // -----------------------------------------------------
+            // Validate request model
+            // -----------------------------------------------------
             if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
             }
 
+            // -----------------------------------------------------
+            // Validate NIC
+            // -----------------------------------------------------
+            if (string.IsNullOrWhiteSpace(request.NIC))
+            {
+                return BadRequest(new
+                {
+                    message = "NIC is required."
+                });
+            }
+
+            // -----------------------------------------------------
+            // Validate full name
+            // -----------------------------------------------------
+            if (string.IsNullOrWhiteSpace(request.FullName))
+            {
+                return BadRequest(new
+                {
+                    message = "Full name is required."
+                });
+            }
+
+            // -----------------------------------------------------
+            // Validate email
+            // -----------------------------------------------------
             if (string.IsNullOrWhiteSpace(request.Email))
             {
                 return BadRequest(new
@@ -35,6 +66,20 @@ namespace SmartSolarMicrogridAPI.Controllers
                 });
             }
 
+            // -----------------------------------------------------
+            // Validate phone
+            // -----------------------------------------------------
+            if (string.IsNullOrWhiteSpace(request.Phone))
+            {
+                return BadRequest(new
+                {
+                    message = "Phone number is required."
+                });
+            }
+
+            // -----------------------------------------------------
+            // Validate password
+            // -----------------------------------------------------
             if (string.IsNullOrWhiteSpace(request.Password))
             {
                 return BadRequest(new
@@ -43,11 +88,97 @@ namespace SmartSolarMicrogridAPI.Controllers
                 });
             }
 
-            // Find user by email
-            var user = await _authService
-                .GetUserByEmailAsync(request.Email.Trim());
+            // -----------------------------------------------------
+            // Register Prosumer
+            // -----------------------------------------------------
+            var result =
+                await _authService.RegisterProsumerAsync(request);
 
-            // Do not reveal whether the email exists
+            // -----------------------------------------------------
+            // Duplicate email/NIC
+            // -----------------------------------------------------
+            if (!result.Success)
+            {
+                return Conflict(new
+                {
+                    message = result.Message
+                });
+            }
+
+            // -----------------------------------------------------
+            // Registration successful
+            // -----------------------------------------------------
+            return StatusCode(
+                StatusCodes.Status201Created,
+                new
+                {
+                    message = result.Message,
+
+                    user = new
+                    {
+                        id = result.User!.Id,
+                        nic = result.User.NIC,
+                        fullName = result.User.FullName,
+                        email = result.User.Email,
+                        phone = result.User.Phone,
+                        role = result.User.Role,
+                        status = result.User.Status,
+                        isActive = result.User.IsActive
+                    }
+                });
+        }
+
+        // =========================================================
+        // POST: api/auth/login
+        // User login
+        // =========================================================
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(
+            [FromBody] LoginRequest request)
+        {
+            // -----------------------------------------------------
+            // Validate model
+            // -----------------------------------------------------
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            // -----------------------------------------------------
+            // Validate email
+            // -----------------------------------------------------
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest(new
+                {
+                    message = "Email is required."
+                });
+            }
+
+            // -----------------------------------------------------
+            // Validate password
+            // -----------------------------------------------------
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest(new
+                {
+                    message = "Password is required."
+                });
+            }
+
+            // -----------------------------------------------------
+            // Normalize email
+            // -----------------------------------------------------
+            var email =
+                request.Email.Trim().ToLowerInvariant();
+
+            // -----------------------------------------------------
+            // Find user
+            // -----------------------------------------------------
+            var user =
+                await _authService.GetUserByEmailAsync(email);
+
             if (user == null)
             {
                 return Unauthorized(new
@@ -56,7 +187,9 @@ namespace SmartSolarMicrogridAPI.Controllers
                 });
             }
 
+            // -----------------------------------------------------
             // Verify password
+            // -----------------------------------------------------
             if (!BCrypt.Net.BCrypt.Verify(
                 request.Password,
                 user.PasswordHash))
@@ -67,7 +200,9 @@ namespace SmartSolarMicrogridAPI.Controllers
                 });
             }
 
-            // Check approval status
+            // -----------------------------------------------------
+            // Pending account
+            // -----------------------------------------------------
             if (string.Equals(
                 user.Status,
                 "Pending",
@@ -75,10 +210,14 @@ namespace SmartSolarMicrogridAPI.Controllers
             {
                 return Unauthorized(new
                 {
-                    message = "Your account is pending Backoffice approval."
+                    message =
+                        "Your account is pending Backoffice approval."
                 });
             }
 
+            // -----------------------------------------------------
+            // Rejected account
+            // -----------------------------------------------------
             if (string.Equals(
                 user.Status,
                 "Rejected",
@@ -86,11 +225,14 @@ namespace SmartSolarMicrogridAPI.Controllers
             {
                 return Unauthorized(new
                 {
-                    message = "Your account registration was rejected."
+                    message =
+                        "Your account registration was rejected."
                 });
             }
 
-            // Only Approved users can continue
+            // -----------------------------------------------------
+            // Only Approved users can login
+            // -----------------------------------------------------
             if (!string.Equals(
                 user.Status,
                 "Approved",
@@ -98,31 +240,45 @@ namespace SmartSolarMicrogridAPI.Controllers
             {
                 return Unauthorized(new
                 {
-                    message = "Your account is not approved for login."
+                    message =
+                        "Your account is not approved for login."
                 });
             }
 
+            // -----------------------------------------------------
             // Check active status
+            // -----------------------------------------------------
             if (!user.IsActive)
             {
                 return Unauthorized(new
                 {
-                    message = "User account is inactive."
+                    message =
+                        "User account is inactive."
                 });
             }
 
-            // Generate JWT only after all checks pass
-            var token = _authService.GenerateJwtToken(user);
+            // -----------------------------------------------------
+            // Generate JWT
+            // -----------------------------------------------------
+            var token =
+                _authService.GenerateJwtToken(user);
 
+            // -----------------------------------------------------
+            // Login successful
+            // -----------------------------------------------------
             return Ok(new
             {
                 message = "Login successful.",
+
                 token = token,
+
                 user = new
                 {
                     id = user.Id,
+                    nic = user.NIC,
                     fullName = user.FullName,
                     email = user.Email,
+                    phone = user.Phone,
                     role = user.Role,
                     status = user.Status,
                     isActive = user.IsActive
@@ -131,4 +287,3 @@ namespace SmartSolarMicrogridAPI.Controllers
         }
     }
 }
-
