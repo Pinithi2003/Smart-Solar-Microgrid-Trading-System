@@ -52,13 +52,19 @@
       return request(`${slotsBase}${qs ? `?${qs}` : ""}`);
     },
     getSlot: (slotId) => request(`${slotsBase}/${encodeURIComponent(slotId)}`),
+    createSlot: (payload) => request(slotsBase, { method: "POST", body: JSON.stringify(payload) }),
+    updateSlot: (slotId, payload) => request(`${slotsBase}/${encodeURIComponent(slotId)}`, { method: "PUT", body: JSON.stringify(payload) }),
+    deleteSlot: (slotId) => request(`${slotsBase}/${encodeURIComponent(slotId)}`, { method: "DELETE" }),
 
     // reservations
     getAllReservations: () => request(resBase),
     getReservation: (id) => request(`${resBase}/${encodeURIComponent(id)}`),
-    getUserReservations: (userId) => request(`${resBase}/user/${encodeURIComponent(userId)}`),
+    getUserReservations: (userId) => request(`${resBase}/my?userId=${encodeURIComponent(userId)}`),
     createReservation: (payload) => request(resBase, { method: "POST", body: JSON.stringify(payload) }),
+    updateReservation: (id, payload) => request(`${resBase}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) }),
+    updateStatus: (id, status) => request(`${resBase}/${encodeURIComponent(id)}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
     cancelReservation: (id) => request(`${resBase}/${encodeURIComponent(id)}/cancel`, { method: "PATCH" }),
+    deleteReservation: (id) => request(`${resBase}/${encodeURIComponent(id)}`, { method: "DELETE" }),
 
     // read-only: Member 2's stations, used only to populate the dropdown
     getStations: () => request(stationsBase)

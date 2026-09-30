@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3F5FB"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/summaryKicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_res_soft"
+        android:paddingLeft="12dp"
+        android:paddingTop="4dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp"
+        android:text="BOOKING SUMMARY"
+        android:textColor="#8A6200"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/summaryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textColor="#1C2434"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/summaryQr"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="18dp"
+        android:background="@android:color/white"
+        android:contentDescription="Booking QR code"
+        android:padding="12dp" />
+
+    <TextView
+        android:id="@+id/summaryCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#1C2434"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/summaryBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_res_card"
+        android:lineSpacingExtra="4dp"
+        android:padding="16dp"
+        android:textColor="#1C2434"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/summaryDone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_res_btn"
+        android:backgroundTint="@null"
+        android:text="Back to bookings"
+        android:textAllCaps="false"
+        android:textColor="#3A2A00"
+        android:textStyle="bold" />
+</LinearLayout>

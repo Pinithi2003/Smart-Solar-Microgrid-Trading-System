@@ -1,5 +1,6 @@
 package com.smartsolar.stations.s_stations.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -14,6 +15,8 @@ import com.smartsolar.stations.s_stations.data.StationsDbHelper
 import com.smartsolar.stations.s_stations.model.SolarStation
 import com.smartsolar.stations.s_stations.data.ApiClient
 import com.smartsolar.stations.s_stations.data.StationRepository
+import com.smartsolar.stations.reservations.data.ReservationStubs
+import com.smartsolar.stations.reservations.ui.BookSlotActivity
 import com.smartsolar.stations.s_stations.util.BusinessRules
 import com.smartsolar.stations.core.MockData
 import kotlinx.coroutines.launch
@@ -102,11 +105,10 @@ class StationFullDetailActivity : AppCompatActivity() {
         book.isEnabled = bookable
         book.alpha = if (bookable) 1f else 0.5f
         book.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Reservations module (Member 3): booking ${station.stationId} opens here.",
-                Toast.LENGTH_LONG
-            ).show()
+            startActivity(
+                Intent(this, BookSlotActivity::class.java)
+                    .putExtra(ReservationStubs.EXTRA_STATION_ID, station.stationId)
+            )
         }
 
         findViewById<Button>(R.id.fullMapButton).setOnClickListener { finish() }

@@ -30,6 +30,10 @@
         </activity>
 
         <activity android:name=".auth.ui.LoginActivity" android:exported="false" />
+        <activity android:name=".reservations.ui.ReservationsActivity" android:exported="false" />
+        <activity android:name=".reservations.ui.BookSlotActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".reservations.ui.ReservationDetailActivity" android:exported="false" />
+        <activity android:name=".reservations.ui.BookingSummaryActivity" android:exported="false" />
         <activity android:name=".s_stations.ui.StationDetailActivity" android:exported="false" />
         <activity android:name=".s_stations.ui.StationFullDetailActivity" android:exported="false" />
     </application>

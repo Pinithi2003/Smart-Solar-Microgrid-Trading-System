@@ -9,14 +9,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.smartsolar.stations.R
+import com.smartsolar.stations.reservations.ui.ReservationsActivity
 
 // Member 2 shared demo chrome for the Stitch theme.
 // Map-only: Home tab also lands on the Map page (Stations list retired).
-// Bookings, QR and Profile are visual stubs - Members 3, 4 and 1 plug in later.
+// Bookings opens the Member 3 reservation screens. QR and Profile stay with Members 4 and 1.
 object MemberNav {
 
     const val HOME = 0
     const val MAP = 1
+    const val BOOKINGS = 2
 
     // Header with brand title. Bell and avatar are stubs for Member 1.
     fun bindHeader(activity: Activity, title: String) {
@@ -43,7 +45,7 @@ object MemberNav {
     fun bindBottomNav(activity: Activity, selected: Int) {
         styleTab(activity, R.id.nav_home, R.id.nav_home_icon, R.id.nav_home_label, selected == HOME)
         styleTab(activity, R.id.nav_map, R.id.nav_map_icon, R.id.nav_map_label, selected == MAP)
-        styleTab(activity, R.id.nav_bookings, R.id.nav_bookings_icon, R.id.nav_bookings_label, false)
+        styleTab(activity, R.id.nav_bookings, R.id.nav_bookings_icon, R.id.nav_bookings_label, selected == BOOKINGS)
         styleTab(activity, R.id.nav_qr, R.id.nav_qr_icon, R.id.nav_qr_label, false)
         styleTab(activity, R.id.nav_profile, R.id.nav_profile_icon, R.id.nav_profile_label, false)
 
@@ -58,7 +60,9 @@ object MemberNav {
             }
         }
         activity.findViewById<View>(R.id.nav_bookings)?.setOnClickListener {
-            Toast.makeText(activity, "Bookings module (Member 3) plugs in here.", Toast.LENGTH_SHORT).show()
+            if (activity !is ReservationsActivity) {
+                activity.startActivity(Intent(activity, ReservationsActivity::class.java))
+            }
         }
         activity.findViewById<View>(R.id.nav_qr)?.setOnClickListener {
             Toast.makeText(activity, "QR scanning (Member 4) plugs in here.", Toast.LENGTH_SHORT).show()
