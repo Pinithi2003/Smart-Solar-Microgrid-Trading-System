@@ -21,7 +21,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
 
+        <!-- ========================================= -->
         <!-- Splash Screen -->
+        <!-- ========================================= -->
+
         <activity
             android:name=".shared.navigation.SplashActivity"
             android:exported="true"
@@ -34,31 +37,73 @@
 
         </activity>
 
-        <!-- Member 1: Authentication -->
+
+        <!-- ========================================= -->
+        <!-- Member 1 - Authentication -->
+        <!-- ========================================= -->
+
+        <!-- Login -->
         <activity
             android:name=".auth.ui.LoginActivity"
             android:exported="false" />
 
-
-        <!-- Member 1: User Registration -->
+        <!-- User Registration -->
         <activity
             android:name=".auth.ui.RegisterActivity"
             android:exported="false" />
 
-        <!-- Member 1: User Profile -->
+        <!-- User Profile -->
         <activity
             android:name=".auth.ui.ProfileActivity"
             android:exported="false" />
 
-        <!-- Member 1: Authentication -->
-
-        <!-- Member 2: Solar Station -->
+        <!-- Common Mobile Home -->
         <activity
-            android:name=".stations.ui.StationDetailActivity"
+            android:name=".auth.ui.HomeActivity"
             android:exported="false" />
 
+        <!-- ========================================= -->
+        <!-- Member 2 - Solar Stations -->
+        <!-- ========================================= -->
+
+        <!-- Station Map / Station List -->
         <activity
-            android:name=".stations.ui.StationFullDetailActivity"
+            android:name="com.smartsolar.stations.stations.ui.StationDetailActivity"
+            android:exported="false" />
+
+        <!-- Individual Station Details -->
+        <activity
+            android:name="com.smartsolar.stations.stations.ui.StationFullDetailActivity"
+            android:exported="false" />
+
+
+        <!-- ========================================= -->
+        <!-- Member 4 - Field Operations -->
+        <!-- ========================================= -->
+
+        <!-- Member 4 Operator Dashboard -->
+        <activity
+            android:name=".fieldops.member4.operations.OperatorDashboardActivity"
+            android:exported="false" />
+
+        <!-- Completed Transactions -->
+        <activity
+            android:name=".fieldops.member4.operations.CompletedTransactionsActivity"
+            android:exported="false" />
+
+        <!-- QR Scanner -->
+        <activity
+            android:name=".fieldops.member4.qrscanner.ScanQrActivity"
+            android:exported="false" />
+
+        <!-- Transaction QR Generator -->
+        <activity
+            android:name=".fieldops.member4.qrscanner.TransactionQrActivity"
+            android:exported="false" />
+
+        <!-- Transaction Verification -->
+        <activity
+            android:name=".fieldops.member4.qrverification.TransactionVerifyActivity"
             android:exported="false" />
 
     </application>

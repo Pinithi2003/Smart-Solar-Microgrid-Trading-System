@@ -13,7 +13,7 @@ import com.smartsolar.stations.R
 import com.smartsolar.stations.auth.data.AuthService
 import com.smartsolar.stations.auth.data.RetrofitClient
 import com.smartsolar.stations.auth.data.SessionManager
-import com.smartsolar.stations.stations.ui.StationDetailActivity
+import com.smartsolar.stations.auth.ui.HomeActivity
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -98,14 +98,15 @@ class LoginActivity : AppCompatActivity() {
                             SessionManager(this@LoginActivity)
                                 .save(user)
 
-                            // Open station screen
+                            // Open the common Home screen
                             startActivity(
                                 Intent(
                                     this@LoginActivity,
-                                    StationDetailActivity::class.java
+                                    HomeActivity::class.java
                                 )
                             )
 
+                            // Remove LoginActivity from back stack
                             finish()
                         }
 
