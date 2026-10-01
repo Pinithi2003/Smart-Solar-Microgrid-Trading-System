@@ -14,7 +14,7 @@ import com.smartsolar.stations.R
 import com.smartsolar.stations.fieldops.member4.qrscanner.TransactionQrActivity
 import com.smartsolar.stations.models.Booking
 import com.smartsolar.stations.services.QrService
-import com.smartsolar.stations.infrastructure.MemberNav
+import com.smartsolar.stations.stations.ui.MemberNav
 
 class CompletedTransactionsActivity : AppCompatActivity() {
 
@@ -27,6 +27,7 @@ class CompletedTransactionsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_completed_transactions)
+        MemberNav.bindHeader(this, "Completed Transactions")
 
         // ---------------------------------------------------------
         // Find views
@@ -66,8 +67,6 @@ class CompletedTransactionsActivity : AppCompatActivity() {
         }
 
         recyclerView.adapter = adapter
-
-        MemberNav.bindBottomNav(this, MemberNav.QR)
 
         // ---------------------------------------------------------
         // Search

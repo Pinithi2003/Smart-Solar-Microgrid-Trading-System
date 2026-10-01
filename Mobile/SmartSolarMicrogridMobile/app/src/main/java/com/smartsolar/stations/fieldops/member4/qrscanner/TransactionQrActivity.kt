@@ -11,7 +11,7 @@ import com.google.android.material.card.MaterialCardView
 import com.smartsolar.stations.R
 import com.smartsolar.stations.models.Booking
 import com.smartsolar.stations.services.QrService
-import com.smartsolar.stations.infrastructure.MemberNav
+import com.smartsolar.stations.stations.ui.MemberNav
 
 /**
  * Member 4 - Official P2P Transaction QR Code screen.
@@ -32,21 +32,13 @@ class TransactionQrActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_transaction_qr)
-        MemberNav.bindBottomNav(this, MemberNav.QR)
 
         // ---------------------------------------------------------
         // Header
         // ---------------------------------------------------------
 
-        findViewById<TextView>(
-            R.id.headerTitle
-        ).text = "Transaction QR"
-
-        findViewById<ImageView>(
-            R.id.btnBack
-        ).setOnClickListener {
-            finish()
-        }
+        MemberNav.bindHeader(this, "Transaction QR")
+        MemberNav.bindBottomNav(this, MemberNav.QR)
 
         // ---------------------------------------------------------
         // QR views

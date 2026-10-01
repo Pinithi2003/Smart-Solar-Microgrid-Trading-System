@@ -15,7 +15,6 @@ import com.smartsolar.stations.auth.ui.LoginActivity
 import com.smartsolar.stations.auth.ui.ProfileActivity
 import com.smartsolar.stations.fieldops.member4.qrscanner.ScanQrActivity
 import com.smartsolar.stations.fieldops.member4.qrscanner.TransactionQrActivity
-import com.smartsolar.stations.fieldops.member4.operations.OperatorDashboardActivity
 import com.smartsolar.stations.stations.ui.StationDetailActivity
 
 /**
@@ -31,9 +30,6 @@ object MemberNav {
 
     const val HOME = 0
     const val MAP = 1
-    const val BOOKINGS = 2
-    const val QR = 3
-    const val PROFILE = 4
 
     /**
      * Configure the common application header.
@@ -136,7 +132,7 @@ object MemberNav {
             R.id.nav_bookings,
             R.id.nav_bookings_icon,
             R.id.nav_bookings_label,
-            selected == BOOKINGS
+            false
         )
 
         styleTab(
@@ -144,7 +140,7 @@ object MemberNav {
             R.id.nav_qr,
             R.id.nav_qr_icon,
             R.id.nav_qr_label,
-            selected == QR
+            false
         )
 
         styleTab(
@@ -152,7 +148,7 @@ object MemberNav {
             R.id.nav_profile,
             R.id.nav_profile_icon,
             R.id.nav_profile_label,
-            selected == PROFILE
+            false
         )
 
 
@@ -245,11 +241,37 @@ object MemberNav {
         activity.findViewById<View>(
             R.id.nav_qr
         )?.setOnClickListener {
-            if (activity !is OperatorDashboardActivity) {
+
+            val session =
+                SessionManager(activity).current()
+
+            val role =
+                session?.role.orEmpty()
+
+            if (
+                role.equals(
+                    "GridOperator",
+                    ignoreCase = true
+                ) ||
+                role.equals(
+                    "Grid Operator",
+                    ignoreCase = true
+                )
+            ) {
+
                 activity.startActivity(
                     Intent(
                         activity,
-                        OperatorDashboardActivity::class.java
+                        ScanQrActivity::class.java
+                    )
+                )
+
+            } else {
+
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        TransactionQrActivity::class.java
                     )
                 )
             }

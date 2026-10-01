@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.smartsolar.stations.R
 import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.fieldops.member4.operations.OperatorDashboardActivity
-import com.smartsolar.stations.infrastructure.MemberNav
 import com.smartsolar.stations.stations.ui.StationDetailActivity
+import com.smartsolar.stations.stations.ui.MemberNav
 
 class HomeActivity : AppCompatActivity() {
 

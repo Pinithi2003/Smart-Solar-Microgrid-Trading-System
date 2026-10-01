@@ -9,17 +9,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.smartsolar.stations.R
+import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.ui.HomeActivity
 import com.smartsolar.stations.auth.ui.ProfileActivity
 import com.smartsolar.stations.fieldops.member4.operations.OperatorDashboardActivity
+import com.smartsolar.stations.fieldops.member4.qrscanner.TransactionQrActivity
 
-// Member 2 shared demo chrome for the Stitch theme.
-// Shared station chrome with Home, bookings, QR and profile destinations.
-// Bookings, QR and Profile are connected to their respective member modules.
+// Shared member navigation for the Stitch theme.
 object MemberNav {
 
     const val HOME = 0
     const val MAP = 1
+    const val QR = 3
+    const val PROFILE = 4
 
     // Header with brand title.
     // Bell and avatar are connected to Member 1 profile functionality.
@@ -36,9 +38,9 @@ object MemberNav {
         }
 
         activity.findViewById<View>(R.id.header_avatar)?.setOnClickListener {
-            activity.startActivity(
-                Intent(activity, ProfileActivity::class.java)
-            )
+            if (activity !is ProfileActivity) {
+                activity.startActivity(Intent(activity, ProfileActivity::class.java))
+            }
         }
     }
 
@@ -114,7 +116,7 @@ object MemberNav {
             R.id.nav_qr,
             R.id.nav_qr_icon,
             R.id.nav_qr_label,
-            false
+            selected == QR
         )
 
         // -----------------------------
@@ -126,7 +128,7 @@ object MemberNav {
             R.id.nav_profile,
             R.id.nav_profile_icon,
             R.id.nav_profile_label,
-            false
+            selected == PROFILE
         )
 
         // ==========================================
@@ -134,19 +136,13 @@ object MemberNav {
         // ==========================================
 
         activity.findViewById<View>(R.id.nav_home)?.setOnClickListener {
-
             if (activity !is HomeActivity) {
-
                 activity.startActivity(
-                    Intent(
-                        activity,
-                        HomeActivity::class.java
-                    ).apply {
+                    Intent(activity, HomeActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
                             Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
                 )
-                activity.finish()
             }
         }
 
@@ -186,14 +182,17 @@ object MemberNav {
 
         activity.findViewById<View>(R.id.nav_qr)?.setOnClickListener {
 
-            if (activity !is OperatorDashboardActivity) {
-
-                activity.startActivity(
-                    Intent(
-                        activity,
-                        OperatorDashboardActivity::class.java
-                    )
-                )
+            if (activity !is TransactionQrActivity && activity !is OperatorDashboardActivity) {
+                val role = SessionManager(activity).current()?.role.orEmpty()
+                val target = if (
+                    role.equals("GridOperator", ignoreCase = true) ||
+                    role.equals("Grid Operator", ignoreCase = true)
+                ) {
+                    OperatorDashboardActivity::class.java
+                } else {
+                    TransactionQrActivity::class.java
+                }
+                activity.startActivity(Intent(activity, target))
             }
         }
 
@@ -202,13 +201,9 @@ object MemberNav {
         // ==========================================
 
         activity.findViewById<View>(R.id.nav_profile)?.setOnClickListener {
-
-            activity.startActivity(
-                Intent(
-                    activity,
-                    ProfileActivity::class.java
-                )
-            )
+            if (activity !is ProfileActivity) {
+                activity.startActivity(Intent(activity, ProfileActivity::class.java))
+            }
         }
     }
 

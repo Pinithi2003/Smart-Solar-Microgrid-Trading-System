@@ -6,49 +6,7 @@
     android:background="@color/solar_bg"
     android:orientation="vertical">
 
-    <!-- Operator Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/solar_card"
-        android:elevation="2dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="16dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/greeting_operator"
-                android:textColor="@color/solar_text"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Grid Operator #01 • Field Verification Station"
-                android:textColor="@color/solar_blue"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_avatar"
-            android:padding="8dp"
-            android:src="@drawable/ic_scan"
-            app:tint="@color/solar_blue" />
-    </LinearLayout>
+    <include layout="@layout/include_app_header" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -398,5 +356,5 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/include_bottom_nav" />
+    <include layout="@layout/include_operator_bottom_nav" />
 </LinearLayout>

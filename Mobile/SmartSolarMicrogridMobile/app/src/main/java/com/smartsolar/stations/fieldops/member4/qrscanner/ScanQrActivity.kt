@@ -3,7 +3,6 @@ package com.smartsolar.stations.fieldops.member4.qrscanner
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -12,7 +11,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import com.smartsolar.stations.R
-import com.smartsolar.stations.infrastructure.MemberNav
+import com.smartsolar.stations.stations.ui.MemberNav
+import com.smartsolar.stations.ui.common.NavigationHelper
 
 /**
  * QR Code scanning activity for Grid Operators.
@@ -39,15 +39,7 @@ class ScanQrActivity : AppCompatActivity() {
         // Header
         // ---------------------------------------------------------
 
-        findViewById<TextView>(
-            R.id.headerTitle
-        ).text = "Scan QR Code"
-
-        findViewById<ImageView>(
-            R.id.btnBack
-        ).setOnClickListener {
-            finish()
-        }
+        MemberNav.bindHeader(this, "Scan QR Code")
 
         // ---------------------------------------------------------
         // Input
@@ -187,7 +179,10 @@ class ScanQrActivity : AppCompatActivity() {
         // Bottom Navigation
         // ---------------------------------------------------------
 
-        MemberNav.bindBottomNav(this, MemberNav.QR)
+        NavigationHelper.setupOperatorBottomNav(
+            this,
+            NavigationHelper.OperatorTab.SCAN
+        )
     }
 
     // -------------------------------------------------------------

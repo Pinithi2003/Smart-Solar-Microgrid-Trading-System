@@ -17,7 +17,7 @@ import com.smartsolar.stations.auth.data.RetrofitClient
 import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.data.UpdateProfileRequest
 import com.smartsolar.stations.auth.model.LocalUser
-import com.smartsolar.stations.infrastructure.MemberNav
+import com.smartsolar.stations.stations.ui.MemberNav
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -40,7 +40,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_profile)
-
+        MemberNav.bindHeader(this, "Profile")
         MemberNav.bindBottomNav(this, MemberNav.PROFILE)
 
         sessionManager = SessionManager(this)

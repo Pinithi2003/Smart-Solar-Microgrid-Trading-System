@@ -59,26 +59,37 @@ class MapPreviewFragment : Fragment() {
 
     override fun onViewCreated(v: View, s: Bundle?) {
         val host = v.findViewById<FrameLayout>(R.id.mockMapCanvas)
-        showLegacyMap(host)
-    }
-
-    private fun showLegacyMap(host: FrameLayout) {
-        legacyView = buildLegacyView()
-        legacyView?.setOnClickListener {
-            val target = highlightId ?: stations.firstOrNull()?.stationId
-                ?: return@setOnClickListener
-            context?.startActivity(
-                Intent(context, StationFullDetailActivity::class.java)
-                    .putExtra("stationId", target)
+        if (isOnline()) {
+            setupTiles(host)
+        } else {
+            legacyView = buildLegacyView()
+            // Offline schematic: tap the highlighted pin area -> full details.
+            legacyView?.setOnClickListener {
+                val target = highlightId ?: stations.firstOrNull()?.stationId ?: return@setOnClickListener
+                context?.startActivity(
+                    android.content.Intent(
+                        context,
+                        com.smartsolar.stations.stations.ui.StationFullDetailActivity::class.java
+                    ).putExtra("stationId", target)
+                )
+            }
+            host.addView(
+                legacyView, FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
             )
         }
-        host.addView(
-            legacyView,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+    }
+
+    override fun onPause() {
+        mapView?.onPause()
+        super.onPause()
     }
 
     override fun onDestroyView() {

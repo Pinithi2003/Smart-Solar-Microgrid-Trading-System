@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -16,8 +15,8 @@ import com.smartsolar.stations.R
 import com.smartsolar.stations.fieldops.member4.operations.CompletedTransactionsActivity
 import com.smartsolar.stations.models.Booking
 import com.smartsolar.stations.services.QrService
+import com.smartsolar.stations.stations.ui.MemberNav
 import com.smartsolar.stations.utils.StatusBadgeHelper
-import com.smartsolar.stations.infrastructure.MemberNav
 
 /**
  * Member 4 - Transaction Verification & Transfer Finalization.
@@ -56,21 +55,12 @@ class TransactionVerifyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_transaction_verify)
-        MemberNav.bindBottomNav(this, MemberNav.QR)
 
         // ---------------------------------------------------------
         // Header
         // ---------------------------------------------------------
 
-        findViewById<TextView>(
-            R.id.headerTitle
-        ).text = "Verify Transaction"
-
-        findViewById<ImageView>(
-            R.id.btnBack
-        ).setOnClickListener {
-            finish()
-        }
+        MemberNav.bindHeader(this, "Verify Transaction")
 
         // ---------------------------------------------------------
         // Find Views

@@ -6,7 +6,7 @@
     android:background="@color/solar_bg"
     android:orientation="vertical">
 
-    <include layout="@layout/include_screen_header" />
+    <include layout="@layout/include_app_header" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -254,5 +254,4 @@
 
         </LinearLayout>
     </ScrollView>
-    <include layout="@layout/include_bottom_nav" />
 </LinearLayout>

@@ -11,7 +11,8 @@ import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.ui.LoginActivity
 import com.smartsolar.stations.fieldops.member4.qrscanner.ScanQrActivity
 import com.smartsolar.stations.services.QrService
-import com.smartsolar.stations.infrastructure.MemberNav
+import com.smartsolar.stations.stations.ui.MemberNav
+import com.smartsolar.stations.ui.common.NavigationHelper
 
 /**
  * Grid Operator Dashboard
@@ -35,6 +36,7 @@ class OperatorDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_operator_dashboard)
+        MemberNav.bindHeader(this, "Field Operations")
 
         // ---------------------------------------------------------
         // Statistics
@@ -112,7 +114,10 @@ class OperatorDashboardActivity : AppCompatActivity() {
         // Bottom Navigation
         // ---------------------------------------------------------
 
-        MemberNav.bindBottomNav(this, MemberNav.QR)
+        NavigationHelper.setupOperatorBottomNav(
+            this,
+            NavigationHelper.OperatorTab.HOME
+        )
     }
 
     // -------------------------------------------------------------

@@ -3,20 +3,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
+    android:background="@color/node_bg"
     android:orientation="vertical">
+
+    <include layout="@layout/include_app_header" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_weight="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             android:text="My Profile"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="#1A1A1A"
+            android:textColor="@color/node_ink"
             android:layout_marginBottom="32dp" />
 
         <TextView
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:text="Name"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -39,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -47,6 +50,7 @@
             android:layout_height="wrap_content"
             android:text="Email"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -54,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -62,6 +67,7 @@
             android:layout_height="wrap_content"
             android:text="Phone"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -69,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -77,6 +84,7 @@
             android:layout_height="wrap_content"
             android:text="Role"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -84,6 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -92,6 +101,7 @@
             android:layout_height="wrap_content"
             android:text="Status"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -99,6 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="18sp"
             android:layout_marginBottom="20dp" />
 
@@ -107,6 +118,7 @@
             android:layout_height="wrap_content"
             android:text="NIC"
             android:textStyle="bold"
+            android:textColor="@color/solar_muted"
             android:textSize="14sp" />
 
         <TextView
@@ -114,6 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textColor="@color/node_ink"
             android:textSize="16sp"
             android:layout_marginBottom="32dp" />
 
@@ -140,9 +153,9 @@
             android:text="Logout"
             android:textAllCaps="false" />
 
-        </LinearLayout>
+    </LinearLayout>
+
     </ScrollView>
 
     <include layout="@layout/include_bottom_nav" />
-
 </LinearLayout>
