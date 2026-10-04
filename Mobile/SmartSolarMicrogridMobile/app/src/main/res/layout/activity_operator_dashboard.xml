@@ -35,7 +35,7 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
-                <!-- Today's Transactions (8) -->
+                <!-- Today's Transactions -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -67,14 +67,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
-                            android:text="Today\'s\nTrades"
+                            android:text="Today's&#10;Trades"
                             android:textColor="@color/solar_muted"
                             android:textSize="11sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Pending Verification (2) -->
+                <!-- Pending Verification -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -106,14 +107,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
-                            android:text="Pending\nVerify"
+                            android:text="Pending&#10;Verify"
                             android:textColor="@color/solar_muted"
                             android:textSize="11sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Completed Transfers (6) -->
+                <!-- Completed Transfers -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -145,12 +147,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
-                            android:text="Completed\nTransfers"
+                            android:text="Completed&#10;Transfers"
                             android:textColor="@color/solar_muted"
                             android:textSize="11sp"
                             android:textStyle="bold" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
             <!-- Actions -->
@@ -212,6 +216,7 @@
                             android:text="Scan prosumer transaction QR code with camera or simulator"
                             android:textColor="@color/solar_muted"
                             android:textSize="13sp" />
+
                     </LinearLayout>
 
                     <TextView
@@ -220,6 +225,7 @@
                         android:text="→"
                         android:textColor="@color/solar_blue"
                         android:textSize="20sp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -272,6 +278,7 @@
                             android:text="Verify approved reservations against active grid station"
                             android:textColor="@color/solar_muted"
                             android:textSize="13sp" />
+
                     </LinearLayout>
 
                     <TextView
@@ -280,6 +287,7 @@
                         android:text="→"
                         android:textColor="@color/solar_green"
                         android:textSize="20sp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -332,6 +340,7 @@
                             android:text="Audit ledger of finalized energy transfers"
                             android:textColor="@color/solar_muted"
                             android:textSize="13sp" />
+
                     </LinearLayout>
 
                     <TextView
@@ -340,6 +349,7 @@
                         android:text="→"
                         android:textColor="@color/solar_green"
                         android:textSize="20sp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -356,5 +366,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/include_operator_bottom_nav" />
+    <!-- Shared bottom navigation -->
+    <include layout="@layout/include_bottom_nav" />
+
 </LinearLayout>

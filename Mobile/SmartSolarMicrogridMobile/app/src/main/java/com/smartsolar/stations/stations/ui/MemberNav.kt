@@ -9,17 +9,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.smartsolar.stations.R
-import com.smartsolar.stations.auth.data.SessionManager
 import com.smartsolar.stations.auth.ui.HomeActivity
 import com.smartsolar.stations.auth.ui.ProfileActivity
+import com.smartsolar.stations.reservations.ui.ReservationsActivity
 import com.smartsolar.stations.fieldops.member4.operations.OperatorDashboardActivity
-import com.smartsolar.stations.fieldops.member4.qrscanner.TransactionQrActivity
 
 // Shared member navigation for the Stitch theme.
 object MemberNav {
 
     const val HOME = 0
     const val MAP = 1
+    const val BOOKINGS = 2
     const val QR = 3
     const val PROFILE = 4
 
@@ -39,7 +39,9 @@ object MemberNav {
 
         activity.findViewById<View>(R.id.header_avatar)?.setOnClickListener {
             if (activity !is ProfileActivity) {
-                activity.startActivity(Intent(activity, ProfileActivity::class.java))
+                activity.startActivity(
+                    Intent(activity, ProfileActivity::class.java)
+                )
             }
         }
     }
@@ -57,24 +59,19 @@ object MemberNav {
         ids.forEach { id ->
 
             activity.findViewById<TextView>(id)?.setOnClickListener { chip ->
-
                 chip.isSelected = !chip.isSelected
-
             }
         }
     }
 
-    // Bottom navigation.
+    // Shared bottom navigation.
     // Selected tab gets the green pill, others stay plain.
     fun bindBottomNav(
         activity: Activity,
         selected: Int
     ) {
 
-        // -----------------------------
         // HOME
-        // -----------------------------
-
         styleTab(
             activity,
             R.id.nav_home,
@@ -83,10 +80,7 @@ object MemberNav {
             selected == HOME
         )
 
-        // -----------------------------
         // MAP
-        // -----------------------------
-
         styleTab(
             activity,
             R.id.nav_map,
@@ -95,22 +89,16 @@ object MemberNav {
             selected == MAP
         )
 
-        // -----------------------------
         // BOOKINGS - MEMBER 3
-        // -----------------------------
-
         styleTab(
             activity,
             R.id.nav_bookings,
             R.id.nav_bookings_icon,
             R.id.nav_bookings_label,
-            false
+            selected == BOOKINGS
         )
 
-        // -----------------------------
         // QR - MEMBER 4
-        // -----------------------------
-
         styleTab(
             activity,
             R.id.nav_qr,
@@ -119,10 +107,7 @@ object MemberNav {
             selected == QR
         )
 
-        // -----------------------------
         // PROFILE - MEMBER 1
-        // -----------------------------
-
         styleTab(
             activity,
             R.id.nav_profile,
@@ -131,25 +116,24 @@ object MemberNav {
             selected == PROFILE
         )
 
-        // ==========================================
         // HOME
-        // ==========================================
-
         activity.findViewById<View>(R.id.nav_home)?.setOnClickListener {
+
             if (activity !is HomeActivity) {
+
                 activity.startActivity(
-                    Intent(activity, HomeActivity::class.java).apply {
+                    Intent(
+                        activity,
+                        HomeActivity::class.java
+                    ).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                            Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
                 )
             }
         }
 
-        // ==========================================
         // MAP
-        // ==========================================
-
         activity.findViewById<View>(R.id.nav_map)?.setOnClickListener {
 
             if (activity !is StationDetailActivity) {
@@ -163,54 +147,50 @@ object MemberNav {
             }
         }
 
-        // ==========================================
         // BOOKINGS - MEMBER 3
-        // ==========================================
-
         activity.findViewById<View>(R.id.nav_bookings)?.setOnClickListener {
 
-            Toast.makeText(
-                activity,
-                "Bookings module (Member 3) plugs in here.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+            if (activity !is ReservationsActivity) {
 
-        // ==========================================
-        // QR / FIELD OPERATIONS - MEMBER 4
-        // ==========================================
-
-        activity.findViewById<View>(R.id.nav_qr)?.setOnClickListener {
-
-            if (activity !is TransactionQrActivity && activity !is OperatorDashboardActivity) {
-                val role = SessionManager(activity).current()?.role.orEmpty()
-                val target = if (
-                    role.equals("GridOperator", ignoreCase = true) ||
-                    role.equals("Grid Operator", ignoreCase = true)
-                ) {
-                    OperatorDashboardActivity::class.java
-                } else {
-                    TransactionQrActivity::class.java
-                }
-                activity.startActivity(Intent(activity, target))
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        ReservationsActivity::class.java
+                    )
+                )
             }
         }
 
-        // ==========================================
-        // PROFILE - MEMBER 1
-        // ==========================================
+        // QR / FIELD OPERATIONS - MEMBER 4
+        activity.findViewById<View>(R.id.nav_qr)?.setOnClickListener {
 
+            if (activity !is OperatorDashboardActivity) {
+
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        OperatorDashboardActivity::class.java
+                    )
+                )
+            }
+        }
+
+        // PROFILE - MEMBER 1
         activity.findViewById<View>(R.id.nav_profile)?.setOnClickListener {
+
             if (activity !is ProfileActivity) {
-                activity.startActivity(Intent(activity, ProfileActivity::class.java))
+
+                activity.startActivity(
+                    Intent(
+                        activity,
+                        ProfileActivity::class.java
+                    )
+                )
             }
         }
     }
 
-    // ==========================================
     // TAB STYLE
-    // ==========================================
-
     private fun styleTab(
         activity: Activity,
         tab: Int,
@@ -245,9 +225,7 @@ object MemberNav {
 
         } else {
 
-            tabView.setBackgroundResource(
-                0
-            )
+            tabView.setBackgroundResource(0)
 
             iconView?.setColorFilter(
                 Color.parseColor("#0E3B22")
@@ -259,10 +237,7 @@ object MemberNav {
         }
     }
 
-    // ==========================================
     // STATUS PILL
-    // ==========================================
-
     fun stylePill(
         pill: TextView,
         status: String
