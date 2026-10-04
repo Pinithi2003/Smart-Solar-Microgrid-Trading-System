@@ -5,7 +5,7 @@ import com.smartsolar.stations.reservations.model.CreateReservationBody
 import com.smartsolar.stations.reservations.model.EnergyReservation
 import com.smartsolar.stations.reservations.model.ReservationEnvelope
 import com.smartsolar.stations.reservations.model.UpdateReservationBody
-import com.smartsolar.stations.s_stations.model.SolarStation
+import com.smartsolar.stations.stations.model.SolarStation
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH

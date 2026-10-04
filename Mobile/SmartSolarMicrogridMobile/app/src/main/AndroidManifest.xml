@@ -2,14 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Member 2: stations/map module. Location only for future real map. -->
+    <!-- Internet access for ASP.NET Core Web API -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Tile + API status checks for the Member 2 map preview. -->
+
+    <!-- Check network availability -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location permissions for Google Maps / nearby solar stations -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <!-- Cleartext http://10.0.2.2 allowed for local dev API only. -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,22 +21,119 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
 
+        <!-- ========================================= -->
+        <!-- Splash Screen -->
+        <!-- ========================================= -->
+
         <activity
-            android:name=".core.SplashActivity"
+            android:name=".shared.navigation.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.SmartSolar.Splash">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
-        <activity android:name=".auth.ui.LoginActivity" android:exported="false" />
-        <activity android:name=".reservations.ui.ReservationsActivity" android:exported="false" />
-        <activity android:name=".reservations.ui.BookSlotActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".reservations.ui.ReservationDetailActivity" android:exported="false" />
-        <activity android:name=".reservations.ui.BookingSummaryActivity" android:exported="false" />
-        <activity android:name=".s_stations.ui.StationDetailActivity" android:exported="false" />
-        <activity android:name=".s_stations.ui.StationFullDetailActivity" android:exported="false" />
+
+        <!-- ========================================= -->
+        <!-- Member 1 - Authentication -->
+        <!-- ========================================= -->
+
+        <!-- Login -->
+        <activity
+            android:name=".auth.ui.LoginActivity"
+            android:exported="false" />
+
+        <!-- User Registration -->
+        <activity
+            android:name=".auth.ui.RegisterActivity"
+            android:exported="false" />
+
+        <!-- User Profile -->
+        <activity
+            android:name=".auth.ui.ProfileActivity"
+            android:exported="false" />
+
+        <!-- Common Mobile Home -->
+        <activity
+            android:name=".auth.ui.HomeActivity"
+            android:exported="false" />
+
+
+        <!-- ========================================= -->
+        <!-- Member 2 - Solar Stations -->
+        <!-- ========================================= -->
+
+        <!-- Station Map / Station List -->
+        <activity
+            android:name="com.smartsolar.stations.stations.ui.StationDetailActivity"
+            android:exported="false" />
+
+        <!-- Individual Station Details -->
+        <activity
+            android:name="com.smartsolar.stations.stations.ui.StationFullDetailActivity"
+            android:exported="false" />
+
+
+        <!-- ========================================= -->
+        <!-- Reservations -->
+        <!-- ========================================= -->
+
+        <!-- Reservations List -->
+        <activity
+            android:name=".reservations.ui.ReservationsActivity"
+            android:exported="false" />
+
+        <!-- Book Energy Slot -->
+        <activity
+            android:name=".reservations.ui.BookSlotActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Reservation Details -->
+        <activity
+            android:name=".reservations.ui.ReservationDetailActivity"
+            android:exported="false" />
+
+        <!-- Booking Summary -->
+        <activity
+            android:name=".reservations.ui.BookingSummaryActivity"
+            android:exported="false" />
+
+
+        <!-- ========================================= -->
+        <!-- Member 4 - Field Operations -->
+        <!-- ========================================= -->
+
+        <!-- Member 4 Operator Dashboard -->
+        <activity
+            android:name=".fieldops.member4.operations.OperatorDashboardActivity"
+            android:exported="false" />
+
+        <!-- Completed Transactions -->
+        <activity
+            android:name=".fieldops.member4.operations.CompletedTransactionsActivity"
+            android:exported="false" />
+
+        <!-- QR Scanner -->
+        <activity
+            android:name=".fieldops.member4.qrscanner.ScanQrActivity"
+            android:exported="false" />
+
+        <!-- Transaction QR Generator -->
+        <activity
+            android:name=".fieldops.member4.qrscanner.TransactionQrActivity"
+            android:exported="false" />
+
+        <!-- Transaction Verification -->
+        <activity
+            android:name=".fieldops.member4.qrverification.TransactionVerifyActivity"
+            android:exported="false" />
+
     </application>
+
 </manifest>
+

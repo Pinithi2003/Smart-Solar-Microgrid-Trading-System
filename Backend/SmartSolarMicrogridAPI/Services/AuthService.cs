@@ -20,6 +20,9 @@ namespace SmartSolarMicrogridAPI.Services
             _configuration = configuration;
         }
 
+        // =========================================================
+        // Get user by email
+        // =========================================================
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             var collection = _mongoDbService.Database
@@ -34,10 +37,106 @@ namespace SmartSolarMicrogridAPI.Services
                 .FirstOrDefaultAsync();
         }
 
+        // =========================================================
+        // Register new Prosumer
+        // =========================================================
+        public async Task<(bool Success, string Message, User? User)>
+            RegisterProsumerAsync(RegisterRequest request)
+        {
+            var collection = _mongoDbService.Database
+                .GetCollection<User>("Users");
+
+            // -----------------------------------------------------
+            // Normalize input
+            // -----------------------------------------------------
+            var normalizedNIC = request.NIC.Trim();
+
+            var normalizedEmail = request.Email
+                .Trim()
+                .ToLowerInvariant();
+
+            // -----------------------------------------------------
+            // Check existing email
+            // -----------------------------------------------------
+            var existingEmail = await collection
+                .Find(u => u.Email == normalizedEmail)
+                .FirstOrDefaultAsync();
+
+            if (existingEmail != null)
+            {
+                return (
+                    false,
+                    "An account with this email already exists.",
+                    null
+                );
+            }
+
+            // -----------------------------------------------------
+            // Check existing NIC
+            // -----------------------------------------------------
+            var existingNIC = await collection
+                .Find(u => u.NIC == normalizedNIC)
+                .FirstOrDefaultAsync();
+
+            if (existingNIC != null)
+            {
+                return (
+                    false,
+                    "An account with this NIC already exists.",
+                    null
+                );
+            }
+
+            // -----------------------------------------------------
+            // Hash password
+            // -----------------------------------------------------
+            var passwordHash =
+                BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+            // -----------------------------------------------------
+            // Create user
+            // -----------------------------------------------------
+            var user = new User
+            {
+                NIC = normalizedNIC,
+
+                FullName = request.FullName.Trim(),
+
+                Email = normalizedEmail,
+
+                Phone = request.Phone.Trim(),
+
+                PasswordHash = passwordHash,
+
+                // Mobile registration creates Prosumer accounts only.
+                Role = "Prosumer",
+
+                // Backoffice approval is required.
+                Status = "Pending",
+
+                // Pending accounts are not active.
+                IsActive = false,
+
+                CreatedAt = DateTime.UtcNow
+            };
+
+            // -----------------------------------------------------
+            // Save user to MongoDB
+            // -----------------------------------------------------
+            await collection.InsertOneAsync(user);
+
+            return (
+                true,
+                "Registration successful. Your account is pending Backoffice approval.",
+                user
+            );
+        }
+
+        // =========================================================
+        // Generate JWT token
+        // =========================================================
         public string GenerateJwtToken(User user)
         {
-            // First check configuration, then fallback to JWT_KEY
-            // from the .env file / environment variables.
             var jwtKey =
                 _configuration["Jwt:Key"]
                 ?? Environment.GetEnvironmentVariable("JWT_KEY");

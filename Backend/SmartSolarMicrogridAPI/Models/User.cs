@@ -10,6 +10,14 @@ public class User : IValidatableObject
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
+    [BsonElement("nic")]
+    [Required(ErrorMessage = "NIC is required.")]
+    [StringLength(
+        20,
+        MinimumLength = 5,
+        ErrorMessage = "NIC must be 5-20 characters.")]
+    public string NIC { get; set; } = string.Empty;
+
     [BsonElement("fullName")]
     [Required(ErrorMessage = "Full name cannot be empty.")]
     [StringLength(
@@ -25,6 +33,12 @@ public class User : IValidatableObject
         160,
         ErrorMessage = "Email must be 160 characters or fewer.")]
     public string Email { get; set; } = string.Empty;
+
+    [BsonElement("phone")]
+    [StringLength(
+        20,
+        ErrorMessage = "Phone must be 20 characters or fewer.")]
+    public string Phone { get; set; } = string.Empty;
 
     [BsonElement("passwordHash")]
     [Required(ErrorMessage = "Password is required.")]
@@ -56,6 +70,13 @@ public class User : IValidatableObject
     public IEnumerable<ValidationResult> Validate(
         ValidationContext validationContext)
     {
+        if (string.IsNullOrWhiteSpace(NIC))
+        {
+            yield return new ValidationResult(
+                "NIC cannot be blank.",
+                [nameof(NIC)]);
+        }
+
         if (!string.IsNullOrEmpty(FullName) &&
             string.IsNullOrWhiteSpace(FullName))
         {
@@ -70,6 +91,14 @@ public class User : IValidatableObject
             yield return new ValidationResult(
                 "Email cannot be blank.",
                 [nameof(Email)]);
+        }
+
+        if (!string.IsNullOrEmpty(Phone) &&
+            string.IsNullOrWhiteSpace(Phone))
+        {
+            yield return new ValidationResult(
+                "Phone cannot be blank.",
+                [nameof(Phone)]);
         }
 
         if (!AllowedRoles.Contains(Role))

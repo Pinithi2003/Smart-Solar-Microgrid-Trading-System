@@ -4,13 +4,21 @@ using SmartSolarMicrogridAPI.Models;
 using SmartSolarMicrogridAPI.Services;
 using System.Text;
 
-// Team convention: load SmartSolarMicrogridAPI/.env into environment variables.
-// No-op when the file is absent.
+// Load .env file
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Optional .env overrides for MongoDB configuration.
+// ============================================================
+// LOCAL NETWORK / ANDROID MOBILE ACCESS
+// ============================================================
+
+builder.WebHost.UseUrls("http://0.0.0.0:5205");
+
+// ============================================================
+// MONGODB CONFIGURATION
+// ============================================================
+
 foreach (var (envKey, configKey) in new[]
 {
     ("MONGODB_CONNECTION_STRING", "MongoDBSettings:ConnectionString"),
@@ -26,7 +34,10 @@ foreach (var (envKey, configKey) in new[]
     }
 }
 
-// MongoDB
+// ============================================================
+// SERVICES
+// ============================================================
+
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings"));
 
@@ -37,8 +48,10 @@ builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<AuthService>();
 
-// JWT Authentication
-// First check configuration, then fallback to JWT_KEY from .env.
+// ============================================================
+// JWT AUTHENTICATION
+// ============================================================
+
 var jwtKey =
     builder.Configuration["Jwt:Key"]
     ?? Environment.GetEnvironmentVariable("JWT_KEY");
@@ -50,42 +63,92 @@ if (string.IsNullOrWhiteSpace(jwtKey))
 }
 
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+
+        options.DefaultChallengeScheme =
+            JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = false;
+
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtKey)),
+
+                ValidateIssuer = false,
+                ValidateAudience = false,
+
+                ValidateLifetime = true,
+
+                ClockSkew = TimeSpan.Zero
+            };
+
+        // Useful while debugging mobile authentication.
+        options.Events = new JwtBearerEvents
         {
-            ValidateIssuerSigningKey = true,
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine(
+                    $"JWT Authentication Failed: {context.Exception.Message}");
 
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtKey)),
+                return Task.CompletedTask;
+            },
 
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine(
+                    "JWT Authentication Successful.");
 
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+                return Task.CompletedTask;
+            }
         };
     });
 
 builder.Services.AddAuthorization();
 
+// ============================================================
+// CONTROLLERS + SWAGGER
+// ============================================================
+
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 
-// Allow demo frontend / Postman / mobile clients during development.
+// ============================================================
+// CORS
+// ============================================================
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 });
+
+// ============================================================
+// BUILD
+// ============================================================
 
 var app = builder.Build();
 
-// MongoDB startup check
+// ============================================================
+// MONGODB STARTUP CHECK
+// ============================================================
+
 var configuredConn =
     app.Configuration["MongoDBSettings:ConnectionString"] ?? "";
 
@@ -113,19 +176,41 @@ else
         app.Configuration["MongoDBSettings:CollectionName"]);
 }
 
+// ============================================================
+// SWAGGER
+// ============================================================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// ============================================================
+// HTTP LOCAL DEVELOPMENT
+// ============================================================
+
+// Do NOT use HTTPS redirection for Android local network testing.
+
+// app.UseHttpsRedirection();
+
+// ============================================================
+// CORS
+// ============================================================
 
 app.UseCors("AllowAll");
 
-// Authentication MUST come before Authorization.
+// ============================================================
+// AUTHENTICATION & AUTHORIZATION
+// ============================================================
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
+// ============================================================
+// CONTROLLERS
+// ============================================================
 
 app.MapControllers();
 
@@ -150,7 +235,12 @@ using (var scope = app.Services.CreateScope())
             {
                 FullName = "System Backoffice",
                 Email = "backoffice@smartsolar.com",
+
+                // IMPORTANT:
+                // This is only the initial password value used
+                // by the existing seed logic.
                 PasswordHash = "Backoffice@123",
+
                 Role = "Backoffice",
                 Status = "Approved",
                 IsActive = true
@@ -175,5 +265,9 @@ using (var scope = app.Services.CreateScope())
             "Failed to seed default Backoffice account.");
     }
 }
+
+// ============================================================
+// RUN
+// ============================================================
 
 app.Run();
