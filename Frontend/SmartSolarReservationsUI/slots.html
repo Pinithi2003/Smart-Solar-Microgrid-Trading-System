@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slot lookup — Smart Solar</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-sun"></i></span><div><strong>Smart Solar</strong><span data-user-role>Microgrid</span></div></a>
+      <a class="side-link" href="../SmartSolarUsersUI/index.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a class="side-link" href="../SmartSolarStationUI/index.html"><i class="fa-solid fa-solar-panel"></i> Stations</a>
+      <a class="side-link" href="index.html"><i class="fa-solid fa-clipboard-list"></i> Reservations</a>
+      <a class="side-link active" href="slots.html"><i class="fa-solid fa-clock"></i> Slot lookup</a>
+      <a class="side-link" href="../SmartSolarUsersUI/users.html"><i class="fa-solid fa-users"></i> User Management</a>
+      <a class="side-link" href="../SmartSolarFieldOpsUI/index.html"><i class="fa-solid fa-qrcode"></i> QR Verification</a>
+      <div class="side-spacer"></div>
+      <button class="logout" id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </aside>
+    <div class="main">
+      <div class="topbar"><span>Smart Solar Microgrid / Slot lookup</span><div class="who"><span data-user-name>Guest</span><span class="avatar"><i class="fa-solid fa-user"></i></span></div></div>
+      <div class="content">
+        <div class="kicker">ENERGY BOOKING SLOTS</div>
+        <h1>Slot lookup</h1>
+        <p class="lead">Create a schedule, update a slot, or delete one that has no confirmed booking. Dates must stay inside the next 7 days.</p>
+        <div class="layout">
+          <section class="panel"><div id="slotRows"></div></section>
+          <form id="slotForm" class="panel">
+            <h2>Slot</h2>
+            <label class="sub">Station</label>
+            <select id="slotStation" class="field" required style="margin:6px 0 12px"></select>
+            <label class="sub">Date</label>
+            <input id="slotDate" class="field" type="date" required style="margin:6px 0 12px" />
+            <label class="sub">Start</label>
+            <input id="slotStart" class="field" placeholder="10:00 AM" required style="margin:6px 0 12px" />
+            <label class="sub">End</label>
+            <input id="slotEnd" class="field" placeholder="12:00 PM" required style="margin:6px 0 12px" />
+            <label class="sub">Capacity (kWh)</label>
+            <input id="slotCapacity" class="field" type="number" min="0.1" step="0.1" required style="margin:6px 0 12px" />
+            <button id="slotSave" class="btn-yellow btn-block" type="submit">Create slot</button>
+            <div id="slotError" class="error"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/slots.js"></script>
+</body>
+</html>

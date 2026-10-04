@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation details — Smart Solar</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-sun"></i></span><div><strong>Smart Solar</strong><span data-user-role>Microgrid</span></div></a>
+      <a class="side-link" href="../SmartSolarUsersUI/index.html"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a class="side-link" href="../SmartSolarStationUI/index.html"><i class="fa-solid fa-solar-panel"></i> Stations</a>
+      <a class="side-link active" href="index.html"><i class="fa-solid fa-clipboard-list"></i> Reservations</a>
+      <a class="side-link" href="slots.html"><i class="fa-solid fa-clock"></i> Slot lookup</a>
+      <a class="side-link" href="../SmartSolarUsersUI/users.html"><i class="fa-solid fa-users"></i> User Management</a>
+      <a class="side-link" href="../SmartSolarFieldOpsUI/index.html"><i class="fa-solid fa-qrcode"></i> QR Verification</a>
+      <div class="side-spacer"></div>
+      <button class="logout" id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </aside>
+    <div class="main">
+      <div class="topbar"><span>Smart Solar Microgrid / Reservation details</span><div class="who"><span data-user-name>Guest</span><span class="avatar"><i class="fa-solid fa-user"></i></span></div></div>
+      <div class="content">
+        <div class="crumb"><a href="index.html">Reservations</a> / Details</div>
+        <div id="createdNote" class="warn" hidden>Booking confirmed. It is approved immediately. The verification code is on this page.</div>
+        <div class="layout">
+          <section class="panel">
+            <div class="list-head"><h2 style="margin:0" id="title">Loading…</h2><span id="statusPill" class="pill ok"></span></div>
+            <p class="sub" id="when"></p>
+            <div class="row" style="border:0"><span>Reference</span><strong id="ref"></strong></div>
+            <div class="row"><span>Prosumer</span><strong id="who"></strong></div>
+            <div class="row"><span>Station</span><div><strong id="station"></strong><div class="sub" id="where"></div></div></div>
+            <div class="row"><span>Date</span><strong id="date"></strong></div>
+            <div class="row"><span>Time</span><strong id="time"></strong></div>
+            <div class="row"><span>Energy</span><strong id="energy"></strong></div>
+            <div class="row"><span>Verification code</span><strong id="code"></strong></div>
+          </section>
+          <aside class="panel">
+            <div class="sub" id="starts" style="text-align:right"></div>
+            <h2>Actions</h2>
+            <div id="closedNote" class="warn" hidden></div>
+            <button id="changeBtn" class="btn-yellow btn-block" type="button">Change slot</button>
+            <div id="slotChoices" hidden></div>
+            <button id="cancelBtn" class="btn-outline" type="button">Cancel booking</button>
+            <div id="actionError" class="error"></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/details.js"></script>
+</body>
+</html>

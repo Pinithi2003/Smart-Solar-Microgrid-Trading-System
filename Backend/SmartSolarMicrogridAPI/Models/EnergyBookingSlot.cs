@@ -1,3 +1,11 @@
+// ------------------------------------------------------------
+// Project     : Smart Solar Microgrid Trading System
+// Module      : Energy Booking and Reservation (Member 3)
+// Course      : SE4040 Enterprise Application Development
+// File        : EnergyBookingSlot.cs
+// Description : MongoDB document for one energy booking slot.
+// ------------------------------------------------------------
+
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -35,6 +43,10 @@ public class EnergyBookingSlot : IValidatableObject
     [Required(ErrorMessage = "EndTime is required (e.g. 12:00 PM).")]
     public string EndTime { get; set; } = string.Empty;
 
+    [BsonElement("energyCapacity")]
+    [Range(0, double.MaxValue, ErrorMessage = "Energy capacity cannot be negative.")]
+    public double EnergyCapacity { get; set; }
+
     [BsonElement("availableEnergy")]
     [Range(0, double.MaxValue, ErrorMessage = "Available energy cannot be negative.")]
     public double AvailableEnergy { get; set; }
@@ -42,10 +54,11 @@ public class EnergyBookingSlot : IValidatableObject
     [BsonElement("status")]
     public string Status { get; set; } = "Available";
 
-    public static readonly string[] AllowedStatuses = ["Available", "Full", "Unavailable"];
+    public static readonly string[] AllowedStatuses = ["Available", "Full", "Inactive", "Unavailable"];
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
+        // Checks that the slot status is one of the allowed values.
         if (!AllowedStatuses.Contains(Status))
             yield return new ValidationResult(
                 $"Status must be one of: {string.Join(", ", AllowedStatuses)}.",

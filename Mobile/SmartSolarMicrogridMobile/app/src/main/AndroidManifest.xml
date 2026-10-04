@@ -62,6 +62,7 @@
             android:name=".auth.ui.HomeActivity"
             android:exported="false" />
 
+
         <!-- ========================================= -->
         <!-- Member 2 - Solar Stations -->
         <!-- ========================================= -->
@@ -74,6 +75,32 @@
         <!-- Individual Station Details -->
         <activity
             android:name="com.smartsolar.stations.stations.ui.StationFullDetailActivity"
+            android:exported="false" />
+
+
+        <!-- ========================================= -->
+        <!-- Reservations -->
+        <!-- ========================================= -->
+
+        <!-- Reservations List -->
+        <activity
+            android:name=".reservations.ui.ReservationsActivity"
+            android:exported="false" />
+
+        <!-- Book Energy Slot -->
+        <activity
+            android:name=".reservations.ui.BookSlotActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Reservation Details -->
+        <activity
+            android:name=".reservations.ui.ReservationDetailActivity"
+            android:exported="false" />
+
+        <!-- Booking Summary -->
+        <activity
+            android:name=".reservations.ui.BookingSummaryActivity"
             android:exported="false" />
 
 
@@ -109,3 +136,4 @@
     </application>
 
 </manifest>
+

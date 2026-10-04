@@ -1,5 +1,6 @@
 package com.smartsolar.stations.stations.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -16,6 +17,8 @@ import com.smartsolar.stations.stations.data.ApiClient
 import com.smartsolar.stations.stations.data.StationRepository
 import com.smartsolar.stations.stations.util.BusinessRules
 import com.smartsolar.stations.shared.common.MockData
+import com.smartsolar.stations.reservations.data.ReservationStubs
+import com.smartsolar.stations.reservations.ui.BookSlotActivity
 import kotlinx.coroutines.launch
 
 /**
@@ -32,8 +35,13 @@ class StationFullDetailActivity : AppCompatActivity() {
 
         val id = intent.getStringExtra("stationId")
             ?: MockData.stations.firstOrNull()?.stationId ?: ""
+
         if (id.isBlank()) {
-            Toast.makeText(this, getString(R.string.error_station_not_found), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.error_station_not_found),
+                Toast.LENGTH_SHORT
+            ).show()
             finish()
             return
         }
@@ -46,19 +54,34 @@ class StationFullDetailActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val db = StationsDbHelper(this@StationFullDetailActivity)
+
             val repo = try {
-                StationRepository(ApiClient.stationApi(BuildConfig.API_BASE_URL)) { db.cacheStations(it) }
+                StationRepository(
+                    ApiClient.stationApi(BuildConfig.API_BASE_URL)
+                ) {
+                    db.cacheStations(it)
+                }
             } catch (_: Exception) {
                 StationRepository(null)
             }
+
             var list = repo.loadStations()
+
             if (list == MockData.stations) {
                 val cached = db.readCachedStations()
-                if (cached.isNotEmpty()) list = cached
+                if (cached.isNotEmpty()) {
+                    list = cached
+                }
             }
+
             val station = list.find { it.stationId == id }
+
             if (station == null) {
-                Toast.makeText(this@StationFullDetailActivity, getString(R.string.error_station_not_found), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@StationFullDetailActivity,
+                    getString(R.string.error_station_not_found),
+                    Toast.LENGTH_SHORT
+                ).show()
                 finish()
             } else {
                 bind(station)
@@ -67,13 +90,18 @@ class StationFullDetailActivity : AppCompatActivity() {
     }
 
     private fun bind(station: SolarStation) {
-        MemberNav.bindHeader(this, station.stationName)
-        MemberNav.stylePill(findViewById(R.id.fullStatus), station.status)
 
-        // Demo distances exist only for ST001..ST003 — hide when unknown
-        // instead of showing "-- away".
+        MemberNav.bindHeader(this, station.stationName)
+        MemberNav.stylePill(
+            findViewById(R.id.fullStatus),
+            station.status
+        )
+
+        // Demo distances exist only for ST001..ST003.
+        // Hide when unknown instead of showing "-- away".
         val distView = findViewById<TextView>(R.id.fullDist)
         val dist = MockData.demoDistances[station.stationId]
+
         if (dist != null) {
             distView.visibility = View.VISIBLE
             distView.text = "• $dist away"
@@ -81,34 +109,67 @@ class StationFullDetailActivity : AppCompatActivity() {
             distView.visibility = View.GONE
         }
 
-        findViewById<TextView>(R.id.fullId).text = station.stationId
-        findViewById<TextView>(R.id.fullName).text = station.stationName
-        findViewById<TextView>(R.id.fullLocation).text = station.location
+        findViewById<TextView>(R.id.fullId).text =
+            station.stationId
 
-        findViewById<TextView>(R.id.fullTotal).text = "${station.totalCapacity} kWh"
-        findViewById<TextView>(R.id.fullAvail).text = "${station.availableCapacity} kWh"
-        val inUse = (station.totalCapacity - station.availableCapacity).coerceAtLeast(0.0)
-        findViewById<TextView>(R.id.fullUsed).text = "$inUse kWh"
+        findViewById<TextView>(R.id.fullName).text =
+            station.stationName
 
-        val pct = if (station.totalCapacity > 0)
-            ((inUse / station.totalCapacity) * 100).toInt().coerceIn(0, 100)
-        else 0
+        findViewById<TextView>(R.id.fullLocation).text =
+            station.location
+
+        findViewById<TextView>(R.id.fullTotal).text =
+            "${station.totalCapacity} kWh"
+
+        findViewById<TextView>(R.id.fullAvail).text =
+            "${station.availableCapacity} kWh"
+
+        val inUse =
+            (station.totalCapacity - station.availableCapacity)
+                .coerceAtLeast(0.0)
+
+        findViewById<TextView>(R.id.fullUsed).text =
+            "$inUse kWh"
+
+        val pct =
+            if (station.totalCapacity > 0)
+                ((inUse / station.totalCapacity) * 100)
+                    .toInt()
+                    .coerceIn(0, 100)
+            else
+                0
+
         findViewById<TextView>(R.id.fullUsageText).text =
             "$pct% utilized • ${station.availableCapacity} kWh free of ${station.totalCapacity} kWh"
+
         findViewById<ProgressBar>(R.id.fullUsageBar).progress = pct
 
+        // Booking is allowed only when the station is bookable.
         val bookable = BusinessRules.isBookable(station.status)
-        val book = findViewById<Button>(R.id.fullBookButton)
+
+        val book =
+            findViewById<Button>(R.id.fullBookButton)
+
         book.isEnabled = bookable
         book.alpha = if (bookable) 1f else 0.5f
+
         book.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Reservations module (Member 3): booking ${station.stationId} opens here.",
-                Toast.LENGTH_LONG
-            ).show()
+
+            startActivity(
+                Intent(
+                    this,
+                    BookSlotActivity::class.java
+                ).putExtra(
+                    ReservationStubs.EXTRA_STATION_ID,
+                    station.stationId
+                )
+            )
         }
 
-        findViewById<Button>(R.id.fullMapButton).setOnClickListener { finish() }
+        findViewById<Button>(R.id.fullMapButton)
+            .setOnClickListener {
+                finish()
+            }
     }
 }
+
