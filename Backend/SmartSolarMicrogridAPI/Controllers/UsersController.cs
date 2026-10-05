@@ -139,27 +139,35 @@ public class UsersController : ControllerBase
     // =========================================================
     [HttpPost]
     [Authorize(Roles = "Backoffice")]
-    public async Task<IActionResult> CreateUser([FromBody] User user)
+    public async Task<IActionResult> CreateUser(
+        [FromBody] CreateUserRequest request)
     {
-       if (!ModelState.IsValid)
-{
-    var errors = ModelState
-        .Where(x => x.Value != null && x.Value.Errors.Count > 0)
-        .ToDictionary(
-            x => x.Key,
-            x => x.Value!.Errors
-                .Select(e => e.ErrorMessage)
-                .ToArray()
-        );
+        // Model validation
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x =>
+                    x.Value != null &&
+                    x.Value.Errors.Count > 0)
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.Value!.Errors
+                        .Select(e => e.ErrorMessage)
+                        .ToArray()
+                );
 
-    return BadRequest(new
-    {
-        message = "Validation failed.",
-        errors = errors
-    });
-}
+            return BadRequest(new
+            {
+                message = "Validation failed.",
+                errors = errors
+            });
+        }
 
-        if (string.IsNullOrWhiteSpace(user.NIC))
+        // =====================================================
+        // Validate required fields
+        // =====================================================
+
+        if (string.IsNullOrWhiteSpace(request.NIC))
         {
             return BadRequest(new
             {
@@ -167,7 +175,15 @@ public class UsersController : ControllerBase
             });
         }
 
-        if (string.IsNullOrWhiteSpace(user.Email))
+        if (string.IsNullOrWhiteSpace(request.FullName))
+        {
+            return BadRequest(new
+            {
+                message = "Full name is required."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Email))
         {
             return BadRequest(new
             {
@@ -175,13 +191,68 @@ public class UsersController : ControllerBase
             });
         }
 
-        user.NIC = user.NIC.Trim();
-        user.Email = user.Email.Trim().ToLowerInvariant();
-        user.Phone = user.Phone?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(request.Phone))
+        {
+            return BadRequest(new
+            {
+                message = "Phone number is required."
+            });
+        }
 
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest(new
+            {
+                message = "Password is required."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Role))
+        {
+            return BadRequest(new
+            {
+                message = "Role is required."
+            });
+        }
+
+        // =====================================================
+        // Normalize input
+        // =====================================================
+
+        var nic = request.NIC.Trim();
+
+        var fullName = request.FullName.Trim();
+
+        var email = request.Email
+            .Trim()
+            .ToLowerInvariant();
+
+        var phone = request.Phone.Trim();
+
+        var role = request.Role.Trim();
+
+        // =====================================================
+        // Validate role
+        // =====================================================
+
+       if (!SmartSolarMicrogridAPI.Models.User.AllowedRoles.Contains(role))
+        {
+           return BadRequest(new
+{
+    message =
+        $"Role must be one of: " +
+        $"{string.Join(
+            ", ",
+            SmartSolarMicrogridAPI.Models.User.AllowedRoles)}."
+});
+        }
+
+        // =====================================================
         // Check duplicate email
+        // =====================================================
+
         var existingUser =
-            await _userService.GetUserByEmailAsync(user.Email);
+            await _userService.GetUserByEmailAsync(email);
 
         if (existingUser != null)
         {
@@ -191,14 +262,19 @@ public class UsersController : ControllerBase
             });
         }
 
+        // =====================================================
         // Check duplicate NIC
-        var allUsers = await _userService.GetUsersAsync();
+        // =====================================================
 
-        var existingNIC = allUsers.FirstOrDefault(
-            x => string.Equals(
-                x.NIC?.Trim(),
-                user.NIC,
-                StringComparison.OrdinalIgnoreCase));
+        var allUsers =
+            await _userService.GetUsersAsync();
+
+        var existingNIC =
+            allUsers.FirstOrDefault(
+                x => string.Equals(
+                    x.NIC?.Trim(),
+                    nic,
+                    StringComparison.OrdinalIgnoreCase));
 
         if (existingNIC != null)
         {
@@ -208,19 +284,48 @@ public class UsersController : ControllerBase
             });
         }
 
-        user.Id = null;
-        user.CreatedAt = DateTime.UtcNow;
+        // =====================================================
+        // Create User model
+        // =====================================================
 
-        // Backoffice-created users are already approved
-        user.Status = "Approved";
-        user.IsActive = true;
+        var user = new User
+        {
+            NIC = nic,
+
+            FullName = fullName,
+
+            Email = email,
+
+            Phone = phone,
+
+            // IMPORTANT:
+            // UserService will BCrypt-hash this password
+            // before saving it to MongoDB.
+            PasswordHash = request.Password,
+
+            // Backoffice selects the role.
+            Role = role,
+
+            // Backoffice-created users are already approved.
+            Status = "Approved",
+
+            IsActive = true,
+
+            CreatedAt = DateTime.UtcNow
+        };
+
+        // =====================================================
+        // Save user
+        // =====================================================
 
         try
         {
             await _userService.CreateUserAsync(user);
         }
         catch (MongoWriteException ex)
-            when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            when (
+                ex.WriteError.Category ==
+                ServerErrorCategory.DuplicateKey)
         {
             return Conflict(new
             {
@@ -228,6 +333,10 @@ public class UsersController : ControllerBase
                     "A user with the same unique information already exists."
             });
         }
+
+        // =====================================================
+        // Retrieve created user
+        // =====================================================
 
         var created =
             await _userService.GetUserByEmailAsync(user.Email);
@@ -240,6 +349,11 @@ public class UsersController : ControllerBase
                     "User was created but could not be retrieved."
             });
         }
+
+        // =====================================================
+        // Return created user
+        // Never return PasswordHash
+        // =====================================================
 
         return CreatedAtAction(
             nameof(GetUserById),
@@ -338,18 +452,21 @@ public class UsersController : ControllerBase
         // =====================================================
         // Normalize input
         // =====================================================
+
         var nic = request.NIC.Trim();
 
-        // IMPORTANT:
-        // Store email in lowercase because AuthService also
-        // searches using lowercase email.
-        var email = request.Email.Trim().ToLowerInvariant();
+        // Store email in lowercase because AuthService
+        // also searches using lowercase email.
+        var email = request.Email
+            .Trim()
+            .ToLowerInvariant();
 
         var phone = request.Phone.Trim();
 
         // -------------------------
         // Check duplicate email
         // -------------------------
+
         var existingEmail =
             await _userService.GetUserByEmailAsync(email);
 
@@ -364,13 +481,16 @@ public class UsersController : ControllerBase
         // -------------------------
         // Check duplicate NIC
         // -------------------------
-        var allUsers = await _userService.GetUsersAsync();
 
-        var existingNIC = allUsers.FirstOrDefault(
-            x => string.Equals(
-                x.NIC?.Trim(),
-                nic,
-                StringComparison.OrdinalIgnoreCase));
+        var allUsers =
+            await _userService.GetUsersAsync();
+
+        var existingNIC =
+            allUsers.FirstOrDefault(
+                x => string.Equals(
+                    x.NIC?.Trim(),
+                    nic,
+                    StringComparison.OrdinalIgnoreCase));
 
         if (existingNIC != null)
         {
@@ -384,6 +504,7 @@ public class UsersController : ControllerBase
         // Public registration
         // ALWAYS create Prosumer
         // -------------------------
+
         var user = new User
         {
             NIC = nic,
@@ -413,7 +534,9 @@ public class UsersController : ControllerBase
             await _userService.CreateUserAsync(user);
         }
         catch (MongoWriteException ex)
-            when (ex.WriteError.Category == ServerErrorCategory.DuplicateKey)
+            when (
+                ex.WriteError.Category ==
+                ServerErrorCategory.DuplicateKey)
         {
             return Conflict(new
             {
@@ -451,7 +574,8 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetMyProfile()
     {
         var userId =
-            User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -506,7 +630,8 @@ public class UsersController : ControllerBase
         }
 
         var userId =
-            User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -594,8 +719,9 @@ public class UsersController : ControllerBase
                 existing);
         }
         catch (MongoWriteException ex)
-            when (ex.WriteError.Category ==
-                  ServerErrorCategory.DuplicateKey)
+            when (
+                ex.WriteError.Category ==
+                ServerErrorCategory.DuplicateKey)
         {
             return Conflict(new
             {
@@ -643,7 +769,8 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> RequestDeactivation()
     {
         var userId =
-            User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -962,14 +1089,26 @@ public class UsersController : ControllerBase
         // changed through Backoffice.
         // =====================================================
 
-        existing.NIC = updated.NIC;
-        existing.FullName = updated.FullName.Trim();
-        existing.Email = updated.Email;
-        existing.Phone = updated.Phone;
+        existing.NIC =
+            updated.NIC;
 
-        existing.Role = updated.Role;
-        existing.Status = updated.Status;
-        existing.IsActive = updated.IsActive;
+        existing.FullName =
+            updated.FullName.Trim();
+
+        existing.Email =
+            updated.Email;
+
+        existing.Phone =
+            updated.Phone;
+
+        existing.Role =
+            updated.Role;
+
+        existing.Status =
+            updated.Status;
+
+        existing.IsActive =
+            updated.IsActive;
 
         // Keep existing password unless a separate password
         // update feature is implemented.
@@ -987,8 +1126,9 @@ public class UsersController : ControllerBase
                 existing);
         }
         catch (MongoWriteException ex)
-            when (ex.WriteError.Category ==
-                  ServerErrorCategory.DuplicateKey)
+            when (
+                ex.WriteError.Category ==
+                ServerErrorCategory.DuplicateKey)
         {
             return Conflict(new
             {
@@ -1066,6 +1206,25 @@ public class UsersController : ControllerBase
             message = "User deleted successfully."
         });
     }
+}
+
+
+// =========================================================
+// Backoffice Create User Request
+// =========================================================
+public class CreateUserRequest
+{
+    public string FullName { get; set; } = string.Empty;
+
+    public string NIC { get; set; } = string.Empty;
+
+    public string Email { get; set; } = string.Empty;
+
+    public string Phone { get; set; } = string.Empty;
+
+    public string Role { get; set; } = string.Empty;
+
+    public string Password { get; set; } = string.Empty;
 }
 
 
