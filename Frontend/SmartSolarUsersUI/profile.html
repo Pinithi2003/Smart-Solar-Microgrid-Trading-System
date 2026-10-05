@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile - Smart Solar Microgrid</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .topbar {
+            height: 70px;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            color: #176b45;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #176b45;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .page {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 25px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #78909c;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+            margin-bottom: 25px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eeeeee;
+            margin-bottom: 25px;
+        }
+
+        .large-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #176b45;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .profile-header h2 {
+            margin-bottom: 6px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: #176b45;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cfd8dc;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #176b45;
+        }
+
+        input:disabled {
+            background: #f1f3f4;
+            color: #607d8b;
+            cursor: not-allowed;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #176b45;
+            color: white;
+        }
+
+        .save-btn {
+            background: #176b45;
+            color: white;
+            display: none;
+        }
+
+        .cancel-btn {
+            background: #eceff1;
+            color: #37474f;
+            display: none;
+        }
+
+        .deactivate-card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px 30px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+            border-left: 5px solid #d32f2f;
+        }
+
+        .deactivate-card h3 {
+            color: #c62828;
+            margin-bottom: 8px;
+        }
+
+        .deactivate-card p {
+            color: #607d8b;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .deactivate-btn {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .back-btn {
+            background: #eceff1;
+            color: #37474f;
+        }
+
+        .status-active {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .status-inactive {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 18px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #607d8b;
+        }
+
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .page {
+                margin: 25px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+
+        <div class="brand">
+            Smart Solar Microgrid
+        </div>
+
+        <div class="user-area">
+            <div class="user-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <span class="user-name" id="topUserName">
+                Loading...
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- PAGE -->
+    <main class="page">
+
+        <div class="page-header">
+            <h1>My Profile</h1>
+            <p>View and manage your Smart Solar Microgrid account.</p>
+        </div>
+
+
+        <!-- PROFILE -->
+        <div class="profile-card">
+
+            <div class="profile-header">
+
+                <div class="large-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div>
+                    <h2 id="profileName">
+                        Loading...
+                    </h2>
+
+                    <span class="role-badge" id="profileRole">
+                        Loading...
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div id="loadingMessage" class="loading">
+                Loading profile...
+            </div>
+
+
+            <div id="profileContent" style="display:none;">
+
+                <div class="form-grid">
+
+                    <!-- FULL NAME -->
+                    <div class="form-group">
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="form-group">
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- PHONE -->
+                    <div class="form-group">
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="phone"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- NIC -->
+                    <div class="form-group">
+                        <label for="nic">
+                            NIC
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nic"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- ROLE -->
+                    <div class="form-group">
+                        <label for="role">
+                            Role
+                        </label>
+
+                        <input
+                            type="text"
+                            id="role"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div class="form-group">
+                        <label for="status">
+                            Account Status
+                        </label>
+
+                        <input
+                            type="text"
+                            id="status"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- ACTIVE STATUS -->
+                    <div class="form-group">
+                        <label for="activeStatus">
+                            Account State
+                        </label>
+
+                        <input
+                            type="text"
+                            id="activeStatus"
+                            disabled
+                        >
+                    </div>
+
+
+                    <!-- CREATED DATE -->
+                    <div class="form-group">
+                        <label for="createdAt">
+                            Created Date
+                        </label>
+
+                        <input
+                            type="text"
+                            id="createdAt"
+                            disabled
+                        >
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+                <div class="button-row">
+
+                    <button
+                        type="button"
+                        class="edit-btn"
+                        id="editBtn"
+                        onclick="enableEdit()"
+                    >
+                        <i class="fa-solid fa-pen"></i>
+                        Edit Profile
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="save-btn"
+                        id="saveBtn"
+                        onclick="saveProfile()"
+                    >
+                        <i class="fa-solid fa-check"></i>
+                        Save Changes
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancelBtn"
+                        onclick="cancelEdit()"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="back-btn"
+                        onclick="goBack()"
+                    >
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Back
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="profileMessage"
+                    class="message"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DEACTIVATE -->
+        <div class="deactivate-card">
+
+            <h3>
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Deactivate Account
+            </h3>
+
+            <p>
+                Deactivating your account will make it inactive and
+                you will no longer be able to use the system with
+                this account.
+            </p>
+
+            <button
+                type="button"
+                class="deactivate-btn"
+                onclick="deactivateAccount()"
+            >
+                <i class="fa-solid fa-user-slash"></i>
+                Deactivate My Account
+            </button>
+
+        </div>
+
+    </main>
+
+
+<script>
+
+    // ==========================================
+    // API
+    // ==========================================
+
+    const API_BASE_URL = "http://localhost:5205";
+
+
+    // ==========================================
+    // LOGIN SESSION
+    // ==========================================
+
+    const token =
+        localStorage.getItem("solarGridToken");
+
+    let currentUser = null;
+
+    try {
+
+        currentUser =
+            JSON.parse(
+                localStorage.getItem("solarGridUser")
+            );
+
+    } catch (error) {
+
+        currentUser = null;
+
+    }
+
+
+    // ==========================================
+    // CHECK LOGIN
+    // ==========================================
+
+    if (!token) {
+
+        window.location.replace("../index.html");
+
+    }
+
+
+    // ==========================================
+    // LOAD PROFILE
+    // ==========================================
+
+    let originalProfile = null;
+
+
+    async function loadProfile() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/users/me`,
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+            if (response.status === 401) {
+
+                logout();
+
+                return;
+
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load profile."
+                );
+
+            }
+
+
+            const user =
+                await response.json();
+
+
+            originalProfile = user;
+
+
+            displayProfile(user);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                "Unable to load your profile.",
+                "error"
+            );
+
+            document.getElementById(
+                "loadingMessage"
+            ).style.display = "none";
+
+            document.getElementById(
+                "profileContent"
+            ).style.display = "block";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // DISPLAY PROFILE
+    // ==========================================
+
+    function displayProfile(user) {
+
+        document.getElementById(
+            "loadingMessage"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "profileContent"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "profileName"
+        ).textContent =
+            user.fullName || "-";
+
+
+        document.getElementById(
+            "profileRole"
+        ).textContent =
+            user.role || "-";
+
+
+        document.getElementById(
+            "topUserName"
+        ).textContent =
+            user.fullName || "-";
+
+
+        document.getElementById(
+            "fullName"
+        ).value =
+            user.fullName || "";
+
+
+        document.getElementById(
+            "email"
+        ).value =
+            user.email || "";
+
+
+        document.getElementById(
+            "phone"
+        ).value =
+            user.phone || "";
+
+
+        document.getElementById(
+            "nic"
+        ).value =
+            user.nic || "";
+
+
+        document.getElementById(
+            "role"
+        ).value =
+            user.role || "";
+
+
+        document.getElementById(
+            "status"
+        ).value =
+            user.status || "";
+
+
+        document.getElementById(
+            "activeStatus"
+        ).value =
+            user.isActive
+                ? "Active"
+                : "Inactive";
+
+
+        document.getElementById(
+            "createdAt"
+        ).value =
+            formatDate(user.createdAt);
+
+    }
+
+
+    // ==========================================
+    // ENABLE EDIT
+    // ==========================================
+
+    function enableEdit() {
+
+        document.getElementById(
+            "fullName"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "email"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "phone"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "editBtn"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "saveBtn"
+        ).style.display = "inline-block";
+
+
+        document.getElementById(
+            "cancelBtn"
+        ).style.display = "inline-block";
+
+    }
+
+
+    // ==========================================
+    // CANCEL EDIT
+    // ==========================================
+
+    function cancelEdit() {
+
+        if (originalProfile) {
+
+            document.getElementById(
+                "fullName"
+            ).value =
+                originalProfile.fullName || "";
+
+
+            document.getElementById(
+                "email"
+            ).value =
+                originalProfile.email || "";
+
+
+            document.getElementById(
+                "phone"
+            ).value =
+                originalProfile.phone || "";
+
+        }
+
+
+        disableEdit();
+
+    }
+
+
+    // ==========================================
+    // DISABLE EDIT
+    // ==========================================
+
+    function disableEdit() {
+
+        document.getElementById(
+            "fullName"
+        ).disabled = true;
+
+
+        document.getElementById(
+            "email"
+        ).disabled = true;
+
+
+        document.getElementById(
+            "phone"
+        ).disabled = true;
+
+
+        document.getElementById(
+            "editBtn"
+        ).style.display = "inline-block";
+
+
+        document.getElementById(
+            "saveBtn"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "cancelBtn"
+        ).style.display = "none";
+
+    }
+
+
+    // ==========================================
+    // SAVE PROFILE
+    // ==========================================
+
+    async function saveProfile() {
+
+        const fullName =
+            document.getElementById(
+                "fullName"
+            ).value.trim();
+
+
+        const email =
+            document.getElementById(
+                "email"
+            ).value.trim();
+
+
+        const phone =
+            document.getElementById(
+                "phone"
+            ).value.trim();
+
+
+        if (!fullName ||
+            !email ||
+            !phone) {
+
+            showMessage(
+                "Full Name, Email and Phone are required.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/users/me`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${token}`
+                        },
+
+                        body: JSON.stringify({
+
+                            fullName: fullName,
+                            email: email,
+                            phone: phone
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to update profile."
+                );
+
+            }
+
+
+            originalProfile =
+                data.user;
+
+
+            displayProfile(
+                data.user
+            );
+
+
+            disableEdit();
+
+
+            // Update local storage
+            localStorage.setItem(
+                "solarGridUser",
+                JSON.stringify(data.user)
+            );
+
+
+            showMessage(
+                "Profile updated successfully.",
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Unable to update profile.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // DEACTIVATE ACCOUNT
+    // ==========================================
+
+    async function deactivateAccount() {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to deactivate your account?\n\n" +
+                "You will be logged out and will not be able to use this account."
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/users/me/deactivation-request`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Failed to deactivate account."
+                );
+
+            }
+
+
+            alert(
+                "Your account has been deactivated successfully."
+            );
+
+
+            // Clear session
+            localStorage.removeItem(
+                "solarGridToken"
+            );
+
+            localStorage.removeItem(
+                "solarGridUser"
+            );
+
+
+            // Go to login
+            window.location.replace(
+                "../index.html"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.message ||
+                "Unable to deactivate account."
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // BACK
+    // ==========================================
+
+    function goBack() {
+
+        history.back();
+
+    }
+
+
+    // ==========================================
+    // FORMAT DATE
+    // ==========================================
+
+    function formatDate(dateValue) {
+
+        if (!dateValue) {
+
+            return "-";
+
+        }
+
+
+        const date =
+            new Date(dateValue);
+
+
+        if (isNaN(date.getTime())) {
+
+            return dateValue;
+
+        }
+
+
+        return date.toLocaleDateString(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // MESSAGE
+    // ==========================================
+
+    function showMessage(
+        message,
+        type
+    ) {
+
+        const element =
+            document.getElementById(
+                "profileMessage"
+            );
+
+
+        element.textContent =
+            message;
+
+
+        element.className =
+            "message " + type;
+
+
+        element.style.display =
+            "block";
+
+
+        setTimeout(
+            () => {
+                element.style.display =
+                    "none";
+            },
+            4000
+        );
+
+    }
+
+
+    // ==========================================
+    // LOGOUT
+    // ==========================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "solarGridToken"
+        );
+
+        localStorage.removeItem(
+            "solarGridUser"
+        );
+
+
+        window.location.replace(
+            "../index.html"
+        );
+
+    }
+
+
+    // ==========================================
+    // START
+    // ==========================================
+
+    loadProfile();
+
+</script>
+
+</body>
+</html>

@@ -95,20 +95,6 @@
                     android:textColor="@android:color/white" />
 
                 <Button
-                    android:id="@+id/demoProsumerButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:text="@string/action_use_prosumer_demo" />
-
-                <Button
-                    android:id="@+id/demoOperatorButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:text="@string/action_use_operator_demo" />
-
-                <Button
                     android:id="@+id/registerButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

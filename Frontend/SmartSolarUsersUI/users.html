@@ -1,306 +1,613 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 
 <head>
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>User Management | Smart Solar Microgrid</title>
-
-    <!-- Bootstrap -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
-
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: #f5f7fb;
-            color: #1f2937;
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* =========================================
-           TOP BAR
-        ========================================= */
-
-        .topbar {
-            height: 70px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 30px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #facc15;
-            color: #111827;
-
-            border-radius: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-name {
-            font-weight: 600;
-        }
-
-        .user-role {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #111827;
-            color: white;
-
-            border-radius: 50%;
-        }
-
-
-        /* =========================================
-           MAIN
-        ========================================= */
-
-        .page-container {
-            padding: 35px;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 25px;
-        }
-
-        .page-title {
-            margin: 0;
-
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 30px;
-            font-weight: 700;
-        }
-
-        .page-subtitle {
-            margin-top: 6px;
-            color: #6b7280;
-        }
-
-
-        /* =========================================
-           CARD
-        ========================================= */
-
-        .card {
-            border: none;
-            border-radius: 14px;
-
-            box-shadow:
-                0 4px 18px rgba(0, 0, 0, 0.06);
-        }
-
-
-        /* =========================================
-           TABLE
-        ========================================= */
-
-        .table-card {
-            overflow: hidden;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            padding: 16px;
-
-            background: #f8fafc;
-
-            color: #374151;
-
-            font-weight: 600;
-
-            border-bottom:
-                1px solid #e5e7eb;
-        }
-
-        .table tbody td {
-            padding: 16px;
-            vertical-align: middle;
-        }
-
-
-        /* =========================================
-           STATUS
-        ========================================= */
-
-        .status {
-            display: inline-block;
-
-            padding: 7px 11px;
-
-            border-radius: 20px;
-
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: #fff7ed;
-            color: #c2410c;
-        }
-
-        .status-approved {
-            background: #ecfdf5;
-            color: #047857;
-        }
-
-        .status-rejected {
-            background: #fef2f2;
-            color: #b91c1c;
-        }
-
-
-        /* =========================================
-           ROLE
-        ========================================= */
-
-        .role {
-            display: inline-block;
-
-            padding: 6px 10px;
-
-            border-radius: 15px;
-
-            background: #eef2ff;
-            color: #4338ca;
-
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-
-        /* =========================================
-           LOADING
-        ========================================= */
-
-        .loading {
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-
-        /* =========================================
-           EMPTY
-        ========================================= */
-
-        .empty {
-            padding: 60px 20px;
-            text-align: center;
-
-            color: #6b7280;
-        }
-
-        .empty i {
-            font-size: 45px;
-            margin-bottom: 15px;
-        }
-
-
-        /* =========================================
-           ERROR
-        ========================================= */
-
-        #errorBox {
-            display: none;
-        }
-
-
-        /* =========================================
-           MOBILE
-        ========================================= */
-
-        @media (max-width: 768px) {
-
-            .topbar {
-                padding: 0 15px;
-            }
-
-            .page-container {
-                padding: 20px 15px;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .table-responsive {
-                font-size: 14px;
-            }
-
-        }
-
-    </style>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>User Management — Smart Solar Microgrid</title>
+
+
+<style>
+    /* Hide page until role is verified */
+    body {
+        visibility: hidden;
+    }
+
+    body.access-allowed {
+        visibility: visible;
+    }
+</style>
+
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="assets/logo.svg"
+  >
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- Font Awesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- Shared Dashboard CSS -->
+  <link
+    href="css/styles.css"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    /* =========================================================
+       USER MANAGEMENT PAGE
+       ========================================================= */
+
+    body {
+      background-color: var(--page-bg);
+      color: var(--ink);
+    }
+
+    /* =========================================================
+       PAGE HEADER
+       ========================================================= */
+
+    .user-page-header {
+      margin-bottom: 28px;
+    }
+
+    .user-page-kicker {
+      font-size: 12px;
+      letter-spacing: 1.4px;
+      font-weight: 700;
+      color: var(--label-grey);
+      margin-bottom: 8px;
+    }
+
+    .user-page-title {
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .user-page-subtitle {
+      color: #697586;
+      font-size: 14px;
+      margin-top: 9px;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    /* =========================================================
+       USER MANAGEMENT CARD
+       ========================================================= */
+
+    .users-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      padding: 24px;
+    }
+
+    /* =========================================================
+       ACTION BAR
+       ========================================================= */
+
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      color: var(--label-grey);
+      pointer-events: none;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      padding: 11px 14px 11px 40px;
+      background: var(--input-bg);
+      color: var(--ink);
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+    }
+
+    .search-box input:focus {
+      background: #ffffff;
+      border-color: var(--green);
+      box-shadow:
+        0 0 0 3px rgba(30, 126, 77, 0.10);
+    }
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    .button-group {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .refresh-btn,
+    .add-user-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+
+      border: 0;
+      border-radius: 10px;
+
+      padding: 11px 17px;
+
+      color: #ffffff;
+
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background-color 0.15s ease,
+        transform 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    .refresh-btn {
+      background: var(--navy);
+    }
+
+    .refresh-btn:hover {
+      background: #1b2b42;
+      transform: translateY(-1px);
+    }
+
+    .add-user-btn {
+      background: var(--green);
+    }
+
+    .add-user-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* =========================================================
+       TABLE
+       ========================================================= */
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .users-table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+    }
+
+    .users-table th {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 2px solid #e6ebf1;
+      color: var(--label-grey);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .users-table td {
+      padding: 15px 12px;
+      border-bottom: 1px solid #edf0f4;
+      color: #475467;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .users-table tbody tr {
+      transition: background-color 0.15s ease;
+    }
+
+    .users-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .users-table td strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       ROLE
+       ========================================================= */
+
+    .role {
+      font-weight: 600;
+      color: #344054;
+    }
+
+    /* =========================================================
+       STATUS
+       ========================================================= */
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-pending {
+      background: #fff4d6;
+      color: #996c00;
+    }
+
+    .status-approved,
+    .status-active {
+      background: var(--mint-bg);
+      color: var(--mint-text);
+    }
+
+    .status-rejected,
+    .status-inactive {
+      background: #fdeaea;
+      color: #dc3545;
+    }
+
+    /* =========================================================
+       ACTION BUTTONS
+       ========================================================= */
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      border: 0;
+      border-radius: 8px;
+
+      padding: 7px 10px;
+
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
+    }
+
+    .action-btn:hover {
+      opacity: 0.82;
+      transform: translateY(-1px);
+    }
+
+    .approve-btn {
+      background: var(--mint-bg);
+      color: var(--mint-text);
+    }
+
+    .reject-btn {
+      background: #fdeaea;
+      color: #dc3545;
+    }
+
+    /* =========================================================
+       MESSAGE
+       ========================================================= */
+
+    .message {
+      display: none;
+      padding: 13px 16px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .message.error {
+      background: #fdeaea;
+      color: #b42318;
+      border: 1px solid #f5c2c0;
+    }
+
+    .message.success {
+      background: var(--mint-bg);
+      color: var(--mint-text);
+      border: 1px solid #b8dfc8;
+    }
+
+    /* =========================================================
+       EMPTY / LOADING
+       ========================================================= */
+
+    .empty {
+      text-align: center;
+      padding: 50px 20px !important;
+      color: var(--label-grey) !important;
+    }
+
+    .empty i {
+      display: block;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .empty div {
+      font-size: 14px;
+    }
+
+    /* =========================================================
+       ADD USER MODAL
+       ========================================================= */
+
+    .add-user-modal .modal-content {
+      border: 0;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(16, 24, 40, 0.18);
+      overflow: hidden;
+    }
+
+    .add-user-modal .modal-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid #edf0f4;
+      background: #ffffff;
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9f7ef;
+      color: var(--green);
+      font-size: 18px;
+    }
+
+    .add-user-modal .modal-title {
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--label-grey);
+      margin-top: 3px;
+    }
+
+    .add-user-modal .modal-body {
+      padding: 24px;
+    }
+
+    .form-label-custom {
+      display: block;
+      margin-bottom: 7px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .form-label-custom .required {
+      color: #dc3545;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+      width: 100%;
+      border: 1px solid #d0d5dd;
+      border-radius: 9px;
+      padding: 11px 12px;
+      background: #ffffff;
+      color: #101828;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .form-control-custom:focus,
+    .form-select-custom:focus {
+      border-color: var(--green);
+      box-shadow:
+        0 0 0 3px rgba(30, 126, 77, 0.10);
+    }
+
+    .form-help {
+      display: block;
+      margin-top: 5px;
+      color: #98a2b3;
+      font-size: 11px;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper .form-control-custom {
+      padding-right: 42px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      border: 0;
+      background: transparent;
+
+      color: #667085;
+      cursor: pointer;
+
+      padding: 5px;
+    }
+
+    .password-toggle:hover {
+      color: var(--ink);
+    }
+
+    .add-user-modal .modal-footer {
+      padding: 18px 24px;
+      border-top: 1px solid #edf0f4;
+      background: #f9fafb;
+    }
+
+    .cancel-btn {
+      border: 1px solid #d0d5dd;
+      background: #ffffff;
+      color: #344054;
+      border-radius: 9px;
+      padding: 10px 17px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .cancel-btn:hover {
+      background: #f2f4f7;
+    }
+
+    .create-user-btn {
+      border: 0;
+      background: var(--green);
+      color: #ffffff;
+      border-radius: 9px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .create-user-btn:hover {
+      opacity: 0.9;
+    }
+
+    .create-user-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+      .page-content {
+        padding: 28px 24px !important;
+      }
+
+    }
+
+    @media (max-width: 700px) {
+
+      .page-content {
+        padding: 22px 18px !important;
+      }
+
+      .action-bar {
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: 100%;
+      }
+
+      .button-group {
+        width: 100%;
+      }
+
+      .refresh-btn,
+      .add-user-btn {
+        flex: 1;
+      }
+
+      .user-page-title {
+        font-size: 28px;
+      }
+
+    }
+
+  </style>
 
 </head>
 
@@ -308,1253 +615,2258 @@
 <body>
 
 
-<!-- =====================================================
-     TOP BAR
-===================================================== -->
+  <div class="app-shell">
 
-<header class="topbar">
 
-    <div class="brand">
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
-        <div class="brand-icon">
-            <i class="fa-solid fa-solar-panel"></i>
-        </div>
+    <aside
+      id="sidebar"
+      class="sidebar"
+      aria-label="Main navigation"
+    >
 
-        <span>
-            Smart Solar Microgrid
+      <!-- BRAND -->
+
+      <a
+        class="sidebar-brand d-flex align-items-center gap-2"
+        href="index.html"
+      >
+
+        <span class="logo-glow">
+
+          <img
+            src="assets/logo.svg"
+            alt="SolarGrid logo"
+          >
+
         </span>
 
-    </div>
+        <span>
+
+          <strong>
+            SolarGrid
+          </strong>
+
+        </span>
+
+      </a>
 
 
-    <div class="user-info">
+      <hr class="sidebar-divider">
 
-        <div>
+
+      <!-- NAVIGATION -->
+
+      <nav class="sidebar-nav">
+
+
+        <!-- DASHBOARD -->
+
+        <a
+          class="nav-item"
+          href="index.html"
+          data-module="dashboard"
+        >
+
+          <i class="fa-solid fa-house"></i>
+
+          <span>
+            Dashboard
+          </span>
+
+        </a>
+
+
+        <!-- USER MANAGEMENT -->
+
+        <a
+          class="nav-item active"
+          href="users.html"
+          data-module="users"
+          aria-current="page"
+        >
+
+          <i class="fa-solid fa-users"></i>
+
+          <span>
+            User Management
+          </span>
+
+        </a>
+
+
+        <!-- SOLAR STATIONS -->
+
+        <a
+          class="nav-item"
+          href="../SmartSolarStationUI/index.html"
+          data-module="stations"
+        >
+
+          <i class="fa-solid fa-solar-panel"></i>
+
+          <span>
+            Solar Stations
+          </span>
+
+        </a>
+
+
+        <!-- RESERVATIONS -->
+
+        <a
+          class="nav-item"
+          href="../SmartSolarReservationsUI/index.html"
+          data-module="reservations"
+        >
+
+          <i class="fa-solid fa-clipboard-list"></i>
+
+          <span>
+            Reservations
+          </span>
+
+        </a>
+
+
+        <!-- PROFILE -->
+
+        <a
+          class="nav-item"
+          href="profile.html"
+          data-module="profile"
+        >
+
+          <i class="fa-solid fa-user"></i>
+
+          <span>
+            Profile
+          </span>
+
+        </a>
+
+
+        <!-- LOGOUT -->
+
+        <button
+          type="button"
+          class="nav-item"
+          id="logoutBtn"
+        >
+
+          <i class="fa-solid fa-right-from-bracket"></i>
+
+          <span>
+            Logout
+          </span>
+
+        </button>
+
+
+      </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <div class="content-wrap">
+
+
+      <!-- TOPBAR -->
+
+      <nav class="navbar navbar-expand topbar">
+
+        <div class="container-fluid">
+
+          <span class="navbar-brand mb-0 h6 fw-bold">
+
+            Member 1 — User & Identity Management
+
+          </span>
+
+
+          <div class="ms-auto d-flex align-items-center gap-3">
+
+            <div class="text-end">
+
+              <div
+                id="topUserName"
+                class="fw-semibold"
+                style="font-size: 14px;"
+              >
+                User
+              </div>
+
+              <div
+                id="topUserRole"
+                class="text-muted"
+                style="font-size: 12px;"
+              >
+                Loading...
+              </div>
+
+            </div>
+
 
             <div
-                id="loggedUserName"
-                class="user-name"
+              class="user-avatar"
+              style="
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background: #e8f1ff;
+                color: #0d6efd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
             >
-                Loading...
+
+              <i class="fa-solid fa-user-shield"></i>
+
             </div>
 
-            <div
-                id="loggedUserRole"
-                class="user-role"
-            >
-                Loading...
-            </div>
+          </div>
+
+        </div>
+
+      </nav>
+
+
+      <!-- PAGE CONTENT -->
+
+      <main
+        class="container-fluid page-content"
+        style="padding: 38px 40px;"
+      >
+
+
+        <!-- HEADER -->
+
+        <div class="user-page-header">
+
+          <div class="user-page-kicker">
+            ADMINISTRATION
+          </div>
+
+          <h1 class="user-page-title">
+            User Management
+          </h1>
+
+          <p class="user-page-subtitle">
+
+            Manage registered users, approve pending accounts,
+            and create Backoffice or Grid Operator accounts.
+
+          </p>
 
         </div>
 
 
-        <div class="user-avatar">
+        <!-- MESSAGE -->
 
-            <i class="fa-solid fa-user"></i>
-
-        </div>
-
-    </div>
-
-</header>
+        <div
+          id="message"
+          class="message"
+        ></div>
 
 
+        <!-- USER MANAGEMENT PANEL -->
 
-<!-- =====================================================
-     MAIN CONTENT
-===================================================== -->
-
-<main class="page-container">
+        <section class="users-panel">
 
 
-    <!-- PAGE HEADER -->
+          <!-- ACTION BAR -->
 
-    <div class="page-header">
+          <div class="action-bar">
 
-        <div>
 
-            <h1 class="page-title">
-                User Management
-            </h1>
+            <!-- SEARCH -->
 
-            <div class="page-subtitle">
-                Manage registered users and account approvals.
+            <div class="search-box">
+
+              <i
+                class="fa-solid fa-magnifying-glass"
+              ></i>
+
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name, NIC, email or role..."
+                autocomplete="off"
+              >
+
             </div>
 
-        </div>
+
+            <!-- BUTTONS -->
+
+            <div class="button-group">
 
 
-        <div class="d-flex gap-2">
+              <!-- ADD USER -->
 
-            <button
+              <button
+                class="add-user-btn"
+                id="addUserBtn"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addUserModal"
+              >
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                Add User
+
+              </button>
+
+
+              <!-- REFRESH -->
+
+              <button
+                class="refresh-btn"
                 id="refreshBtn"
-                class="btn btn-dark"
-            >
+                type="button"
+              >
 
-                <i class="fa-solid fa-rotate me-1"></i>
+                <i
+                  class="fa-solid fa-rotate-right"
+                ></i>
 
                 Refresh
 
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+          <!-- TABLE -->
+
+          <div class="table-wrap">
+
+            <table class="users-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>Name</th>
+
+                  <th>NIC</th>
+
+                  <th>Email</th>
+
+                  <th>Phone</th>
+
+                  <th>Role</th>
+
+                  <th>Status</th>
+
+                  <th>Actions</th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody id="usersTableBody">
+
+                <tr>
+
+                  <td
+                    colspan="7"
+                    class="empty"
+                  >
+
+                    <i
+                      class="fa-solid fa-spinner fa-spin"
+                    ></i>
+
+                    <div>
+                      Loading users...
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+
+        </section>
+
+
+      </main>
+
+
+    </div>
+
+
+  </div>
+
+
+  <!-- =======================================================
+       ADD USER MODAL
+       ======================================================= -->
+
+  <div
+    class="modal fade add-user-modal"
+    id="addUserModal"
+    tabindex="-1"
+    aria-labelledby="addUserModalLabel"
+    aria-hidden="true"
+  >
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+      <div class="modal-content">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="modal-header">
+
+          <div class="modal-title-wrap">
+
+            <div class="modal-icon">
+
+              <i class="fa-solid fa-user-plus"></i>
+
+            </div>
+
+            <div>
+
+              <h5
+                class="modal-title"
+                id="addUserModalLabel"
+              >
+                Add New User
+              </h5>
+
+              <div class="modal-subtitle">
+                Create a Backoffice or Grid Operator account
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+
+        </div>
+
+
+        <!-- MODAL BODY -->
+
+        <form id="addUserForm">
+
+          <div class="modal-body">
+
+
+            <div class="row g-3">
+
+
+              <!-- FULL NAME -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newFullName"
+                  class="form-label-custom"
+                >
+
+                  Full Name
+                  <span class="required">*</span>
+
+                </label>
+
+                <input
+                  type="text"
+                  id="newFullName"
+                  class="form-control-custom"
+                  placeholder="Enter full name"
+                  autocomplete="name"
+                  required
+                >
+
+              </div>
+
+
+              <!-- NIC -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newNic"
+                  class="form-label-custom"
+                >
+
+                  NIC
+                  <span class="required">*</span>
+
+                </label>
+
+                <input
+                  type="text"
+                  id="newNic"
+                  class="form-control-custom"
+                  placeholder="e.g. 200012345678"
+                  autocomplete="off"
+                  required
+                >
+
+              </div>
+
+
+              <!-- EMAIL -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newEmail"
+                  class="form-label-custom"
+                >
+
+                  Email
+                  <span class="required">*</span>
+
+                </label>
+
+                <input
+                  type="email"
+                  id="newEmail"
+                  class="form-control-custom"
+                  placeholder="name@example.com"
+                  autocomplete="email"
+                  required
+                >
+
+              </div>
+
+
+              <!-- PHONE -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newPhone"
+                  class="form-label-custom"
+                >
+
+                  Phone
+                  <span class="required">*</span>
+
+                </label>
+
+                <input
+                  type="tel"
+                  id="newPhone"
+                  class="form-control-custom"
+                  placeholder="07XXXXXXXX"
+                  autocomplete="tel"
+                  required
+                >
+
+              </div>
+
+
+              <!-- ROLE -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newRole"
+                  class="form-label-custom"
+                >
+
+                  Role
+                  <span class="required">*</span>
+
+                </label>
+
+                <select
+                  id="newRole"
+                  class="form-select-custom"
+                  required
+                >
+
+                  <option
+                    value=""
+                    selected
+                    disabled
+                  >
+                    Select role
+                  </option>
+
+                  <option value="Backoffice">
+                    Backoffice
+                  </option>
+
+                  <option value="Grid Operator">
+                    Grid Operator
+                  </option>
+
+                </select>
+
+                <small class="form-help">
+                  Only Backoffice and Grid Operator accounts can be created here.
+                </small>
+
+              </div>
+
+
+              <!-- PASSWORD -->
+
+              <div class="col-md-6">
+
+                <label
+                  for="newPassword"
+                  class="form-label-custom"
+                >
+
+                  Password
+                  <span class="required">*</span>
+
+                </label>
+
+                <div class="password-wrapper">
+
+                  <input
+                    type="password"
+                    id="newPassword"
+                    class="form-control-custom"
+                    placeholder="Enter password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                  >
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="passwordToggle"
+                    aria-label="Show password"
+                  >
+
+                    <i
+                      class="fa-solid fa-eye"
+                      id="passwordToggleIcon"
+                    ></i>
+
+                  </button>
+
+                </div>
+
+                <small class="form-help">
+                  Minimum 6 characters.
+                </small>
+
+              </div>
+
+
+            </div>
+
+
+          </div>
+
+
+          <!-- MODAL FOOTER -->
+
+          <div class="modal-footer">
+
+            <button
+              type="button"
+              class="cancel-btn"
+              data-bs-dismiss="modal"
+            >
+              Cancel
             </button>
 
 
             <button
-                id="logoutBtn"
-                class="btn btn-outline-danger"
+              type="submit"
+              class="create-user-btn"
+              id="createUserBtn"
             >
 
-                <i class="fa-solid fa-right-from-bracket me-1"></i>
+              <i class="fa-solid fa-user-plus"></i>
 
-                Logout
+              <span id="createUserText">
+                Create User
+              </span>
 
             </button>
 
-        </div>
+          </div>
+
+
+        </form>
+
+
+      </div>
 
     </div>
 
+  </div>
 
 
-    <!-- ERROR -->
+  <!-- Bootstrap JS -->
 
-    <div
-        id="errorBox"
-        class="alert alert-danger"
-    >
-
-        <i class="fa-solid fa-circle-exclamation me-2"></i>
-
-        <span id="errorMessage"></span>
-
-    </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
 
 
+  <!-- =======================================================
+       JAVASCRIPT
+       ======================================================= -->
 
-    <!-- USERS CARD -->
+  <script>
 
-    <div class="card table-card">
+    /* =======================================================
+       API
+       ======================================================= */
 
-
-        <!-- LOADING -->
-
-        <div
-            id="loading"
-            class="loading"
-        >
-
-            <div
-                class="spinner-border text-dark mb-3"
-                role="status"
-            ></div>
-
-            <div>
-                Loading users...
-            </div>
-
-        </div>
+    const API_BASE_URL =
+      "http://localhost:5205";
 
 
+    /* =======================================================
+       AUTHENTICATION
+       ======================================================= */
 
-        <!-- TABLE -->
-
-        <div
-            id="tableContainer"
-            class="table-responsive"
-            style="display: none;"
-        >
-
-            <table class="table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-
-                        <th>Full Name</th>
-
-                        <th>Email</th>
-
-                        <th>Role</th>
-
-                        <th>Status</th>
-
-                        <th>Active</th>
-
-                        <th>Created</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="usersTableBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-
-        <!-- EMPTY -->
-
-        <div
-            id="emptyState"
-            class="empty"
-            style="display: none;"
-        >
-
-            <i class="fa-solid fa-users-slash"></i>
-
-            <h5>
-                No users found
-            </h5>
-
-            <p>
-                There are currently no registered users.
-            </p>
-
-        </div>
-
-
-    </div>
-
-</main>
-
-
-
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
-<script>
-
-
-/* =====================================================
-   API
-===================================================== */
-
-const API_BASE_URL =
-    "http://localhost:5205";
-
-
-
-/* =====================================================
-   GET LOGIN DATA
-===================================================== */
-
-const token =
-    localStorage.getItem(
+    const solarGridToken =
+      localStorage.getItem(
         "solarGridToken"
-    );
+      );
 
 
-const storedUser =
-    localStorage.getItem(
+    const solarGridUserRaw =
+      localStorage.getItem(
         "solarGridUser"
-    );
+      );
 
 
-let currentUser = null;
+    let solarGridUser = null;
 
 
-try {
+    try {
 
-    if (storedUser) {
-
-        currentUser =
-            JSON.parse(
-                storedUser
-            );
+      solarGridUser =
+        solarGridUserRaw
+          ? JSON.parse(solarGridUserRaw)
+          : null;
 
     }
 
-}
-catch (error) {
+    catch (error) {
 
-    console.error(
-        "Invalid user data:",
-        error
-    );
+      solarGridUser = null;
 
-    currentUser = null;
-
-}
+    }
 
 
+    /* =======================================================
+       CURRENT ROLE
+       ======================================================= */
 
-/* =====================================================
-   DISPLAY USER
-===================================================== */
-
-if (currentUser) {
-
-    document.getElementById(
-        "loggedUserName"
-    ).textContent =
-        currentUser.fullName ||
-        "User";
-
-
-    document.getElementById(
-        "loggedUserRole"
-    ).textContent =
-        currentUser.role ||
-        "Unknown";
-
-}
+    const currentRole =
+      solarGridUser &&
+      solarGridUser.role
+        ? solarGridUser.role
+            .trim()
+            .toLowerCase()
+        : "";
 
 
+    /* =======================================================
+       BACKOFFICE ONLY
+       ======================================================= */
 
-/* =====================================================
-   IMPORTANT
-   NO ACCESS-DENIED REDIRECT HERE
+    if (
+      !solarGridToken ||
+      !solarGridUser ||
+      currentRole !== "backoffice"
+    ) {
 
-   Backend will decide whether this user
-   is allowed to access the API.
-===================================================== */
+      window.location.replace(
+        "access-denied.html"
+      );
 
+    }
 
+    else {
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
+      document.body.style.visibility =
+        "visible";
 
-const loading =
-    document.getElementById(
-        "loading"
-    );
-
-
-const tableContainer =
-    document.getElementById(
-        "tableContainer"
-    );
+    }
 
 
-const emptyState =
-    document.getElementById(
-        "emptyState"
-    );
+    /* =======================================================
+       USER DISPLAY
+       ======================================================= */
+
+    const topUserName =
+      document.getElementById(
+        "topUserName"
+      );
 
 
-const usersTableBody =
-    document.getElementById(
+    const topUserRole =
+      document.getElementById(
+        "topUserRole"
+      );
+
+
+    if (
+      solarGridUser &&
+      solarGridUser.fullName
+    ) {
+
+      topUserName.textContent =
+        solarGridUser.fullName;
+
+    }
+
+
+    if (
+      solarGridUser &&
+      solarGridUser.role
+    ) {
+
+      topUserRole.textContent =
+        solarGridUser.role;
+
+    }
+
+
+    /* =======================================================
+       ELEMENTS
+       ======================================================= */
+
+    const usersTableBody =
+      document.getElementById(
         "usersTableBody"
-    );
+      );
 
 
-const errorBox =
-    document.getElementById(
-        "errorBox"
-    );
+    const refreshBtn =
+      document.getElementById(
+        "refreshBtn"
+      );
 
 
-const errorMessage =
-    document.getElementById(
-        "errorMessage"
-    );
+    const searchInput =
+      document.getElementById(
+        "searchInput"
+      );
 
 
+    const messageElement =
+      document.getElementById(
+        "message"
+      );
 
-/* =====================================================
-   ERROR
-===================================================== */
 
-function showError(message) {
+    const addUserForm =
+      document.getElementById(
+        "addUserForm"
+      );
 
-    errorMessage.textContent =
+
+    const createUserBtn =
+      document.getElementById(
+        "createUserBtn"
+      );
+
+
+    const createUserText =
+      document.getElementById(
+        "createUserText"
+      );
+
+
+    const passwordToggle =
+      document.getElementById(
+        "passwordToggle"
+      );
+
+
+    const passwordToggleIcon =
+      document.getElementById(
+        "passwordToggleIcon"
+      );
+
+
+    let allUsers = [];
+
+
+    /* =======================================================
+       MESSAGE
+       ======================================================= */
+
+    function showMessage(
+      message,
+      type = "error"
+    ) {
+
+      if (!messageElement) {
+        return;
+      }
+
+
+      messageElement.textContent =
         message;
 
-    errorBox.style.display =
-        "block";
-}
+
+      messageElement.className =
+        "message " + type;
 
 
-function hideError() {
-
-    errorBox.style.display =
-        "none";
-
-}
-
-
-
-/* =====================================================
-   HTML ESCAPE
-===================================================== */
-
-function escapeHtml(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
-    }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-
-/* =====================================================
-   DATE
-===================================================== */
-
-function formatDate(value) {
-
-    if (!value) {
-
-        return "-";
-
-    }
-
-
-    const date =
-        new Date(value);
-
-
-    if (
-        isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "-";
-
-    }
-
-
-    return date.toLocaleDateString(
-        "en-GB",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   STATUS BADGE
-===================================================== */
-
-function statusBadge(status) {
-
-    const value =
-        String(
-            status || "Pending"
-        )
-        .trim()
-        .toLowerCase();
-
-
-    if (value === "approved") {
-
-        return `
-            <span class="status status-approved">
-                Approved
-            </span>
-        `;
-
-    }
-
-
-    if (value === "rejected") {
-
-        return `
-            <span class="status status-rejected">
-                Rejected
-            </span>
-        `;
-
-    }
-
-
-    return `
-        <span class="status status-pending">
-            Pending
-        </span>
-    `;
-
-}
-
-
-
-/* =====================================================
-   LOAD USERS
-===================================================== */
-
-async function loadUsers() {
-
-    hideError();
-
-
-    loading.style.display =
+      messageElement.style.display =
         "block";
 
 
-    tableContainer.style.display =
-        "none";
+      setTimeout(() => {
+
+        messageElement.style.display =
+          "none";
+
+      }, 4000);
+
+    }
 
 
-    emptyState.style.display =
-        "none";
+    /* =======================================================
+       API HEADERS
+       ======================================================= */
+
+    function getHeaders() {
+
+      return {
+
+        "Content-Type":
+          "application/json",
+
+        "Authorization":
+          "Bearer " +
+          solarGridToken
+
+      };
+
+    }
 
 
-    usersTableBody.innerHTML =
-        "";
+    /* =======================================================
+       LOAD USERS
+       ======================================================= */
+
+    async function loadUsers() {
 
 
-    try {
+      usersTableBody.innerHTML = `
+
+        <tr>
+
+          <td
+            colspan="7"
+            class="empty"
+          >
+
+            <i
+              class="fa-solid fa-spinner fa-spin"
+            ></i>
+
+            <div>
+              Loading users...
+            </div>
+
+          </td>
+
+        </tr>
+
+      `;
 
 
-        /* ---------------------------------------------
-           CHECK TOKEN
-        --------------------------------------------- */
+      try {
 
-        if (!token) {
-
-            throw new Error(
-                "No login token found. Please login again."
-            );
-
-        }
-
-
-
-        /* ---------------------------------------------
-           API REQUEST
-        --------------------------------------------- */
 
         const response =
-            await fetch(
-                `${API_BASE_URL}/api/Users`,
-                {
-                    method: "GET",
+          await fetch(
 
-                    headers: {
-                        "Authorization":
-                            `Bearer ${token}`,
+            API_BASE_URL +
+            "/api/Users",
 
-                        "Content-Type":
-                            "application/json"
-                    }
-                }
-            );
-
-
-
-        /* ---------------------------------------------
-           SAFE RESPONSE
-        --------------------------------------------- */
-
-        const responseText =
-            await response.text();
-
-
-        let data = null;
-
-
-        if (responseText) {
-
-            try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            }
-            catch (error) {
-
-                console.error(
-                    "JSON error:",
-                    error
-                );
-
+            {
+              method: "GET",
+              headers:
+                getHeaders()
             }
 
-        }
+          );
 
-
-
-        /* ---------------------------------------------
-           401
-        --------------------------------------------- */
-
-        if (
-            response.status === 401
-        ) {
-
-            showError(
-                "Your login session is invalid or expired. Please login again."
-            );
-
-            return;
-
-        }
-
-
-
-        /* ---------------------------------------------
-           403
-        --------------------------------------------- */
-
-        if (
-            response.status === 403
-        ) {
-
-            showError(
-                "Access denied. Only Backoffice users can manage users."
-            );
-
-            return;
-
-        }
-
-
-
-        /* ---------------------------------------------
-           OTHER ERROR
-        --------------------------------------------- */
 
         if (!response.ok) {
 
+
+          if (
+            response.status === 401
+          ) {
+
             throw new Error(
-
-                data &&
-                data.message
-                    ? data.message
-                    : `Server error: ${response.status}`
-
+              "Your session has expired. Please login again."
             );
+
+          }
+
+
+          if (
+            response.status === 403
+          ) {
+
+            throw new Error(
+              "Only Backoffice users can manage users."
+            );
+
+          }
+
+
+          throw new Error(
+            "Failed to load users."
+          );
 
         }
 
 
-
-        /* ---------------------------------------------
-           SUCCESS
-        --------------------------------------------- */
-
-        const users =
-            Array.isArray(data)
-                ? data
-                : [];
+        allUsers =
+          await response.json();
 
 
-        loading.style.display =
-            "none";
+        renderUsers(
+          allUsers
+        );
 
 
+      }
 
-        /* ---------------------------------------------
-           EMPTY
-        --------------------------------------------- */
+      catch (error) {
 
-        if (
-            users.length === 0
-        ) {
 
-            emptyState.style.display =
-                "block";
+        console.error(
+          "Load users error:",
+          error
+        );
+
+
+        usersTableBody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="7"
+              class="empty"
+            >
+
+              <i
+                class="fa-solid fa-circle-exclamation"
+              ></i>
+
+              <div>
+
+                ${escapeHtml(
+                  error.message
+                )}
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+    }
+
+
+    /* =======================================================
+       RENDER USERS
+       ======================================================= */
+
+    function renderUsers(users) {
+
+
+      if (
+        !users ||
+        users.length === 0
+      ) {
+
+
+        usersTableBody.innerHTML = `
+
+          <tr>
+
+            <td
+              colspan="7"
+              class="empty"
+            >
+
+              <i
+                class="fa-solid fa-users"
+              ></i>
+
+              <div>
+                No users found.
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+
+        return;
+
+      }
+
+
+      usersTableBody.innerHTML =
+
+        users.map(user => {
+
+
+          const name =
+            user.fullName ||
+            user.name ||
+            "-";
+
+
+          const nic =
+            user.nic ||
+            user.NIC ||
+            "-";
+
+
+          const email =
+            user.email ||
+            "-";
+
+
+          const phone =
+            user.phone ||
+            "-";
+
+
+          const role =
+            user.role ||
+            "-";
+
+
+          const status =
+            user.status ||
+            (
+              user.isActive
+                ? "Active"
+                : "Inactive"
+            );
+
+
+          let statusClass =
+            "status-inactive";
+
+
+          const normalizedStatus =
+            String(status)
+              .toLowerCase();
+
+
+          if (
+            normalizedStatus ===
+            "pending"
+          ) {
+
+            statusClass =
+              "status-pending";
+
+          }
+
+          else if (
+            normalizedStatus === "approved" ||
+            normalizedStatus === "active"
+          ) {
+
+            statusClass =
+              "status-approved";
+
+          }
+
+          else if (
+            normalizedStatus === "rejected" ||
+            normalizedStatus === "inactive"
+          ) {
+
+            statusClass =
+              "status-rejected";
+
+          }
+
+
+          const id =
+            user.id ||
+            user._id;
+
+
+          const showApprove =
+            normalizedStatus ===
+            "pending";
+
+
+          return `
+
+            <tr>
+
+
+              <td>
+
+                <strong>
+                  ${escapeHtml(name)}
+                </strong>
+
+              </td>
+
+
+              <td>
+                ${escapeHtml(nic)}
+              </td>
+
+
+              <td>
+                ${escapeHtml(email)}
+              </td>
+
+
+              <td>
+                ${escapeHtml(phone)}
+              </td>
+
+
+              <td class="role">
+                ${escapeHtml(role)}
+              </td>
+
+
+              <td>
+
+                <span
+                  class="status ${statusClass}"
+                >
+
+                  ${escapeHtml(status)}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+                <div class="actions">
+
+
+                  ${
+                    showApprove
+                      ? `
+
+                        <button
+                          class="action-btn approve-btn"
+                          onclick="approveUser('${escapeAttribute(id)}')"
+                          type="button"
+                        >
+
+                          <i
+                            class="fa-solid fa-check"
+                          ></i>
+
+                          Approve
+
+                        </button>
+
+                      `
+                      : ""
+                  }
+
+
+                  ${
+                    showApprove
+                      ? `
+
+                        <button
+                          class="action-btn reject-btn"
+                          onclick="rejectUser('${escapeAttribute(id)}')"
+                          type="button"
+                        >
+
+                          <i
+                            class="fa-solid fa-xmark"
+                          ></i>
+
+                          Reject
+
+                        </button>
+
+                      `
+                      : ""
+                  }
+
+
+                </div>
+
+              </td>
+
+
+            </tr>
+
+          `;
+
+
+        }).join("");
+
+    }
+
+
+    /* =======================================================
+       ADD USER
+       ======================================================= */
+
+    if (addUserForm) {
+
+
+      addUserForm.addEventListener(
+        "submit",
+        async function(event) {
+
+          event.preventDefault();
+
+
+          /* -----------------------------------------------
+             Get form values
+             ----------------------------------------------- */
+
+          const fullName =
+            document.getElementById(
+              "newFullName"
+            ).value.trim();
+
+
+          const nic =
+            document.getElementById(
+              "newNic"
+            ).value.trim();
+
+
+          const email =
+            document.getElementById(
+              "newEmail"
+            ).value.trim();
+
+
+          const phone =
+            document.getElementById(
+              "newPhone"
+            ).value.trim();
+
+
+          const role =
+            document.getElementById(
+              "newRole"
+            ).value;
+
+
+          const password =
+            document.getElementById(
+              "newPassword"
+            ).value;
+
+
+          /* -----------------------------------------------
+             Validation
+             ----------------------------------------------- */
+
+          if (
+            !fullName ||
+            !nic ||
+            !email ||
+            !phone ||
+            !role ||
+            !password
+          ) {
+
+            showMessage(
+              "Please fill in all required fields.",
+              "error"
+            );
 
             return;
 
-        }
+          }
 
 
+          if (
+            role !== "Backoffice" &&
+            role !== "Grid Operator"
+          ) {
 
-        /* ---------------------------------------------
-           SHOW TABLE
-        --------------------------------------------- */
+            showMessage(
+              "Only Backoffice and Grid Operator users can be created here.",
+              "error"
+            );
 
-        tableContainer.style.display =
-            "block";
+            return;
 
-
-
-        /* ---------------------------------------------
-           CREATE ROWS
-        --------------------------------------------- */
-
-        users.forEach(
-            (user, index) => {
+          }
 
 
-                const status =
-                    String(
-                        user.status ||
-                        "Pending"
-                    )
-                    .trim();
+          if (
+            password.length < 6
+          ) {
+
+            showMessage(
+              "Password must contain at least 6 characters.",
+              "error"
+            );
+
+            return;
+
+          }
 
 
-                const role =
-                    user.role ||
-                    "-";
+          /* -----------------------------------------------
+             Disable button
+             ----------------------------------------------- */
+
+          createUserBtn.disabled =
+            true;
 
 
-                const active =
-                    user.isActive === true;
+          createUserText.textContent =
+            "Creating...";
 
 
-
-                let actions = "";
-
+          try {
 
 
-                /* -----------------------------------------
-                   PENDING USER
-                ----------------------------------------- */
+            /* ---------------------------------------------
+               CREATE USER API
+               --------------------------------------------- */
 
-                if (
-                    status.toLowerCase() ===
-                    "pending"
-                ) {
+            const response =
+              await fetch(
 
-                    actions = `
+                API_BASE_URL +
+                "/api/Users",
 
-                        <button
-                            class="btn btn-sm btn-success me-1"
-                            onclick="approveUser('${user.id}')"
-                        >
+                {
 
-                            <i class="fa-solid fa-check"></i>
+                  method: "POST",
 
-                            Approve
+                  headers:
+                    getHeaders(),
 
-                        </button>
+                  body:
+                    JSON.stringify({
 
+                      fullName:
+                        fullName,
 
-                        <button
-                            class="btn btn-sm btn-outline-danger"
-                            onclick="rejectUser('${user.id}')"
-                        >
+                      nic:
+                        nic,
 
-                            <i class="fa-solid fa-xmark"></i>
+                      email:
+                        email,
 
-                            Reject
+                      phone:
+                        phone,
 
-                        </button>
+                      role:
+                        role,
 
-                    `;
+                      password:
+                        password
+
+                    })
 
                 }
-                else {
 
-                    actions = `
-                        <span class="text-muted">
-                            No action
-                        </span>
-                    `;
-
-                }
+              );
 
 
+            /* ---------------------------------------------
+               Handle response
+               --------------------------------------------- */
 
-                /* -----------------------------------------
-                   ROW
-                ----------------------------------------- */
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
+            if (!response.ok) {
 
 
-                row.innerHTML = `
+              if (
+                response.status === 401
+              ) {
 
-                    <td>
-                        ${index + 1}
-                    </td>
-
-
-                    <td>
-
-                        <strong>
-                            ${escapeHtml(user.fullName)}
-                        </strong>
-
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(user.email)}
-                    </td>
-
-
-                    <td>
-
-                        <span class="role">
-                            ${escapeHtml(role)}
-                        </span>
-
-                    </td>
-
-
-                    <td>
-
-                        ${statusBadge(status)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            active
-
-                            ? `
-                                <span class="text-success">
-
-                                    <i
-                                        class="fa-solid fa-circle-check"
-                                    ></i>
-
-                                    Yes
-
-                                </span>
-                              `
-
-                            : `
-                                <span class="text-danger">
-
-                                    <i
-                                        class="fa-solid fa-circle-xmark"
-                                    ></i>
-
-                                    No
-
-                                </span>
-                              `
-                        }
-
-                    </td>
-
-
-                    <td>
-                        ${formatDate(user.createdAt)}
-                    </td>
-
-
-                    <td>
-                        ${actions}
-                    </td>
-
-                `;
-
-
-                usersTableBody.appendChild(
-                    row
+                throw new Error(
+                  "Your session has expired. Please login again."
                 );
 
+              }
+
+
+              if (
+                response.status === 403
+              ) {
+
+                throw new Error(
+                  "Only Backoffice users can create new users."
+                );
+
+              }
+
+
+           if (response.status === 400) {
+
+    let errorMessage = "Invalid user information.";
+
+    try {
+
+        const errorData = await response.json();
+
+        console.log("CREATE USER 400 RESPONSE:", errorData);
+
+        // ASP.NET Core ValidationProblem response
+        if (errorData.errors) {
+
+            const validationErrors = [];
+
+            Object.keys(errorData.errors).forEach(field => {
+
+                const fieldErrors = errorData.errors[field];
+
+                if (Array.isArray(fieldErrors)) {
+
+                    fieldErrors.forEach(error => {
+                        validationErrors.push(
+                            `${field}: ${error}`
+                        );
+                    });
+
+                }
+
+            });
+
+            if (validationErrors.length > 0) {
+
+                errorMessage =
+                    validationErrors.join(" | ");
+
             }
-        );
+
+        }
+
+        // Normal BadRequest({ message: "..." })
+        else if (errorData.message) {
+
+            errorMessage =
+                errorData.message;
+
+        }
+
+        // ASP.NET generic title
+        else if (errorData.title) {
+
+            errorMessage =
+                errorData.title;
+
+        }
 
     }
+
     catch (error) {
 
         console.error(
-            "Load users error:",
+            "Could not read validation response:",
             error
         );
 
-
-        loading.style.display =
-            "none";
-
-
-        showError(
-            error.message ||
-            "Unable to load users."
-        );
-
     }
 
+    throw new Error(errorMessage);
 }
 
+              if (
+                response.status === 409
+              ) {
+
+                throw new Error(
+                  "A user with this NIC or email already exists."
+                );
+
+              }
 
 
-/* =====================================================
-   APPROVE USER
-===================================================== */
+              throw new Error(
+                "Failed to create user."
+              );
 
-async function approveUser(userId) {
+            }
 
 
-    if (!userId) {
+            /* ---------------------------------------------
+               Success
+               --------------------------------------------- */
 
-        alert(
-            "Invalid user ID."
+            showMessage(
+              role +
+              " user created successfully.",
+              "success"
+            );
+
+
+            /* ---------------------------------------------
+               Reset form
+               --------------------------------------------- */
+
+            addUserForm.reset();
+
+
+            /* ---------------------------------------------
+               Close modal
+               --------------------------------------------- */
+
+            const modalElement =
+              document.getElementById(
+                "addUserModal"
+              );
+
+
+            const modal =
+              bootstrap.Modal.getInstance(
+                modalElement
+              );
+
+
+            if (modal) {
+              modal.hide();
+            }
+
+
+            /* ---------------------------------------------
+               Reload users
+               --------------------------------------------- */
+
+            await loadUsers();
+
+
+          }
+
+          catch (error) {
+
+
+            console.error(
+              "Create user error:",
+              error
+            );
+
+
+            showMessage(
+              error.message ||
+              "Failed to create user.",
+              "error"
+            );
+
+          }
+
+          finally {
+
+
+            createUserBtn.disabled =
+              false;
+
+
+            createUserText.textContent =
+              "Create User";
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
+       PASSWORD SHOW / HIDE
+       ======================================================= */
+
+    if (passwordToggle) {
+
+
+      passwordToggle.addEventListener(
+        "click",
+        function() {
+
+
+          const passwordInput =
+            document.getElementById(
+              "newPassword"
+            );
+
+
+          if (
+            passwordInput.type ===
+            "password"
+          ) {
+
+
+            passwordInput.type =
+              "text";
+
+
+            passwordToggleIcon.className =
+              "fa-solid fa-eye-slash";
+
+
+            passwordToggle.setAttribute(
+              "aria-label",
+              "Hide password"
+            );
+
+
+          }
+
+          else {
+
+
+            passwordInput.type =
+              "password";
+
+
+            passwordToggleIcon.className =
+              "fa-solid fa-eye";
+
+
+            passwordToggle.setAttribute(
+              "aria-label",
+              "Show password"
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
+       RESET ADD USER FORM WHEN MODAL CLOSES
+       ======================================================= */
+
+    const addUserModalElement =
+      document.getElementById(
+        "addUserModal"
+      );
+
+
+    if (addUserModalElement) {
+
+
+      addUserModalElement.addEventListener(
+        "hidden.bs.modal",
+        function() {
+
+
+          if (addUserForm) {
+            addUserForm.reset();
+          }
+
+
+          const passwordInput =
+            document.getElementById(
+              "newPassword"
+            );
+
+
+          if (passwordInput) {
+
+            passwordInput.type =
+              "password";
+
+          }
+
+
+          if (passwordToggleIcon) {
+
+            passwordToggleIcon.className =
+              "fa-solid fa-eye";
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
+       APPROVE USER
+       ======================================================= */
+
+    async function approveUser(id) {
+
+
+      if (!id) {
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to approve this user?"
         );
 
+
+      if (!confirmed) {
         return;
-
-    }
-
-
-    if (
-        !confirm(
-            "Are you sure you want to approve this user?"
-        )
-    ) {
-
-        return;
-
-    }
+      }
 
 
-
-    try {
+      try {
 
 
         const response =
-            await fetch(
-                `${API_BASE_URL}/api/Users/${userId}/approve`,
-                {
-                    method: "PUT",
+          await fetch(
 
-                    headers: {
-                        "Authorization":
-                            `Bearer ${token}`,
+            API_BASE_URL +
+            "/api/Users/" +
+            encodeURIComponent(id) +
+            "/approve",
 
-                        "Content-Type":
-                            "application/json"
-                    }
-                }
-            );
+            {
 
+              method: "PUT",
 
-        const responseText =
-            await response.text();
-
-
-        let data = null;
-
-
-        if (responseText) {
-
-            try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            }
-            catch (error) {
-
-                console.error(
-                    error
-                );
+              headers:
+                getHeaders()
 
             }
 
-        }
-
-
-
-        if (
-            response.status === 401
-        ) {
-
-            alert(
-                "Your login session has expired. Please login again."
-            );
-
-            return;
-
-        }
-
-
-
-        if (
-            response.status === 403
-        ) {
-
-            alert(
-                "Only Backoffice users can approve users."
-            );
-
-            return;
-
-        }
-
+          );
 
 
         if (!response.ok) {
 
+
+          if (
+            response.status === 401
+          ) {
+
             throw new Error(
-
-                data &&
-                data.message
-                    ? data.message
-                    : "Unable to approve user."
-
+              "Your session has expired. Please login again."
             );
+
+          }
+
+
+          if (
+            response.status === 403
+          ) {
+
+            throw new Error(
+              "Only Backoffice users can approve users."
+            );
+
+          }
+
+
+          throw new Error(
+            "Failed to approve user."
+          );
 
         }
 
 
-
-        alert(
-
-            data &&
-            data.message
-                ? data.message
-                : "User approved successfully."
-
+        showMessage(
+          "User approved successfully.",
+          "success"
         );
 
 
         await loadUsers();
 
-    }
-    catch (error) {
+
+      }
+
+      catch (error) {
+
 
         console.error(
-            "Approve error:",
-            error
+          "Approve user error:",
+          error
         );
 
 
-        alert(
-            error.message ||
-            "Unable to approve user."
+        showMessage(
+          error.message,
+          "error"
         );
+
+      }
 
     }
 
-}
+
+    /* =======================================================
+       REJECT USER
+       ======================================================= */
+
+    async function rejectUser(id) {
 
 
-
-/* =====================================================
-   REJECT USER
-===================================================== */
-
-async function rejectUser(userId) {
-
-
-    if (!userId) {
-
-        alert(
-            "Invalid user ID."
-        );
-
+      if (!id) {
         return;
+      }
 
-    }
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to reject this user?"
+        );
 
 
-    if (
-        !confirm(
-            "Are you sure you want to reject this user?"
-        )
-    ) {
-
+      if (!confirmed) {
         return;
-
-    }
-
+      }
 
 
-    try {
+      try {
 
 
         const response =
-            await fetch(
-                `${API_BASE_URL}/api/Users/${userId}/reject`,
-                {
-                    method: "PUT",
+          await fetch(
 
-                    headers: {
-                        "Authorization":
-                            `Bearer ${token}`,
+            API_BASE_URL +
+            "/api/Users/" +
+            encodeURIComponent(id) +
+            "/reject",
 
-                        "Content-Type":
-                            "application/json"
-                    }
-                }
-            );
+            {
 
+              method: "PUT",
 
-        const responseText =
-            await response.text();
-
-
-        let data = null;
-
-
-        if (responseText) {
-
-            try {
-
-                data =
-                    JSON.parse(
-                        responseText
-                    );
-
-            }
-            catch (error) {
-
-                console.error(
-                    error
-                );
+              headers:
+                getHeaders()
 
             }
 
-        }
-
-
-
-        if (
-            response.status === 401
-        ) {
-
-            alert(
-                "Your login session has expired. Please login again."
-            );
-
-            return;
-
-        }
-
-
-
-        if (
-            response.status === 403
-        ) {
-
-            alert(
-                "Only Backoffice users can reject users."
-            );
-
-            return;
-
-        }
-
+          );
 
 
         if (!response.ok) {
 
+
+          if (
+            response.status === 401
+          ) {
+
             throw new Error(
-
-                data &&
-                data.message
-                    ? data.message
-                    : "Unable to reject user."
-
+              "Your session has expired. Please login again."
             );
+
+          }
+
+
+          if (
+            response.status === 403
+          ) {
+
+            throw new Error(
+              "Only Backoffice users can reject users."
+            );
+
+          }
+
+
+          throw new Error(
+            "Failed to reject user."
+          );
 
         }
 
 
-
-        alert(
-
-            data &&
-            data.message
-                ? data.message
-                : "User rejected successfully."
-
+        showMessage(
+          "User rejected successfully.",
+          "success"
         );
 
 
         await loadUsers();
 
-    }
-    catch (error) {
+
+      }
+
+      catch (error) {
+
 
         console.error(
-            "Reject error:",
-            error
+          "Reject user error:",
+          error
         );
 
 
-        alert(
-            error.message ||
-            "Unable to reject user."
+        showMessage(
+          error.message,
+          "error"
         );
+
+      }
 
     }
 
-}
+
+    /* =======================================================
+       SEARCH
+       ======================================================= */
+
+    if (searchInput) {
 
 
+      searchInput.addEventListener(
+        "input",
+        function() {
 
-/* =====================================================
-   REFRESH
-===================================================== */
 
-document
-    .getElementById(
-        "refreshBtn"
-    )
-    .addEventListener(
+          const searchTerm =
+            this.value
+              .trim()
+              .toLowerCase();
+
+
+          if (!searchTerm) {
+
+            renderUsers(
+              allUsers
+            );
+
+            return;
+
+          }
+
+
+          const filteredUsers =
+            allUsers.filter(
+              user => {
+
+
+                const searchableText = [
+
+                  user.fullName,
+
+                  user.name,
+
+                  user.nic,
+
+                  user.NIC,
+
+                  user.email,
+
+                  user.phone,
+
+                  user.role,
+
+                  user.status
+
+                ]
+
+                  .filter(Boolean)
+
+                  .join(" ")
+
+                  .toLowerCase();
+
+
+                return searchableText
+                  .includes(searchTerm);
+
+              }
+            );
+
+
+          renderUsers(
+            filteredUsers
+          );
+
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
+       REFRESH
+       ======================================================= */
+
+    if (refreshBtn) {
+
+
+      refreshBtn.addEventListener(
         "click",
         loadUsers
-    );
+      );
+
+    }
 
 
+    /* =======================================================
+       LOGOUT
+       ======================================================= */
 
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-document
-    .getElementById(
+    const logoutBtn =
+      document.getElementById(
         "logoutBtn"
-    )
-    .addEventListener(
+      );
+
+
+    if (logoutBtn) {
+
+
+      logoutBtn.addEventListener(
         "click",
-        function () {
+        function() {
 
 
-            localStorage.removeItem(
-                "solarGridToken"
-            );
+          localStorage.removeItem(
+            "solarGridToken"
+          );
 
 
-            localStorage.removeItem(
-                "solarGridUser"
-            );
+          localStorage.removeItem(
+            "solarGridUser"
+          );
 
 
-            window.location.href =
-                "login.html";
+          localStorage.removeItem(
+            "solar_session"
+          );
+
+
+          window.location.replace(
+            "login.html"
+          );
+
 
         }
-    );
+      );
+
+    }
 
 
+    /* =======================================================
+       HTML ESCAPE
+       ======================================================= */
 
-/* =====================================================
-   START
-===================================================== */
+    function escapeHtml(value) {
 
-loadUsers();
+      return String(
+        value ?? ""
+      )
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
 
 
-</script>
+    /* =======================================================
+       ATTRIBUTE ESCAPE
+       ======================================================= */
+
+    function escapeAttribute(value) {
+
+      return String(
+        value ?? ""
+      )
+
+        .replace(
+          /\\/g,
+          "\\\\"
+        )
+
+        .replace(
+          /'/g,
+          "\\'"
+        );
+
+    }
+
+
+    /* =======================================================
+       INITIAL LOAD
+       ======================================================= */
+
+    if (
+      solarGridToken &&
+      solarGridUser &&
+      currentRole === "backoffice"
+    ) {
+
+      loadUsers();
+
+    }
+
+  </script>
 
 
 </body>

@@ -1,78 +1,784 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>All reservations — Smart Solar</title>
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
-  <link href="css/styles.css" rel="stylesheet" />
+
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href="assets/logo.svg"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="css/styles.css"
+    rel="stylesheet"
+  />
+
+  <!-- =====================================================
+       RESERVATIONS ACCESS GUARD
+       ===================================================== -->
+
+  <style>
+
+    body {
+      visibility: hidden;
+    }
+
+  </style>
+
 </head>
+
+
 <body>
+
+
   <div class="shell">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
     <aside class="sidebar">
-      <a class="brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-sun"></i></span><div><strong>Smart Solar</strong><span data-user-role>Microgrid</span></div></a>
-      <a class="side-link" href="../SmartSolarUsersUI/index.html"><i class="fa-solid fa-house"></i> Dashboard</a>
-      <a class="side-link" href="../SmartSolarStationUI/index.html"><i class="fa-solid fa-solar-panel"></i> Stations</a>
-      <a class="side-link active" href="index.html"><i class="fa-solid fa-clipboard-list"></i> Reservations</a>
-      <a class="side-link" href="slots.html"><i class="fa-solid fa-clock"></i> Slot lookup</a>
-      <a class="side-link" href="../SmartSolarUsersUI/users.html"><i class="fa-solid fa-users"></i> User Management</a>
-      <a class="side-link" href="../SmartSolarFieldOpsUI/index.html"><i class="fa-solid fa-qrcode"></i> QR Verification</a>
-      <div class="side-spacer"></div>
-      <button class="logout" id="logoutBtn" type="button"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-    </aside>
-    <div class="main">
-      <div class="topbar"><span>Smart Solar Microgrid / Reservations</span><div class="who"><span data-user-name>Guest</span><span class="avatar"><i class="fa-solid fa-user"></i></span></div></div>
-      <div class="content">
-        <div class="kicker">RESERVATION MANAGEMENT</div>
-        <h1>All reservations</h1>
-        <p class="lead">Every booking is listed here. A new booking is approved as soon as it is created. <span id="counts"></span></p>
-        <div class="cards">
-          <section class="panel tint">
-            <div class="icon-bubble"><i class="fa-solid fa-bolt"></i></div>
-            <h2>New booking</h2>
-            <p>Book an energy slot for a prosumer at an active station within the next seven days.</p>
-            <a class="btn-yellow" href="booking.html" style="text-decoration:none">+ Create booking</a>
-          </section>
-          <section class="panel">
-            <div class="icon-bubble gray"><i class="fa-solid fa-magnifying-glass"></i></div>
-            <h2>Find a reservation</h2>
-            <p>Open a booking by its reference to view, change or cancel it.</p>
-            <div class="find-row">
-              <input id="lookup" placeholder="e.g. RES001" />
-              <button id="openBtn" class="btn-ghost" type="button">Open</button>
-            </div>
-          </section>
+
+
+      <!-- BRAND -->
+
+      <a
+        class="brand"
+        href="index.html"
+      >
+
+        <span class="brand-mark">
+
+          <i class="fa-solid fa-sun"></i>
+
+        </span>
+
+
+        <div>
+
+          <strong>
+            Smart Solar
+          </strong>
+
+          <span data-user-role>
+            Microgrid
+          </span>
+
         </div>
-        <section class="panel">
-          <div class="list-head"><h2 style="margin:0">Reservations</h2><span id="count" class="count"></span></div>
-          <div class="filters">
-            <input id="search" placeholder="Search name, NIC, station or reference" style="flex:1" />
-            <select id="viewFilter">
-              <option value="">All bookings</option>
-              <option value="current">Current (today)</option>
-              <option value="pending">Pending</option>
-              <option value="future">Approved future</option>
-              <option value="history">History</option>
-            </select>
-            <select id="statusFilter">
-              <option value="">All statuses</option>
-              <option value="Confirmed">Approved</option>
-              <option value="Verified">Verified</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-            <select id="stationFilter"><option value="">All stations</option></select>
-          </div>
-          <div id="rows"></div>
-        </section>
+
+      </a>
+
+
+
+      <!-- =================================================
+           DASHBOARD
+           ================================================= -->
+
+      <a
+        class="side-link"
+        href="../SmartSolarUsersUI/index.html"
+      >
+
+        <i class="fa-solid fa-house"></i>
+
+        Dashboard
+
+      </a>
+
+
+
+      <!-- =================================================
+           SOLAR STATIONS
+           ================================================= -->
+
+      <a
+        class="side-link"
+        href="../SmartSolarStationUI/index.html"
+      >
+
+        <i class="fa-solid fa-solar-panel"></i>
+
+        Stations
+
+      </a>
+
+
+
+      <!-- =================================================
+           RESERVATIONS
+           ================================================= -->
+
+      <a
+        class="side-link active"
+        href="index.html"
+      >
+
+        <i class="fa-solid fa-clipboard-list"></i>
+
+        Reservations
+
+      </a>
+
+
+
+      <!-- =================================================
+           SLOT LOOKUP
+           ================================================= -->
+
+      <a
+        class="side-link"
+        href="slots.html"
+      >
+
+        <i class="fa-solid fa-clock"></i>
+
+        Slot lookup
+
+      </a>
+
+
+
+      <!-- =================================================
+           USER MANAGEMENT
+           BACKOFFICE ONLY
+           ================================================= -->
+
+      <a
+        class="side-link"
+        href="../SmartSolarUsersUI/users.html"
+        id="userManagementLink"
+      >
+
+        <i class="fa-solid fa-users"></i>
+
+        User Management
+
+      </a>
+
+
+
+      <div class="side-spacer"></div>
+
+
+
+      <!-- =================================================
+           LOGOUT
+           ================================================= -->
+
+      <button
+        class="logout"
+        id="logoutBtn"
+        type="button"
+      >
+
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+        Logout
+
+      </button>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <div class="main">
+
+
+      <!-- =================================================
+           TOPBAR
+           ================================================= -->
+
+      <div class="topbar">
+
+
+        <span>
+          Smart Solar Microgrid / Reservations
+        </span>
+
+
+        <div class="who">
+
+
+          <span data-user-name>
+            Guest
+          </span>
+
+
+          <span class="avatar">
+
+            <i class="fa-solid fa-user"></i>
+
+          </span>
+
+
+        </div>
+
+
       </div>
+
+
+
+      <!-- =================================================
+           CONTENT
+           ================================================= -->
+
+      <div class="content">
+
+
+        <div class="kicker">
+          RESERVATION MANAGEMENT
+        </div>
+
+
+
+        <h1>
+          All reservations
+        </h1>
+
+
+
+        <p class="lead">
+
+          Every booking is listed here.
+          A new booking is approved as soon as it is created.
+
+          <span id="counts"></span>
+
+        </p>
+
+
+
+        <!-- =================================================
+             ACTION CARDS
+             ================================================= -->
+
+        <div class="cards">
+
+
+          <!-- NEW BOOKING -->
+
+          <section class="panel tint">
+
+
+            <div class="icon-bubble">
+
+              <i class="fa-solid fa-bolt"></i>
+
+            </div>
+
+
+            <h2>
+              New booking
+            </h2>
+
+
+            <p>
+
+              Book an energy slot for a prosumer at an active station
+              within the next seven days.
+
+            </p>
+
+
+            <a
+              class="btn-yellow"
+              href="booking.html"
+              style="text-decoration:none"
+            >
+
+              + Create booking
+
+            </a>
+
+
+          </section>
+
+
+
+          <!-- FIND RESERVATION -->
+
+          <section class="panel">
+
+
+            <div class="icon-bubble gray">
+
+              <i class="fa-solid fa-magnifying-glass"></i>
+
+            </div>
+
+
+            <h2>
+              Find a reservation
+            </h2>
+
+
+            <p>
+
+              Open a booking by its reference to view,
+              change or cancel it.
+
+            </p>
+
+
+            <div class="find-row">
+
+
+              <input
+                id="lookup"
+                placeholder="e.g. RES001"
+              />
+
+
+              <button
+                id="openBtn"
+                class="btn-ghost"
+                type="button"
+              >
+
+                Open
+
+              </button>
+
+
+            </div>
+
+
+          </section>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RESERVATION LIST
+             ================================================= -->
+
+        <section class="panel">
+
+
+          <div class="list-head">
+
+
+            <h2 style="margin:0">
+
+              Reservations
+
+            </h2>
+
+
+            <span
+              id="count"
+              class="count"
+            ></span>
+
+
+          </div>
+
+
+
+          <!-- =================================================
+               FILTERS
+               ================================================= -->
+
+          <div class="filters">
+
+
+            <input
+              id="search"
+              placeholder="Search name, NIC, station or reference"
+              style="flex:1"
+            />
+
+
+            <select id="viewFilter">
+
+
+              <option value="">
+                All bookings
+              </option>
+
+
+              <option value="current">
+                Current (today)
+              </option>
+
+
+              <option value="pending">
+                Pending
+              </option>
+
+
+              <option value="future">
+                Approved future
+              </option>
+
+
+              <option value="history">
+                History
+              </option>
+
+
+            </select>
+
+
+
+            <select id="statusFilter">
+
+
+              <option value="">
+                All statuses
+              </option>
+
+
+              <option value="Confirmed">
+                Approved
+              </option>
+
+
+              <option value="Verified">
+                Verified
+              </option>
+
+
+              <option value="Completed">
+                Completed
+              </option>
+
+
+              <option value="Cancelled">
+                Cancelled
+              </option>
+
+
+            </select>
+
+
+
+            <select id="stationFilter">
+
+
+              <option value="">
+                All stations
+              </option>
+
+
+            </select>
+
+
+          </div>
+
+
+
+          <!-- =================================================
+               RESERVATION ROWS
+               ================================================= -->
+
+          <div id="rows"></div>
+
+
+        </section>
+
+
+      </div>
+
+
     </div>
+
+
   </div>
+
+
+
+  <!-- =====================================================
+       JAVASCRIPT FILES
+       ===================================================== -->
+
   <script src="js/config.js"></script>
+
   <script src="js/api.js"></script>
+
   <script src="js/common.js"></script>
+
   <script src="js/reservations.js"></script>
+
+
+
+  <!-- =====================================================
+       RESERVATIONS ACCESS CONTROL
+       ===================================================== -->
+
+  <script>
+
+
+    /* =====================================================
+       GET LOGIN TOKEN
+       ===================================================== */
+
+    const solarGridToken =
+      localStorage.getItem(
+        "solarGridToken"
+      );
+
+
+
+    /* =====================================================
+       GET LOGGED-IN USER
+       ===================================================== */
+
+    const solarGridUserRaw =
+      localStorage.getItem(
+        "solarGridUser"
+      );
+
+
+
+    /* =====================================================
+       PARSE USER
+       ===================================================== */
+
+    let solarGridUser = null;
+
+
+    try {
+
+      solarGridUser =
+        solarGridUserRaw
+          ? JSON.parse(solarGridUserRaw)
+          : null;
+
+    }
+
+    catch (error) {
+
+      solarGridUser = null;
+
+    }
+
+
+
+    /* =====================================================
+       GET ROLE SAFELY
+
+       Backoffice
+       -> backoffice
+
+       GridOperator
+       -> gridoperator
+       ===================================================== */
+
+    const currentRole =
+      solarGridUser &&
+      solarGridUser.role
+        ? solarGridUser.role
+            .trim()
+            .toLowerCase()
+        : "";
+
+
+
+    /* =====================================================
+       ALLOWED ROLES
+
+       Backoffice   -> YES
+       GridOperator -> YES
+       Prosumer     -> NO
+       ===================================================== */
+
+    const allowedRoles = [
+
+      "backoffice",
+
+      "gridoperator"
+
+    ];
+
+
+
+    /* =====================================================
+       CHECK AUTHENTICATION + AUTHORIZATION
+       ===================================================== */
+
+    if (
+
+      !solarGridToken ||
+
+      !solarGridUser ||
+
+      !allowedRoles.includes(
+        currentRole
+      )
+
+    ) {
+
+
+      window.location.replace(
+        "../index.html"
+      );
+
+
+    }
+
+    else {
+
+
+      /* =================================================
+         AUTHORIZED USER
+         ================================================= */
+
+      document.body.style.visibility =
+        "visible";
+
+
+
+      /* =================================================
+         SHOW LOGGED-IN USER NAME
+         ================================================= */
+
+      const userNameElement =
+        document.querySelector(
+          "[data-user-name]"
+        );
+
+
+      if (
+
+        userNameElement &&
+
+        solarGridUser.fullName
+
+      ) {
+
+        userNameElement.textContent =
+          solarGridUser.fullName;
+
+      }
+
+
+
+      /* =================================================
+         SHOW USER ROLE
+         ================================================= */
+
+      const userRoleElement =
+        document.querySelector(
+          "[data-user-role]"
+        );
+
+
+      if (
+
+        userRoleElement &&
+
+        solarGridUser.role
+
+      ) {
+
+        userRoleElement.textContent =
+          solarGridUser.role;
+
+      }
+
+
+
+      /* =================================================
+         USER MANAGEMENT
+
+         Only Backoffice can access.
+
+         GridOperator -> hidden
+         ================================================= */
+
+      const userManagementLink =
+        document.getElementById(
+          "userManagementLink"
+        );
+
+
+      if (
+
+        userManagementLink &&
+
+        currentRole !== "backoffice"
+
+      ) {
+
+        userManagementLink.style.display =
+          "none";
+
+      }
+
+
+    }
+
+
+
+    /* =====================================================
+       LOGOUT
+       ===================================================== */
+
+    const logoutBtn =
+      document.getElementById(
+        "logoutBtn"
+      );
+
+
+    if (logoutBtn) {
+
+      logoutBtn.addEventListener(
+        "click",
+        function () {
+
+
+          localStorage.removeItem(
+            "solarGridToken"
+          );
+
+
+          localStorage.removeItem(
+            "solarGridUser"
+          );
+
+
+          window.location.replace(
+            "../index.html"
+          );
+
+
+        }
+      );
+
+    }
+
+  </script>
+
+
 </body>
+
 </html>

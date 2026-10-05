@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
+
 <title>Access Denied - Smart Solar Microgrid</title>
 
 <!-- Bootstrap -->
@@ -113,7 +113,7 @@
         font-size: 14px;
     }
 </style>
-```
+
 
 </head>
 
@@ -121,7 +121,7 @@
 
 <div class="access-card">
 
-```
+
 <div class="icon-circle">
     <i class="fa-solid fa-lock"></i>
 </div>
@@ -154,24 +154,32 @@
 <div class="brand">
     Smart Solar Microgrid
 </div>
-```
+
 
 </div>
 
-<script>
 
+<script>
     function goToDashboard() {
-        window.location.href = "index.html";
+        window.location.href =
+            "http://127.0.0.1:5500/Smart-Solar-Microgrid-Trading-System/Frontend/SmartSolarUsersUI/index.html";
     }
 
     function goToLogin() {
         localStorage.removeItem("solarGridToken");
         localStorage.removeItem("solarGridUser");
 
-        window.location.href = "login.html";
+        window.location.href =
+            "http://127.0.0.1:5500/Smart-Solar-Microgrid-Trading-System/Frontend/index.html";
     }
-
 </script>
+
+
+
+
+
+
+
 
 </body>
 </html>

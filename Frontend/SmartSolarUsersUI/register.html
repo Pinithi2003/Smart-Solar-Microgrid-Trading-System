@@ -30,7 +30,6 @@
   <link href="css/styles.css" rel="stylesheet" />
 
   <style>
-
     body {
       min-height: 100vh;
       display: flex;
@@ -89,6 +88,8 @@
 
     .input-group-text {
       background: #f8faf9;
+      min-width: 45px;
+      justify-content: center;
     }
 
     .btn-register {
@@ -122,11 +123,8 @@
       font-size: 14px;
       color: #356b4a;
     }
-
   </style>
-
 </head>
-
 
 <body>
 
@@ -134,19 +132,21 @@
 
     <div class="register-card">
 
-      <!-- Logo -->
+      <!-- =====================================================
+           LOGO
+      ====================================================== -->
 
       <div class="register-logo">
-
         <img
           src="assets/logo.svg"
           alt="SolarGrid logo"
         />
-
       </div>
 
 
-      <!-- Heading -->
+      <!-- =====================================================
+           HEADING
+      ====================================================== -->
 
       <h1 class="register-title">
         Create Your Account
@@ -157,7 +157,9 @@
       </p>
 
 
-      <!-- Approval Information -->
+      <!-- =====================================================
+           APPROVAL INFORMATION
+      ====================================================== -->
 
       <div class="approval-note">
 
@@ -170,12 +172,55 @@
       </div>
 
 
-      <!-- Register Form -->
+      <!-- =====================================================
+           REGISTER FORM
+      ====================================================== -->
 
       <form id="registerForm">
 
 
-        <!-- Full Name -->
+        <!-- ===================================================
+             NIC
+        ==================================================== -->
+
+        <div class="mb-3">
+
+          <label
+            for="nic"
+            class="form-label"
+          >
+            NIC
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-id-card"></i>
+            </span>
+
+            <input
+              type="text"
+              id="nic"
+              class="form-control"
+              placeholder="Enter your NIC number"
+              minlength="5"
+              maxlength="20"
+              autocomplete="off"
+              required
+            />
+
+          </div>
+
+          <small class="text-muted">
+            Enter your National Identity Card number.
+          </small>
+
+        </div>
+
+
+        <!-- ===================================================
+             FULL NAME
+        ==================================================== -->
 
         <div class="mb-3">
 
@@ -199,6 +244,7 @@
               placeholder="Enter your full name"
               minlength="2"
               maxlength="120"
+              autocomplete="name"
               required
             />
 
@@ -207,7 +253,43 @@
         </div>
 
 
-        <!-- Email -->
+        <!-- ===================================================
+             PHONE
+        ==================================================== -->
+
+        <div class="mb-3">
+
+          <label
+            for="phone"
+            class="form-label"
+          >
+            Phone Number
+          </label>
+
+          <div class="input-group">
+
+            <span class="input-group-text">
+              <i class="fa-solid fa-phone"></i>
+            </span>
+
+            <input
+              type="tel"
+              id="phone"
+              class="form-control"
+              placeholder="Enter your phone number"
+              maxlength="20"
+              autocomplete="tel"
+              required
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             EMAIL
+        ==================================================== -->
 
         <div class="mb-3">
 
@@ -230,6 +312,7 @@
               class="form-control"
               placeholder="Enter your email"
               maxlength="160"
+              autocomplete="email"
               required
             />
 
@@ -238,7 +321,9 @@
         </div>
 
 
-        <!-- Password -->
+        <!-- ===================================================
+             PASSWORD
+        ==================================================== -->
 
         <div class="mb-3">
 
@@ -261,6 +346,7 @@
               class="form-control"
               placeholder="Create a password"
               minlength="6"
+              autocomplete="new-password"
               required
             />
 
@@ -273,7 +359,9 @@
         </div>
 
 
-        <!-- Confirm Password -->
+        <!-- ===================================================
+             CONFIRM PASSWORD
+        ==================================================== -->
 
         <div class="mb-3">
 
@@ -296,6 +384,7 @@
               class="form-control"
               placeholder="Confirm your password"
               minlength="6"
+              autocomplete="new-password"
               required
             />
 
@@ -304,7 +393,9 @@
         </div>
 
 
-        <!-- Account Type -->
+        <!-- ===================================================
+             ACCOUNT TYPE
+        ==================================================== -->
 
         <div class="mb-4">
 
@@ -338,7 +429,9 @@
         </div>
 
 
-        <!-- Message -->
+        <!-- ===================================================
+             MESSAGE
+        ==================================================== -->
 
         <div
           id="registerMessage"
@@ -347,7 +440,9 @@
         ></div>
 
 
-        <!-- Register Button -->
+        <!-- ===================================================
+             REGISTER BUTTON
+        ==================================================== -->
 
         <button
           type="submit"
@@ -361,11 +456,12 @@
 
         </button>
 
-
       </form>
 
 
-      <!-- Login -->
+      <!-- =====================================================
+           LOGIN LINK
+      ====================================================== -->
 
       <div class="register-footer">
 
@@ -382,154 +478,337 @@
   </div>
 
 
+  <!-- =========================================================
+       REGISTER JAVASCRIPT
+  ========================================================== -->
+
   <script>
+
+    /*
+     * =========================================================
+     * API CONFIGURATION
+     * =========================================================
+     *
+     * Frontend:
+     * http://127.0.0.1:5500
+     *
+     * Backend:
+     * http://localhost:5205
+     *
+     * Both are running on the same PC.
+     */
 
     const API_BASE_URL = "http://localhost:5205";
 
 
-    document
-      .getElementById("registerForm")
-      .addEventListener("submit", async function(event) {
+    /*
+     * =========================================================
+     * FORM ELEMENTS
+     * =========================================================
+     */
+
+    const registerForm =
+      document.getElementById("registerForm");
+
+    const nicInput =
+      document.getElementById("nic");
+
+    const fullNameInput =
+      document.getElementById("fullName");
+
+    const phoneInput =
+      document.getElementById("phone");
+
+    const emailInput =
+      document.getElementById("email");
+
+    const passwordInput =
+      document.getElementById("password");
+
+    const confirmPasswordInput =
+      document.getElementById("confirmPassword");
+
+    const registerMessage =
+      document.getElementById("registerMessage");
+
+    const registerButton =
+      document.getElementById("registerButton");
+
+
+    /*
+     * =========================================================
+     * SHOW MESSAGE
+     * =========================================================
+     */
+
+    function showMessage(type, message) {
+
+      registerMessage.className =
+        `alert alert-${type}`;
+
+      registerMessage.textContent =
+        message;
+
+      registerMessage.style.display =
+        "block";
+    }
+
+
+    /*
+     * =========================================================
+     * HIDE MESSAGE
+     * =========================================================
+     */
+
+    function hideMessage() {
+
+      registerMessage.style.display =
+        "none";
+
+      registerMessage.textContent =
+        "";
+    }
+
+
+    /*
+     * =========================================================
+     * RESET BUTTON
+     * =========================================================
+     */
+
+    function resetRegisterButton() {
+
+      registerButton.disabled =
+        false;
+
+      registerButton.innerHTML =
+        '<i class="fa-solid fa-user-plus me-2"></i>Create Account';
+    }
+
+
+    /*
+     * =========================================================
+     * REGISTER
+     * =========================================================
+     */
+
+    registerForm.addEventListener(
+      "submit",
+      async function (event) {
 
         event.preventDefault();
 
+        hideMessage();
+
+
+        /*
+         * -----------------------------------------------------
+         * Read values
+         * -----------------------------------------------------
+         */
+
+        const nic =
+          nicInput.value.trim();
 
         const fullName =
-          document
-            .getElementById("fullName")
-            .value
-            .trim();
+          fullNameInput.value.trim();
 
+        const phone =
+          phoneInput.value.trim();
 
         const email =
-          document
-            .getElementById("email")
-            .value
-            .trim();
-
+          emailInput.value.trim().toLowerCase();
 
         const password =
-          document
-            .getElementById("password")
-            .value;
-
+          passwordInput.value;
 
         const confirmPassword =
-          document
-            .getElementById("confirmPassword")
-            .value;
+          confirmPasswordInput.value;
 
 
-        const message =
-          document.getElementById("registerMessage");
+        /*
+         * -----------------------------------------------------
+         * Validate NIC
+         * -----------------------------------------------------
+         */
 
+        if (
+          nic.length < 5 ||
+          nic.length > 20
+        ) {
 
-        const button =
-          document.getElementById("registerButton");
-
-
-        message.style.display = "none";
-
-
-        // Check password confirmation
-
-        if (password !== confirmPassword) {
-
-          message.className =
-            "alert alert-danger";
-
-          message.textContent =
-            "Passwords do not match.";
-
-          message.style.display =
-            "block";
+          showMessage(
+            "danger",
+            "NIC must be between 5 and 20 characters."
+          );
 
           return;
-
         }
 
 
-        // Check password length
-
-        if (password.length < 6) {
-
-          message.className =
-            "alert alert-danger";
-
-          message.textContent =
-            "Password must be at least 6 characters.";
-
-          message.style.display =
-            "block";
-
-          return;
-
-        }
-
-
-        // Check full name
+        /*
+         * -----------------------------------------------------
+         * Validate Full Name
+         * -----------------------------------------------------
+         */
 
         if (fullName.length < 2) {
 
-          message.className =
-            "alert alert-danger";
-
-          message.textContent =
-            "Full name must be at least 2 characters.";
-
-          message.style.display =
-            "block";
+          showMessage(
+            "danger",
+            "Full name must be at least 2 characters."
+          );
 
           return;
-
         }
 
 
-        // Loading state
+        /*
+         * -----------------------------------------------------
+         * Validate Phone
+         * -----------------------------------------------------
+         */
 
-        button.disabled = true;
+        if (phone.length === 0) {
 
-        button.innerHTML =
+          showMessage(
+            "danger",
+            "Phone number is required."
+          );
+
+          return;
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Validate Email
+         * -----------------------------------------------------
+         */
+
+        if (!email) {
+
+          showMessage(
+            "danger",
+            "Email address is required."
+          );
+
+          return;
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Validate Password
+         * -----------------------------------------------------
+         */
+
+        if (password.length < 6) {
+
+          showMessage(
+            "danger",
+            "Password must be at least 6 characters."
+          );
+
+          return;
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Validate Password Confirmation
+         * -----------------------------------------------------
+         */
+
+        if (
+          password !==
+          confirmPassword
+        ) {
+
+          showMessage(
+            "danger",
+            "Passwords do not match."
+          );
+
+          return;
+        }
+
+
+        /*
+         * -----------------------------------------------------
+         * Loading state
+         * -----------------------------------------------------
+         */
+
+        registerButton.disabled =
+          true;
+
+        registerButton.innerHTML =
           '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
 
 
         try {
 
-          // Public registration endpoint
+          /*
+           * ===================================================
+           * SEND REGISTRATION REQUEST
+           * ===================================================
+           *
+           * Backend RegisterRequest expects:
+           *
+           * NIC
+           * FullName
+           * Email
+           * Phone
+           * Password
+           *
+           * Role is NOT sent.
+           *
+           * Backend automatically creates:
+           *
+           * Role     = Prosumer
+           * Status   = Pending
+           * IsActive = false
+           */
 
-          const response = await fetch(
-            `${API_BASE_URL}/api/Users/register`,
-            {
-              method: "POST",
+          const response =
+            await fetch(
+              `${API_BASE_URL}/api/Users/register`,
+              {
+                method: "POST",
 
-              headers: {
-                "Content-Type": "application/json"
-              },
+                headers: {
+                  "Content-Type": "application/json"
+                },
 
-              // Role is NOT sent from frontend.
-              // Backend automatically creates a Prosumer account.
+                body: JSON.stringify({
 
-              body: JSON.stringify({
+                  NIC: nic,
 
-                fullName: fullName,
+                  FullName: fullName,
 
-                email: email,
+                  Email: email,
 
-                password: password
+                  Phone: phone,
 
-              })
+                  Password: password
 
-            }
-          );
+                })
+              }
+            );
 
 
-          // Read response safely
+          /*
+           * ===================================================
+           * READ RESPONSE
+           * ===================================================
+           */
 
           const responseText =
             await response.text();
 
-
           let data = {};
+
 
           if (responseText) {
 
@@ -541,7 +820,7 @@
             } catch (jsonError) {
 
               console.error(
-                "Invalid JSON response:",
+                "Server returned non-JSON response:",
                 responseText
               );
 
@@ -550,79 +829,124 @@
           }
 
 
+          /*
+           * ===================================================
+           * HANDLE API ERROR
+           * ===================================================
+           */
+
           if (!response.ok) {
 
+            let errorMessage =
+              "Registration failed.";
+
+            if (data.message) {
+
+              errorMessage =
+                data.message;
+
+            } else if (data.title) {
+
+              errorMessage =
+                data.title;
+
+            } else if (responseText) {
+
+              errorMessage =
+                responseText;
+
+            }
+
             throw new Error(
-              data.message ||
-              "Registration failed."
+              errorMessage
+            );
+          }
+
+
+          /*
+           * ===================================================
+           * SUCCESS
+           * ===================================================
+           */
+
+          showMessage(
+            "success",
+            "Registration successful! Your account is waiting for Backoffice approval."
+          );
+
+
+          /*
+           * Keep button disabled after success
+           */
+
+          registerButton.disabled =
+            true;
+
+          registerButton.innerHTML =
+            '<i class="fa-solid fa-check me-2"></i>Account Created';
+
+
+          /*
+           * Redirect to login
+           */
+
+          setTimeout(
+            function () {
+
+              window.location.href =
+                "login.html";
+
+            },
+            2500
+          );
+
+        }
+
+
+        /*
+         * ===================================================
+         * ERROR
+         * ===================================================
+         */
+
+        catch (error) {
+
+          console.error(
+            "Registration error:",
+            error
+          );
+
+
+          /*
+           * Fetch failed completely
+           */
+
+          if (
+            error instanceof TypeError &&
+            error.message === "Failed to fetch"
+          ) {
+
+            showMessage(
+              "danger",
+              "Cannot connect to the Smart Solar API. Make sure the backend is running on http://localhost:5205."
+            );
+
+          } else {
+
+            showMessage(
+              "danger",
+              error.message ||
+              "Unable to connect to the server."
             );
 
           }
 
 
-          // Success message
-
-          message.className =
-            "alert alert-success";
-
-          message.textContent =
-            data.message ||
-            "Registration submitted successfully. Your account is pending approval.";
-
-          message.style.display =
-            "block";
-
-
-          // Disable button after success
-
-          button.disabled = true;
-
-
-          // Redirect to login
-
-          setTimeout(function() {
-
-            window.location.href =
-              "login.html";
-
-          }, 2500);
-
-
-        } catch (error) {
-
-          console.error(error);
-
-
-          message.className =
-            "alert alert-danger";
-
-          message.textContent =
-            error.message ||
-            "Unable to connect to the server.";
-
-          message.style.display =
-            "block";
-
-
-          button.disabled = false;
-
+          resetRegisterButton();
         }
 
-
-        if (
-          !message.classList.contains(
-            "alert-success"
-          )
-        ) {
-
-          button.disabled = false;
-
-          button.innerHTML =
-            '<i class="fa-solid fa-user-plus me-2"></i>Create Account';
-
-        }
-
-      });
+      }
+    );
 
   </script>
 

@@ -386,176 +386,171 @@
 
 <div class="app-shell">
 
-  <!-- =======================================================
-       SIDEBAR
-       ======================================================= -->
+<!-- =========================
+     SIDEBAR
+========================== -->
 
-  <aside
-    id="sidebar"
-    class="sidebar"
-    aria-label="Main navigation"
-  >
-
-```
-<a
-  class="sidebar-brand d-flex align-items-center gap-2"
-  href="index.html"
+<aside
+  id="sidebar"
+  class="sidebar"
+  aria-label="Main navigation"
 >
 
-  <span class="logo-glow">
+  <!-- BRAND -->
 
-    <img
-      src="assets/logo.svg"
-      alt="SolarGrid logo"
-    />
-
-  </span>
-
-  <span>
-    <strong>SolarGrid</strong>
-  </span>
-
-</a>
-
-
-<hr class="sidebar-divider" />
-
-
-<nav class="sidebar-nav">
-
-
-  <!-- Dashboard -->
-
-  <button
-    class="nav-item active"
-    data-module="dashboard"
-    aria-current="page"
+  <a
+    class="sidebar-brand d-flex align-items-center gap-2"
+    href="index.html"
   >
 
-    <i class="fa-solid fa-house"></i>
+    <span class="logo-glow">
 
-    <span>Dashboard</span>
+      <img
+        src="assets/logo.svg"
+        alt="SolarGrid logo"
+      />
 
-  </button>
+    </span>
 
+    <span>
+      <strong>SolarGrid</strong>
+    </span>
 
-  <!-- User Management -->
-
-  <button
-    class="nav-item"
-    data-module="users"
-    id="userManagementButton"
-  >
-
-    <i class="fa-solid fa-users"></i>
-
-    <span>User Management</span>
-
-  </button>
+  </a>
 
 
-  <!-- Solar Stations -->
-
-  <button
-    class="nav-item"
-    data-module="stations"
-  >
-
-    <i class="fa-solid fa-solar-panel"></i>
-
-    <span>Solar Stations</span>
-
-  </button>
+  <hr class="sidebar-divider" />
 
 
-  <!-- Reservations -->
+  <!-- NAVIGATION -->
 
-  <button
-    class="nav-item"
-    data-module="reservations"
-  >
-
-    <i class="fa-solid fa-clipboard-list"></i>
-
-    <span>Reservations</span>
-
-  </button>
+  <nav class="sidebar-nav">
 
 
-  <!-- QR Verification -->
+    <!-- DASHBOARD — ACTIVE -->
 
-  <button
-    class="nav-item"
-    data-module="qr"
-  >
+    <a
+      class="nav-item active"
+      href="index.html"
+      data-module="dashboard"
+      data-owner="Member 1"
+      aria-current="page"
+    >
 
-    <i class="fa-solid fa-qrcode"></i>
+      <i class="fa-solid fa-house"></i>
 
-    <span>QR Verification</span>
+      <span>
+        Dashboard
+      </span>
 
-  </button>
-
-
-  <!-- Profile -->
-
-  <button
-    class="nav-item"
-    data-module="profile"
-  >
-
-    <i class="fa-solid fa-user"></i>
-
-    <span>Profile</span>
-
-  </button>
+    </a>
 
 
-  <!-- About -->
+    <!-- USER MANAGEMENT -->
 
-  <button
-    class="nav-item"
-    data-module="about"
-  >
+    <a
+      class="nav-item"
+      href="users.html"
+      data-module="users"
+      data-owner="Member 1"
+    >
 
-    <i class="fa-solid fa-circle-info"></i>
+      <i class="fa-solid fa-users"></i>
 
-    <span>About System</span>
+      <span>
+        User Management
+      </span>
 
-  </button>
-
-
-  <!-- Technology -->
-
-  <button
-    class="nav-item"
-    data-module="technology"
-  >
-
-    <i class="fa-solid fa-microchip"></i>
-
-    <span>Technology</span>
-
-  </button>
+    </a>
 
 
-  <!-- Architecture -->
+    <!-- SOLAR STATIONS -->
 
-  <button
-    class="nav-item"
-    data-module="architecture"
-  >
+    <a
+      class="nav-item"
+      href="../SmartSolarStationUI/index.html"
+      data-module="stations"
+    >
 
-    <i class="fa-solid fa-diagram-project"></i>
+      <i class="fa-solid fa-solar-panel"></i>
 
-    <span>Architecture</span>
+      <span>
+        Solar Stations
+      </span>
 
-  </button>
+    </a>
 
 
-</nav>
+    <!-- RESERVATIONS -->
+
+    <a
+      class="nav-item"
+      href="../SmartSolarReservationsUI/index.html"
+      data-module="reservations"
+      data-owner="Member 3"
+    >
+
+      <i class="fa-solid fa-clipboard-list"></i>
+
+      <span>
+        Reservations
+      </span>
+
+    </a>
+
+
+    <!-- PROFILE -->
+
+    <a
+      class="nav-item"
+      href="profile.html"
+      data-module="profile"
+      data-owner="Member 1"
+    >
+
+      <i class="fa-solid fa-user"></i>
+
+      <span>
+        Profile
+      </span>
+
+    </a>
+
+
+    <!-- LOGOUT -->
+
+    <button
+      type="button"
+      class="nav-item logout-btn"
+      onclick="logoutUser()"
+    >
+
+      <i class="fas fa-sign-out-alt"></i>
+
+      <span>
+        Logout
+      </span>
+
+    </button>
+
+
+  </nav>
+
+</aside>
+
+
+<div
+  id="sidebarBackdrop"
+  class="sidebar-backdrop d-none"
+></div>
+
+
+
+<div
+  id="sidebarBackdrop"
+  class="sidebar-backdrop d-none"
+></div>
 ```
-
-  </aside>
 
   <!-- =======================================================
        MAIN CONTENT
@@ -563,7 +558,7 @@
 
   <div class="content-wrap">
 
-```
+
 <!-- TOP NAVBAR -->
 
 <nav class="navbar navbar-expand topbar">
@@ -571,9 +566,7 @@
   <div class="container-fluid">
 
     <span class="navbar-brand mb-0 h6 fw-bold">
-
       Member 1 — User & Identity Management
-
     </span>
 
     <div class="ms-auto d-flex align-items-center gap-3">
@@ -599,9 +592,7 @@
       </div>
 
       <div class="user-avatar">
-
         <i class="fa-solid fa-user"></i>
-
       </div>
 
     </div>
@@ -609,7 +600,6 @@
   </div>
 
 </nav>
-
 
 
 <!-- =======================================================
@@ -633,7 +623,6 @@
     </p>
 
   </div>
-
 
 
   <!-- =====================================================
@@ -679,7 +668,6 @@
     </div>
 
   </div>
-
 
 
   <!-- =====================================================
@@ -757,24 +745,28 @@
 
       <div class="stat-card">
 
-        <div
-          class="stat-icon"
-          style="background:#e9f8ef;color:#198754;"
-        >
+        <div class="stat-card">
 
-          <i class="fa-solid fa-user-check"></i>
+          <div
+            class="stat-icon"
+            style="background:#e9f8ef;color:#198754;"
+          >
 
-        </div>
+            <i class="fa-solid fa-user-check"></i>
 
-        <div class="stat-label">
-          Approved Users
-        </div>
+          </div>
 
-        <div
-          class="stat-value"
-          id="approvedUsers"
-        >
-          —
+          <div class="stat-label">
+            Approved Users
+          </div>
+
+          <div
+            class="stat-value"
+            id="approvedUsers"
+          >
+            —
+          </div>
+
         </div>
 
       </div>
@@ -813,7 +805,6 @@
     </div>
 
   </div>
-
 
 
   <!-- =====================================================
@@ -918,36 +909,7 @@
 
     </div>
 
-
-    <!-- QR Verification -->
-
-    <div class="col-xl-3 col-md-6">
-
-      <div
-        class="quick-card"
-        onclick="openQR()"
-      >
-
-        <div class="quick-icon">
-
-          <i class="fa-solid fa-qrcode"></i>
-
-        </div>
-
-        <div class="quick-title">
-          QR Verification
-        </div>
-
-        <p class="quick-text">
-          Verify transaction QR codes and field operations.
-        </p>
-
-      </div>
-
-    </div>
-
   </div>
-
 
 
   <!-- =====================================================
@@ -1038,7 +1000,6 @@
       </div>
 
     </div>
-
 
 
     <!-- System Status -->
@@ -1177,6 +1138,24 @@
 
 
   /* =========================================================
+     BACKOFFICE-ONLY DASHBOARD ACCESS
+     ========================================================= */
+
+  if (
+    !currentUser ||
+    currentUser.role !== "Backoffice"
+  ) {
+
+    window.location.replace("access-denied.html");
+
+    throw new Error(
+      "Backoffice access required."
+    );
+
+  }
+
+
+  /* =========================================================
      DISPLAY USER INFORMATION
      ========================================================= */
 
@@ -1299,6 +1278,7 @@
 
       let data = [];
 
+
       try {
 
         data =
@@ -1331,6 +1311,7 @@
         "apiStatus"
       ).textContent = "Online";
 
+
       document.getElementById(
         "apiStatus"
       ).className =
@@ -1346,6 +1327,7 @@
       document.getElementById(
         "apiStatus"
       ).textContent = "Unavailable";
+
 
       document.getElementById(
         "apiStatus"
@@ -1622,14 +1604,6 @@
   }
 
 
-  function openQR() {
-
-    window.location.href =
-      "../SmartSolarFieldOpsUI/index.html";
-
-  }
-
-
   /* =========================================================
      SIDEBAR NAVIGATION
      ========================================================= */
@@ -1672,19 +1646,31 @@
 
           }
 
-
-          else if (
-            mod === "qr"
-          ) {
-
-            openQR();
-
-          }
-
         }
       );
 
     });
+
+
+  /* =========================================================
+     LOGOUT
+     ========================================================= */
+
+  function logoutUser() {
+
+    // Remove logged-in user information
+    localStorage.removeItem("solarGridUser");
+
+    // Remove JWT authentication token
+    localStorage.removeItem("solarGridToken");
+
+    // Optional: remove any other session data
+    localStorage.removeItem("solar_session");
+
+    // Redirect to login page
+    window.location.href = "login.html";
+
+  }
 
 
   /* =========================================================

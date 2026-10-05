@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SmartSolarMicrogridAPI.Models;
 using SmartSolarMicrogridAPI.Services;
 using System.Text;
@@ -124,7 +125,46 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+// ============================================================
+// SWAGGER + JWT BEARER AUTHORIZATION
+// ============================================================
+
+builder.Services.AddSwaggerGen(options =>
+{
+    // Add JWT Bearer authentication definition
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+
+            Description =
+                "Enter your JWT token. Example: Bearer eyJhbGciOiJIUzI1NiIs..."
+        });
+
+    // Tell Swagger that API endpoints can use Bearer authentication
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference =
+                        new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                },
+
+                Array.Empty<string>()
+            }
+        });
+});
 
 // ============================================================
 // CORS
@@ -132,11 +172,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 });
 
 // ============================================================
@@ -152,7 +194,8 @@ var app = builder.Build();
 var configuredConn =
     app.Configuration["MongoDBSettings:ConnectionString"] ?? "";
 
-if (string.IsNullOrWhiteSpace(configuredConn) ||
+if (
+    string.IsNullOrWhiteSpace(configuredConn) ||
     configuredConn == "YOUR_MONGODB_CONNECTION_STRING")
 {
     app.Logger.LogWarning(
@@ -183,6 +226,7 @@ else
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+
     app.UseSwaggerUI();
 }
 
@@ -234,15 +278,17 @@ using (var scope = app.Services.CreateScope())
             var backofficeUser = new User
             {
                 FullName = "System Backoffice",
+
                 Email = "backoffice@smartsolar.com",
 
-                // IMPORTANT:
-                // This is only the initial password value used
-                // by the existing seed logic.
+                // Initial password.
+                // UserService automatically hashes it with BCrypt.
                 PasswordHash = "Backoffice@123",
 
                 Role = "Backoffice",
+
                 Status = "Approved",
+
                 IsActive = true
             };
 
