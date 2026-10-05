@@ -1,3 +1,17 @@
+// =========================================================
+// Smart Solar Microgrid Trading System
+// SE4040 - Enterprise Application Development
+//
+// Member: Pinithi Ransiluni
+// Student ID: IT23143654
+// Contribution: Member 1 - Identity & Access
+//
+// File: AuthService.cs
+// Description: Provides user registration, login, password
+//              verification, and JWT token generation
+//              for the Smart Solar Microgrid system.
+// =========================================================
+
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using SmartSolarMicrogridAPI.Models;

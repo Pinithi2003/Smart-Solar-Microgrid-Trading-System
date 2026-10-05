@@ -1,3 +1,17 @@
+// =========================================================
+// Smart Solar Microgrid Trading System
+// SE4040 - Enterprise Application Development
+//
+// Member: Pinithi Ransiluni
+// Student ID: IT23143654
+// Contribution: Member 1 - Identity & Access
+//
+// File: User.cs
+// Description: Defines the User model, user roles, account
+//              status, and validation rules for the
+//              Smart Solar Microgrid system.
+// =========================================================
+
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
