@@ -12,7 +12,7 @@ data class LocalUser(
     val fullName: String,
     val email: String,
     val phone: String,
-    val role: String, // "Prosumer" | "GridOperator"
+    val role: String, 
     val status: String,
     val isActive: Boolean,
     val token: String

@@ -1,3 +1,17 @@
+// =========================================================
+// Smart Solar Microgrid Trading System
+// SE4040 - Enterprise Application Development
+//
+// Member: Pinithi Ransiluni
+// Student ID: IT23143654
+// Contribution: Member 1 - Identity & Access
+//
+// File: UsersController.cs
+// Description: Handles user management, profile operations,
+//              account approval, rejection, and deactivation
+//              requests for the Smart Solar Microgrid system.
+// =========================================================
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
