@@ -1103,7 +1103,7 @@
 
 
 </main>
-```
+
 
   </div>
 
@@ -1140,19 +1140,24 @@
   /* =========================================================
      BACKOFFICE-ONLY DASHBOARD ACCESS
      ========================================================= */
+const allowedWebRoles = [
+  "Backoffice",
+  "Grid Operator"
+];
 
-  if (
-    !currentUser ||
-    currentUser.role !== "Backoffice"
-  ) {
+if (
+  !currentUser ||
+  !allowedWebRoles.includes(currentUser.role)
+) {
 
-    window.location.replace("access-denied.html");
+  window.location.replace("access-denied.html");
 
-    throw new Error(
-      "Backoffice access required."
-    );
+  throw new Error(
+    "Web access is restricted to Backoffice and GridOperator users."
+  );
 
-  }
+}
+  
 
 
   /* =========================================================

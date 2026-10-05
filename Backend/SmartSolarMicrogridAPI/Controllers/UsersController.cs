@@ -25,7 +25,7 @@ public class UsersController : ControllerBase
     // Only Backoffice users can view all users
     // =========================================================
     [HttpGet]
-    [Authorize(Roles = "Backoffice")]
+    [Authorize(Roles = "Backoffice,Grid Operator")]
     public async Task<IActionResult> GetUsers()
     {
         var users = await _userService.GetUsersAsync();
