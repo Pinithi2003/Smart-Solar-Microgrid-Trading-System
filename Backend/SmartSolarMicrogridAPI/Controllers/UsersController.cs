@@ -141,10 +141,23 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> CreateUser([FromBody] User user)
     {
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem(ModelState);
-        }
+       if (!ModelState.IsValid)
+{
+    var errors = ModelState
+        .Where(x => x.Value != null && x.Value.Errors.Count > 0)
+        .ToDictionary(
+            x => x.Key,
+            x => x.Value!.Errors
+                .Select(e => e.ErrorMessage)
+                .ToArray()
+        );
+
+    return BadRequest(new
+    {
+        message = "Validation failed.",
+        errors = errors
+    });
+}
 
         if (string.IsNullOrWhiteSpace(user.NIC))
         {

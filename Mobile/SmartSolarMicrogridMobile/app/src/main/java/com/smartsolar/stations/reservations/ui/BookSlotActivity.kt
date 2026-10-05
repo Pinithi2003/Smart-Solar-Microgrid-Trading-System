@@ -19,8 +19,8 @@ import com.smartsolar.stations.reservations.data.ReservationRepository
 import com.smartsolar.stations.reservations.data.ReservationRules
 import com.smartsolar.stations.reservations.data.ReservationStubs
 import com.smartsolar.stations.reservations.model.BookingSlot
-import com.smartsolar.stations.s_stations.model.SolarStation
-import com.smartsolar.stations.s_stations.ui.MemberNav
+import com.smartsolar.stations.stations.model.SolarStation
+import com.smartsolar.stations.stations.ui.MemberNav
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.TextStyle

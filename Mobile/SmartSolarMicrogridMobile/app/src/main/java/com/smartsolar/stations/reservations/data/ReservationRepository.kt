@@ -7,7 +7,7 @@ import com.smartsolar.stations.reservations.model.BookingSlot
 import com.smartsolar.stations.reservations.model.CreateReservationBody
 import com.smartsolar.stations.reservations.model.EnergyReservation
 import com.smartsolar.stations.reservations.model.UpdateReservationBody
-import com.smartsolar.stations.s_stations.model.SolarStation
+import com.smartsolar.stations.stations.model.SolarStation
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
