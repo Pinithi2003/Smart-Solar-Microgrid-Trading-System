@@ -12,7 +12,7 @@ public class SolarStationsController : ControllerBase
     private readonly SolarStationService _service;
 
     public SolarStationsController(SolarStationService service) => _service = service;
-
+    
     // GET /api/solarstations
     [HttpGet]
     public async Task<ActionResult<List<SolarStationInfo>>> GetAll()

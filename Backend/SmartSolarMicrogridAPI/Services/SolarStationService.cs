@@ -5,7 +5,7 @@ using MongoDB.Driver;
 using SmartSolarMicrogridAPI.Models;
 
 namespace SmartSolarMicrogridAPI.Services;
-
+    
 public class SolarStationService
 {
     private readonly IMongoCollection<SolarStationInfo> _stations;
