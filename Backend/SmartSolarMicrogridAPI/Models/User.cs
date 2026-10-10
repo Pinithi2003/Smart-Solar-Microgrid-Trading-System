@@ -4,6 +4,10 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SmartSolarMicrogridAPI.Models;
 
+// Old Users documents in MongoDB contain extra fields (e.g. 'nic')
+// from an earlier schema. Ignore them so reads/seed don't throw
+// FormatException when the class doesn't declare them.
+[BsonIgnoreExtraElements]
 public class User : IValidatableObject
 {
     [BsonId]

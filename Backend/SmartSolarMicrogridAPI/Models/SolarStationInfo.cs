@@ -7,7 +7,9 @@ namespace SmartSolarMicrogridAPI.Models;
 /// <summary>
 /// One document in the SolarStationInfo MongoDB collection.
 /// Business key is StationId (ST001...). Mongo _id stays separate.
+/// Extra DB fields are ignored so old documents can't crash reads.
 /// </summary>
+[BsonIgnoreExtraElements]
 public class SolarStationInfo : IValidatableObject
 {
     [BsonId]
